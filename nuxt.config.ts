@@ -1,8 +1,9 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
+import tailwindcss from "@tailwindcss/vite";
+
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
-  css: ["~/assets/css/tailwind.scss"],
+  css: ["~/assets/css/tailwind.css"],
   modules: [
     "@nuxt/a11y",
     "@nuxt/eslint",
@@ -15,16 +16,21 @@ export default defineNuxtConfig({
     "@nuxt/content",
   ],
   runtimeConfig: {
-    stripeSecretKey: process.env.STRIPE_SECRET_KEY,
-    stripePriceId: process.env.STRIPE_PRICE_ID,
+    githubToken: process.env.GITHUB_TOKEN,
     public: {
       siteUrl: process.env.NUXT_PUBLIC_SITE_URL || "http://localhost:3000",
       siteName: "The Nordic Base",
       siteDescription: "Premium Nuxt 4 Boilerplate setup.",
       ogImage: "/og.png",
+      githubOwner: "nordicnerd",
+      currentRepo: process.env.GITHUB_REPO || "client-project",
+      currentProject: parseInt(process.env.GITHUB_PROJECT_NUMBER || "1"),
     },
   },
   content: {
     experimental: { nativeSqlite: true },
+  },
+  vite: {
+    plugins: [tailwindcss()],
   },
 });
