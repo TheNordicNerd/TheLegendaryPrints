@@ -1,0 +1,8 @@
+# Netlify Configuration
+[build]
+  command = "npm run build"
+  publish = ".output/public"
+
+# Disable Netlify Image CDN to prevent URL rewriting of external images
+[images]
+  remote_images = []
