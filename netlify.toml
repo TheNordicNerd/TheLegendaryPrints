@@ -3,6 +3,9 @@
   command = "npm run build"
   publish = ".output/public"
 
+[build.environment]
+  NODE_VERSION = "20"
+
 # Disable Netlify Image CDN to prevent URL rewriting of external images
 [images]
   remote_images = []
