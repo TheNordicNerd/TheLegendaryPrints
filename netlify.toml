@@ -3,6 +3,16 @@
   command = "npm run build"
   publish = "dist"
 
-# Disable Netlify Image CDN to prevent URL rewriting of external images
+[build.environment]
+  NODE_VERSION = "20"
+
+# Disable Netlify Image CDN completely
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
 [images]
   remote_images = []
+
+# Alternative: Configure Nuxt Image to not use providers
+[dev]
+  framework = "#custom"
