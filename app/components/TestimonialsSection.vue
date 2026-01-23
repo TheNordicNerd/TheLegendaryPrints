@@ -1,0 +1,260 @@
+<template>
+  <div>
+    <!-- Carousel Section with Background Images -->
+    <Section
+      inner-classes="py-20 md:py-32"
+      outer-classes="min-h-[600px] md:min-h-[400px] relative overflow-hidden"
+    >
+      <!-- Background Images Layer with Crossfade -->
+      <div class="absolute inset-0">
+        <TransitionGroup name="background-fade">
+          <div
+            v-for="(testimonial, index) in testimonials"
+            v-show="index === currentSlide"
+            :key="`bg-${index}`"
+            class="absolute inset-0"
+          >
+            <div
+              class="absolute inset-0 bg-cover bg-center bg-no-repeat"
+              :style="{ backgroundImage: `url(${testimonial.image})` }"
+            ></div>
+          </div>
+        </TransitionGroup>
+      </div>
+
+      <!-- Gradient overlay for better text readability -->
+      <div
+        class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/70 to-black/60 z-0"
+      ></div>
+
+      <!-- Carousel Content -->
+      <div class="relative h-full min-h-[600px] md:min-h-[400px]">
+        <TransitionGroup name="carousel">
+          <div
+            v-for="(testimonial, index) in testimonials"
+            v-show="index === currentSlide"
+            :key="index"
+            class="absolute inset-0 flex items-center justify-center px-4"
+          >
+            <div class="max-w-4xl mx-auto text-center text-white">
+              <!-- Stars -->
+              <div class="flex items-center justify-center gap-2 mb-6">
+                <Icon
+                  v-for="i in 5"
+                  :key="i"
+                  name="i-material-symbols-light-family-star"
+                  size="24"
+                  class="text-yellow-400 fill-yellow-400"
+                />
+              </div>
+
+              <!-- Quote -->
+              <p class="text-2xl md:text-4xl font-light italic mb-8 leading-relaxed">
+                "{{ testimonial.quote }}"
+              </p>
+
+              <!-- Author -->
+              <div class="flex items-center justify-center gap-4">
+                <div class="w-16 h-16 rounded-full overflow-hidden border-4 border-white/30">
+                  <img
+                    :src="testimonial.avatar"
+                    :alt="testimonial.name"
+                    class="w-full h-full object-cover"
+                  />
+                </div>
+                <div class="text-left">
+                  <p class="text-xl font-bold">{{ testimonial.name }}</p>
+                  <p class="text-white/80">{{ testimonial.role }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </TransitionGroup>
+
+        <!-- Navigation Arrows -->
+        <button
+          @click="prevSlide"
+          class="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 items-center justify-center transition-all duration-200 z-20"
+          aria-label="Previous testimonial"
+        >
+          <Icon name="i-lucide-chevron-left" size="24" class="text-white" />
+        </button>
+        <button
+          @click="nextSlide"
+          class="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 flex items-center justify-center transition-all duration-200 z-20"
+          aria-label="Next testimonial"
+        >
+          <Icon name="i-lucide-chevron-right" size="24" class="text-white" />
+        </button>
+
+        <!-- Dots Navigation -->
+        <div class="absolute bottom-8 left-0 right-0 flex justify-center gap-3 z-20">
+          <button
+            v-for="(_, index) in testimonials"
+            :key="index"
+            @click="goToSlide(index)"
+            class="w-3 h-3 rounded-full transition-all duration-300"
+            :class="index === currentSlide ? 'bg-white w-8' : 'bg-white/40 hover:bg-white/60'"
+            :aria-label="`Go to testimonial ${index + 1}`"
+          ></button>
+        </div>
+      </div>
+    </Section>
+
+    <!-- Stats Row -->
+    <Section inner-classes="px-4 py-16" outer-classes="bg-surface-base">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8" data-animate-stagger>
+        <div data-animate="zoom-in">
+          <StatCard value="2,847+" label="Happy Customers" />
+        </div>
+        <div data-animate="zoom-in">
+          <StatCard value="4.9/5" label="Average Rating" />
+        </div>
+        <div data-animate="zoom-in">
+          <StatCard value="50K+" label="Stickers Printed" />
+        </div>
+        <div data-animate="zoom-in">
+          <StatCard value="3-5" label="Days Delivery" />
+        </div>
+      </div>
+    </Section>
+  </div>
+</template>
+
+<script setup lang="ts">
+  const testimonials = [
+    {
+      quote:
+        "Absolutely amazing quality! The colors are vibrant and the stickers are incredibly durable. Perfect for my business branding. Will definitely order again!",
+      name: "Sarah Johnson",
+      role: "Small Business Owner",
+      image:
+        "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1920&q=80&auto=format&fit=crop",
+      avatar: "https://i.pravatar.cc/150?img=1",
+    },
+    {
+      quote:
+        "Fast shipping and excellent customer service! They helped me refine my design and the final product exceeded my expectations. Highly recommend!",
+      name: "Michael Chen",
+      role: "Event Organizer",
+      image:
+        "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=1920&q=80&auto=format&fit=crop",
+      avatar: "https://i.pravatar.cc/150?img=12",
+    },
+    {
+      quote:
+        "Best sticker printing service I've used! The die-cut precision is perfect and the waterproof quality means they look great even after months outdoors.",
+      name: "Emily Rodriguez",
+      role: "Artist & Designer",
+      image:
+        "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1920&q=80&auto=format&fit=crop",
+      avatar: "https://i.pravatar.cc/150?img=5",
+    },
+    {
+      quote:
+        "The team at The Legendary Prints transformed my vision into reality. Professional, creative, and always on time. They're my go-to for all printing needs!",
+      name: "David Martinez",
+      role: "Marketing Director",
+      image:
+        "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1920&q=80&auto=format&fit=crop",
+      avatar: "https://i.pravatar.cc/150?img=8",
+    },
+  ];
+
+  const currentSlide = ref(0);
+  let intervalId: NodeJS.Timeout | null = null;
+
+  const nextSlide = () => {
+    currentSlide.value = (currentSlide.value + 1) % testimonials.length;
+    resetAutoplay();
+  };
+
+  const prevSlide = () => {
+    currentSlide.value = (currentSlide.value - 1 + testimonials.length) % testimonials.length;
+    resetAutoplay();
+  };
+
+  const goToSlide = (index: number) => {
+    currentSlide.value = index;
+    resetAutoplay();
+  };
+
+  const startAutoplay = () => {
+    intervalId = setInterval(() => {
+      nextSlide();
+    }, 10000); // Change slide every 10 seconds
+  };
+
+  const stopAutoplay = () => {
+    if (intervalId) {
+      clearInterval(intervalId);
+      intervalId = null;
+    }
+  };
+
+  const resetAutoplay = () => {
+    stopAutoplay();
+    startAutoplay();
+  };
+
+  onMounted(() => {
+    startAutoplay();
+  });
+
+  onUnmounted(() => {
+    stopAutoplay();
+  });
+</script>
+
+<style scoped>
+  /* Background crossfade transitions */
+  .background-fade-enter-active {
+    transition: opacity 1.2s ease-in-out;
+  }
+
+  .background-fade-leave-active {
+    transition: opacity 1.2s ease-in-out;
+  }
+
+  .background-fade-enter-from {
+    opacity: 0;
+  }
+
+  .background-fade-leave-to {
+    opacity: 0;
+  }
+
+  /* Carousel content transitions */
+  .carousel-enter-active {
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .carousel-leave-active {
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .carousel-enter-from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+
+  .carousel-leave-to {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .background-fade-enter-active,
+    .background-fade-leave-active,
+    .carousel-enter-active,
+    .carousel-leave-active {
+      transition-duration: 0.01ms !important;
+    }
+
+    .carousel-enter-from,
+    .carousel-leave-to {
+      transform: none !important;
+    }
+  }
+</style>

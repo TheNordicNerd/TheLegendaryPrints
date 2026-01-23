@@ -29,7 +29,7 @@
       <Link rel="icon" type="image/png" href="/favicon.png" />
     </Head>
 
-    <Body class="min-h-screen bg-white text-slate-900 antialiased">
+    <Body class="bg-background-base antialiased">
       <!-- App Layout -->
       <NuxtLayout>
         <NuxtPage />

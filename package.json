@@ -28,7 +28,6 @@
     "@nuxtjs/tailwindcss": "6.14.0",
     "@octokit/rest": "^22.0.1",
     "@pinia/nuxt": "0.11.3",
-    "@tailwindcss/vite": "^4.1.18",
     "@unhead/vue": "^2.1.2",
     "@vueuse/nuxt": "14.1.0",
     "better-sqlite3": "^12.6.2",
@@ -36,9 +35,9 @@
     "nuxt": "^4.2.2",
     "nuxt-og-image": "5.1.13",
     "pinia": "^3.0.4",
+    "pinia-plugin-persistedstate": "^4.7.1",
     "sass-embedded": "^1.97.2",
     "stripe": "^20.2.0",
-    "tailwindcss": "^4.1.18",
     "unstorage": "^1.17.4",
     "vue": "^3.5.26",
     "vue-router": "^4.6.4"

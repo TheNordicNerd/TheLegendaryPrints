@@ -1,12 +1,15 @@
 <script setup lang="ts">
+  // Initialize scroll animations for the entire page
+  useScrollAnimation();
+
   // SEO Meta Tags - Optimized for custom sticker printing
   useSeoMeta({
-    title: "Custom Sticker Printing | Fast, Premium Quality | The Legendary Prints",
+    title: "Custom Stickers | Fast Premium Printing - TLP",
     description:
-      "High-quality custom stickers and die-cut prints. Waterproof, weatherproof vinyl stickers delivered fast. Free design support. Order your custom stickers today!",
-    ogTitle: "The Legendary Prints - Custom Stickers That Make an Impact",
+      "High-quality custom stickers & die-cut prints. Waterproof vinyl, fast delivery, free design support. Order premium stickers today!",
+    ogTitle: "Custom Stickers That Make an Impact | TLP",
     ogDescription:
-      "Transform your ideas into stunning custom stickers and prints. Premium quality, delivered in 3-5 days.",
+      "Transform your ideas into stunning custom stickers. Premium quality, waterproof vinyl, delivered in 3-5 days with free design support.",
     ogImage: "/og-image.jpg",
     twitterCard: "summary_large_image",
   });
@@ -73,17 +76,13 @@
 </script>
 
 <template>
-  <div class="min-h-screen bg-background-base">
-    <HeroSection
-      headline="Custom Stickers & Prints Made Easy"
-      subheadline="Professional-grade vinyl stickers and die-cut prints delivered in 3-5 days. Waterproof, weatherproof, and built to last. Perfect for businesses, events, and personal projects."
-      cta-text="Shop Stickers Now"
-      cta-link="/products"
-      background-image="https://images.unsplash.com/photo-1633533452206-8ab246b00e30?q=80&w=3131&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-      :overlay-opacity="70"
-      text-align="center"
-      min-height="700px"
-    />
+  <div>
+    <HeroSection />
+    <FeaturesSection />
+    <BestSellers />
+    <ProcessSection />
+    <TestimonialsSection />
+    <CTASection />
   </div>
 </template>
 
