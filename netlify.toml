@@ -1,10 +1,7 @@
 # Netlify Configuration
 [build]
   command = "npm run build"
-  publish = ".output/public"
-
-[build.environment]
-  NODE_VERSION = "20"
+  publish = "dist"
 
 # Disable Netlify Image CDN to prevent URL rewriting of external images
 [images]
