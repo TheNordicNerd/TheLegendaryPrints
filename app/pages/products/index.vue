@@ -385,53 +385,46 @@
 </template>
 
 <script setup lang="ts">
-  import { products } from "~/data/products";
+  import type { ShopifyProduct } from "~/composables/useShopify";
+  import type { Product } from "~/types/product";
 
-  // SEO Meta Tags
-  useSeoMeta({
-    title: "Custom Sticker Products | Browse All Styles - TLP",
-    description:
-      "Browse die-cut, kiss-cut, circle stickers & sheets. Premium waterproof vinyl with fast delivery. Find your perfect custom sticker today!",
-    ogTitle: "Custom Sticker Products | Browse All Styles",
-    ogDescription:
-      "Explore die-cut, kiss-cut, and specialty stickers. Professional quality, waterproof vinyl, fast turnaround, competitive pricing.",
-    ogImage: "/og-products.jpg",
-    ogType: "website",
-    twitterCard: "summary_large_image",
-    twitterTitle: "Custom Stickers | All Products - TLP",
-    twitterDescription:
-      "Browse die-cut, kiss-cut, circles & sheets. Premium waterproof vinyl stickers with fast delivery and professional quality.",
+  // Fetch products from Shopify
+  const { fetchProducts, getCachedProducts } = useShopifyProducts();
+  const shopifyProducts = ref<ShopifyProduct[]>([]);
+
+  // Try to get cached products first
+  if (import.meta.client) {
+    const cached = getCachedProducts();
+    if (cached) {
+      shopifyProducts.value = cached;
+    }
+  }
+
+  // Fetch fresh products on mount
+  onMounted(async () => {
+    try {
+      const fetchedProducts = await fetchProducts();
+      shopifyProducts.value = fetchedProducts;
+    } catch (error) {
+      // Silently fail - products will remain empty array
+    }
   });
 
-  // Structured Data - Product Catalog
-  useHead({
-    script: [
-      {
-        type: "application/ld+json",
-        innerHTML: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "CollectionPage",
-          name: "Custom Sticker Products",
-          description:
-            "Browse our complete collection of custom stickers including die-cut, kiss-cut, circle stickers, and sticker sheets",
-          url: "https://thelegendaryprints.com/products",
-          mainEntity: {
-            "@type": "ItemList",
-            itemListElement: products.map((product, index) => ({
-              "@type": "ListItem",
-              position: index + 1,
-              item: {
-                "@type": "Product",
-                name: product.name,
-                description: product.description,
-                image: product.thumbnailImg,
-                url: `https://thelegendaryprints.com/products/${product.slug}`,
-              },
-            })),
-          },
-        }),
-      },
-    ],
+  // Transform Shopify products to match local Product interface
+  const products = computed<Product[]>(() => {
+    return shopifyProducts.value.map((shopifyProduct) => ({
+      id: shopifyProduct.id,
+      name: shopifyProduct.title,
+      slug: shopifyProduct.handle,
+      description: shopifyProduct.description,
+      icon: "i-lucide-sticker",
+      featured: shopifyProduct.tags?.includes("featured") || false,
+      thumbnailImg: shopifyProduct.featuredImage?.url || "",
+      images: shopifyProduct.images?.edges.map((e) => e.node.url) || [],
+      category: "die-cut" as const,
+      tags: shopifyProduct.tags || [],
+      shopifyProductId: shopifyProduct.id,
+    }));
   });
 
   // Filter state
@@ -441,14 +434,6 @@
   const sortBy = ref<string>("name-asc");
   const showMobileFilters = ref(false);
   const showSortDropdown = ref(false);
-
-  // Categories configuration
-  const categories = [
-    { value: "die-cut", label: "Die Cut", icon: "i-lucide-sticker" },
-    { value: "kiss-cut", label: "Kiss Cut", icon: "i-lucide-scissors" },
-    { value: "shapes", label: "Shapes", icon: "i-lucide-circle" },
-    { value: "sheets", label: "Sheets", icon: "i-lucide-palette" },
-  ];
 
   // Sort options
   const sortOptions = [
@@ -460,36 +445,38 @@
   // Get all available tags from products
   const availableTags = computed(() => {
     const tags = new Set<string>();
-    products.forEach((product) => {
-      product.tags.forEach((tag) => tags.add(tag));
+    products.value.forEach((product: Product) => {
+      product.tags.forEach((tag: string) => tags.add(tag));
     });
     return Array.from(tags).sort();
   });
 
   // Filter products
   const filteredProducts = computed(() => {
-    let filtered = products;
+    let filtered = products.value;
 
     // Search filter
     if (searchQuery.value) {
       const query = searchQuery.value.toLowerCase();
       filtered = filtered.filter(
-        (product) =>
+        (product: Product) =>
           product.name.toLowerCase().includes(query) ||
           product.description.toLowerCase().includes(query) ||
-          product.tags.some((tag) => tag.toLowerCase().includes(query)),
+          product.tags.some((tag: string) => tag.toLowerCase().includes(query)),
       );
     }
 
     // Category filter
     if (selectedCategories.value.length > 0) {
-      filtered = filtered.filter((product) => selectedCategories.value.includes(product.category));
+      filtered = filtered.filter((product: Product) =>
+        selectedCategories.value.includes(product.category),
+      );
     }
 
     // Tags filter
     if (selectedTags.value.length > 0) {
-      filtered = filtered.filter((product) =>
-        selectedTags.value.some((tag) => product.tags.includes(tag)),
+      filtered = filtered.filter((product: Product) =>
+        selectedTags.value.some((tag: string) => product.tags.includes(tag)),
       );
     }
 
@@ -588,6 +575,57 @@
       });
     });
   }
+
+  // SEO Meta Tags
+  useSeoMeta({
+    title: "Custom Sticker Products | Browse All Styles - TLP",
+    description:
+      "Browse die-cut, kiss-cut, circle stickers & sheets. Premium waterproof vinyl with fast delivery. Find your perfect custom sticker today!",
+    ogTitle: "Custom Sticker Products | Browse All Styles",
+    ogDescription:
+      "Explore die-cut, kiss-cut, and specialty stickers. Professional quality, waterproof vinyl, fast turnaround, competitive pricing.",
+    ogImage: "/og-products.jpg",
+    ogType: "website",
+    twitterCard: "summary_large_image",
+    twitterTitle: "Custom Stickers | All Products - TLP",
+    twitterDescription:
+      "Browse die-cut, kiss-cut, circles & sheets. Premium waterproof vinyl stickers with fast delivery and professional quality.",
+  });
+
+  // Structured Data - Product Catalog (dynamic based on loaded products)
+  watchEffect(() => {
+    if (products.value.length > 0) {
+      useHead({
+        script: [
+          {
+            type: "application/ld+json",
+            innerHTML: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "CollectionPage",
+              name: "Custom Sticker Products",
+              description:
+                "Browse our complete collection of custom stickers including die-cut, kiss-cut, circle stickers, and square stickers",
+              url: "https://thelegendaryprints.com/products",
+              mainEntity: {
+                "@type": "ItemList",
+                itemListElement: products.value.map((product: Product, index: number) => ({
+                  "@type": "ListItem",
+                  position: index + 1,
+                  item: {
+                    "@type": "Product",
+                    name: product.name,
+                    description: product.description,
+                    image: product.thumbnailImg,
+                    url: `https://thelegendaryprints.com/products/${product.slug}`,
+                  },
+                })),
+              },
+            }),
+          },
+        ],
+      });
+    }
+  });
 </script>
 
 <style scoped>

@@ -28,11 +28,21 @@ export default defineEventHandler(async (event) => {
             title
             handle
             description
+            tags
+            availableForSale
             featuredImage {
               url
               altText
               width
               height
+            }
+            images(first: 10) {
+              edges {
+                node {
+                  url
+                  altText
+                }
+              }
             }
             priceRange {
               minVariantPrice {

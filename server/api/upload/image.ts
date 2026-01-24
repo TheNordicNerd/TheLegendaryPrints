@@ -46,13 +46,6 @@ export default defineEventHandler(async (event) => {
   // Handle POST requests (upload)
   const config = useRuntimeConfig();
 
-  // Debug: Log what we're getting
-  console.log('🔧 Cloudinary Config:', {
-    cloud_name: config.cloudinaryCloudName,
-    api_key: config.cloudinaryApiKey ? '***' + config.cloudinaryApiKey.slice(-4) : 'undefined',
-    api_secret: config.cloudinaryApiSecret ? '***' : 'undefined',
-  });
-
   // Configure Cloudinary
   cloudinary.config({
     cloud_name: config.cloudinaryCloudName,

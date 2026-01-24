@@ -9,8 +9,9 @@ export const useShopifyProducts = () => {
   const { getProducts, getProduct } = useShopify();
 
   // Cache products in localStorage
-  const CACHE_KEY = 'shopify_products_cache';
+  const CACHE_KEY = 'shopify_products_cache_v3'; // Changed cache key to force refresh with collection
   const CACHE_DURATION = 1000 * 60 * 60; // 1 hour
+  const COLLECTION_HANDLE = 'custom-stickers'; // Default collection to fetch from
 
   interface CachedProducts {
     products: ShopifyProduct[];
@@ -68,20 +69,21 @@ export const useShopifyProducts = () => {
     if (!forceRefresh) {
       const cached = getCachedProducts();
       if (cached) {
-        console.log('✅ Using cached Shopify products');
         return cached;
       }
     }
 
-    // Fetch from Shopify
-    console.log('🌐 Fetching products from Shopify...');
-    const result = await getProducts({ limit: 50 });
+    // Fetch from Shopify collection
+    const data = await $fetch<{
+      collection: any;
+      products: ShopifyProduct[];
+      count: number;
+    }>(`/api/shopify/collections/${COLLECTION_HANDLE}/products?limit=50`);
 
-    if (result?.products) {
+    if (data?.products) {
       // Cache the products
-      cacheProducts(result.products);
-      console.log('✅ Fetched and cached', result.products.length, 'products');
-      return result.products;
+      cacheProducts(data.products);
+      return data.products;
     }
 
     return [];
@@ -97,13 +99,11 @@ export const useShopifyProducts = () => {
       if (cached) {
         const product = cached.find((p) => p.handle === handle);
         if (product) {
-          console.log('✅ Found product in cache:', handle);
           return product;
         }
       }
 
       // Fetch from Shopify
-      console.log('🌐 Fetching product from Shopify:', handle);
       const product = await getProduct(handle);
       return product;
     } catch (error) {
@@ -183,7 +183,6 @@ export const useShopifyProducts = () => {
   const clearCache = () => {
     if (typeof window === 'undefined') return;
     localStorage.removeItem(CACHE_KEY);
-    console.log('🗑️ Cleared product cache');
   };
 
   return {

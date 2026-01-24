@@ -263,7 +263,7 @@
    * @component
    */
 
-  import { products } from "~/data/products";
+  import type { ShopifyProduct } from "~/composables/useShopify";
 
   interface Link {
     text: string;
@@ -272,15 +272,43 @@
     children?: Link[];
   }
 
-  // Generate product links dynamically from products data
-  const productLinks = products.map((product) => ({
-    text: product.name,
-    to: `/products/${product.slug}`,
-    icon: product.icon,
-  }));
+  // Fetch products from Shopify
+  const { fetchProducts, getCachedProducts } = useShopifyProducts();
+  const shopifyProducts = ref<ShopifyProduct[]>([]);
+
+  // Try to get cached products first (immediate)
+  if (import.meta.client) {
+    const cached = getCachedProducts();
+    if (cached) {
+      shopifyProducts.value = cached;
+    }
+  }
+
+  // Fetch fresh products on mount
+  onMounted(async () => {
+    try {
+      const products = await fetchProducts();
+      shopifyProducts.value = products;
+    } catch (error) {
+      // Silently fail - products will remain empty array
+    }
+  });
+
+  // Generate product links dynamically from Shopify products
+  const productLinks = computed(() => {
+    if (!shopifyProducts.value || shopifyProducts.value.length === 0) {
+      return [];
+    }
+
+    return shopifyProducts.value.map((product: ShopifyProduct) => ({
+      text: product.title,
+      to: `/products/${product.handle}`,
+      icon: "i-lucide-sticker",
+    }));
+  });
 
   // Navigation links configuration
-  const links = ref<Link[]>([
+  const links = computed<Link[]>(() => [
     {
       text: "Home",
       to: "/",
@@ -290,7 +318,7 @@
       text: "Products",
       to: "/products",
       icon: "i-lucide-package",
-      children: productLinks,
+      children: productLinks.value,
     },
     {
       text: "About",

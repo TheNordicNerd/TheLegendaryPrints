@@ -82,9 +82,6 @@ if (!slug) {
 const shopifyProduct = ref<ShopifyProduct | null>(null);
 const loadingShopify = ref(true);
 
-console.log('🔍 Product slug:', slug);
-console.log('🛍️ Fetching product from Shopify...');
-
 const { fetchProductByHandle } = useShopifyProducts();
 
 // Fetch product on mount
@@ -94,14 +91,10 @@ onMounted(async () => {
 
     if (result) {
       shopifyProduct.value = result;
-      console.log('✅ Loaded Shopify product:', result.title);
-      console.log('📦 Variants:', result.variants.edges.length);
     } else {
       throw new Error('Product not found');
     }
   } catch (err: any) {
-    console.error('❌ Failed to load Shopify product:', err);
-
     // Throw 404 if product not found
     throw createError({
       statusCode: 404,
@@ -223,31 +216,17 @@ const toast = useToast();
 const findVariantId = (size: number, material: string): string | null => {
   if (!shopifyProduct.value) return null;
 
-  console.log('🔍 Looking for variant:', { size, material });
-  console.log('📦 Available variants:');
-  shopifyProduct.value.variants.edges.forEach((edge, i) => {
-    console.log(`  ${i + 1}. ${edge.node.title} (ID: ${edge.node.id})`);
-  });
-
   // First, try exact match
   let variant = shopifyProduct.value.variants.edges.find((edge) => {
     const title = edge.node.title.toLowerCase();
-
-    // Check if size matches
     const sizeMatch = title.match(/(\d+(?:\.\d+)?)\s*(?:inch|in|"|')/i);
     const hasMatchingSize = sizeMatch && sizeMatch[1] && parseFloat(sizeMatch[1]) === size;
-
-    // Check if material matches
     const hasMatchingMaterial = title.includes(material.toLowerCase());
-
     return hasMatchingSize && hasMatchingMaterial;
   });
 
   // If no exact match, find closest size with matching material
   if (!variant) {
-    console.log(`⚠️ No exact match for ${size}" ${material}`);
-    console.log('🔍 Looking for closest size with matching material...');
-
     let closestVariant = null;
     let closestDiff = Infinity;
 
@@ -269,57 +248,33 @@ const findVariantId = (size: number, material: string): string | null => {
       }
     });
 
-    if (closestVariant) {
-      console.log(`✅ Using closest variant: ${closestVariant.node.title}`);
-      variant = closestVariant;
-    }
+    variant = closestVariant || undefined;
   }
 
-  // Final fallback: just use material match
+  // Final fallback: material match only
   if (!variant) {
-    console.log('⚠️ No size match found, trying material only...');
     variant = shopifyProduct.value.variants.edges.find((edge) => {
       return edge.node.title.toLowerCase().includes(material.toLowerCase());
     });
   }
 
   // Last resort: first variant
-  if (!variant) {
-    console.warn('⚠️ No match found at all, using first variant');
-    return shopifyProduct.value.variants.edges[0]?.node.id || null;
-  }
-
-  console.log(`✅ Selected variant: ${variant.node.title}`);
-  return variant.node.id;
+  return variant?.node.id || shopifyProduct.value.variants.edges[0]?.node.id || null;
 };
 
 // Handle add to cart
 const handleAddToCart = async () => {
-  console.log('🛒 Add to cart clicked');
-
   if (!productOptionsRef.value) {
-    console.error('❌ Product options ref not available');
     alert('Product options not loaded. Please refresh the page.');
     return;
   }
 
   if (!shopifyProduct.value) {
-    console.error('❌ Shopify product not available');
     alert('Product not loaded. Please refresh the page.');
     return;
   }
 
   const opts = productOptionsRef.value;
-  console.log('📦 Options:', {
-    uploadedImage: opts.uploadedImage ? 'present' : 'missing',
-    uploadedImageUrl: opts.uploadedImageUrl,
-    uploadedFileName: opts.uploadedFileName,
-    selectedSize: opts.selectedSize,
-    customSize: opts.customSize,
-    selectedMaterial: opts.selectedMaterial,
-    selectedQuantity: opts.selectedQuantity,
-    customQuantity: opts.customQuantity,
-  });
 
   const effectiveSize = opts.customSize || opts.selectedSize;
   const effectiveQuantity =
@@ -336,14 +291,10 @@ const handleAddToCart = async () => {
   try {
     // Find the matching Shopify variant
     const variantId = findVariantId(effectiveSize, opts.selectedMaterial);
-    console.log('🔍 Variant lookup:', { effectiveSize, material: opts.selectedMaterial, variantId });
 
     if (!variantId) {
       throw new Error(`No variant found for ${effectiveSize}" ${opts.selectedMaterial} stickers`);
     }
-
-    console.log('📤 Adding to cart...');
-    console.log('💰 Pricing:', { totalPrice, pricePerUnit, effectiveQuantity });
 
     await cart.addItem({
       merchandiseId: variantId,
@@ -356,12 +307,9 @@ const handleAddToCart = async () => {
       customPricePerUnit: pricePerUnit.toFixed(2),
     });
 
-    console.log('✅ Successfully added to cart!');
-
     // Show success toast
     toast.success(`Added ${effectiveQuantity.toLocaleString()} ${shopifyProduct.value.title} to cart!`);
   } catch (error: any) {
-    console.error('❌ Add to cart failed:', error);
     toast.error(`Failed to add to cart: ${error.message}`);
     return;
   }

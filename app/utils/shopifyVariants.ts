@@ -3,7 +3,7 @@
  * Helps map product options (size, material) to Shopify variant IDs
  */
 
-import type { Product } from '~/data/products';
+import type { Product } from '~/types/product';
 
 /**
  * Get Shopify variant ID based on product options

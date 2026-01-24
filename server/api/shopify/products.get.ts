@@ -20,6 +20,30 @@ export default defineEventHandler(async (event) => {
           title
           handle
           description
+          tags
+          availableForSale
+          featuredImage {
+            url
+            altText
+          }
+          images(first: 10) {
+            edges {
+              node {
+                url
+                altText
+              }
+            }
+          }
+          priceRange {
+            minVariantPrice {
+              amount
+              currencyCode
+            }
+            maxVariantPrice {
+              amount
+              currencyCode
+            }
+          }
           variants(first: 50) {
             edges {
               node {

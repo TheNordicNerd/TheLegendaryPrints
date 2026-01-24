@@ -51,12 +51,6 @@
         >
           {{ product.name }}
         </h3>
-        <Icon
-          :name="product.icon"
-          :size="variant === 'hero' ? '18' : '20'"
-          class="text-accent-700 flex-shrink-0"
-          aria-hidden="true"
-        />
       </div>
 
       <p
@@ -83,7 +77,7 @@
 </template>
 
 <script setup lang="ts">
-  import type { Product } from "~/data/products";
+  import type { Product } from "~/types/product";
 
   interface Props {
     /** Product data to display */
