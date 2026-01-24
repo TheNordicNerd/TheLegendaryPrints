@@ -1,46 +1,60 @@
 <template>
   <Section inner-classes="p-4">
-    <Breadcrumb :path="route.path" />
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 py-8">
-      <!-- Product Gallery -->
-      <div class="product-gallery-container">
-        <ProductGallery
-          :images="product.images || [product.thumbnailImg]"
-          :alt="product.name"
-          :thumbnail-columns="4"
-        />
-      </div>
+    <!-- Loading State -->
+    <div v-if="loadingShopify" class="text-center py-12">
+      <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-accent-700 border-t-transparent"></div>
+      <p class="mt-4 text-text-secondary">Loading product...</p>
+    </div>
 
-      <!-- Product Info -->
-      <div class="product-info flex flex-col gap-6">
-        <div>
-          <h1 class="text-4xl lg:text-5xl mb-4 text-text-primary">{{ product.name }}</h1>
-          <p class="text-lg text-text-secondary">{{ product.description }}</p>
+    <!-- Product Content -->
+    <div v-else-if="shopifyProduct">
+      <Breadcrumb :path="route.path" />
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 py-8">
+        <!-- Product Gallery -->
+        <div class="product-gallery-container">
+          <ProductGallery
+            :images="productImages"
+            :alt="shopifyProduct.title"
+            :thumbnail-columns="4"
+          />
         </div>
 
-        <!-- Product Options -->
-        <ProductOptions ref="productOptionsRef" />
+        <!-- Product Info -->
+        <div class="product-info flex flex-col gap-6">
+          <div>
+            <h1 class="text-4xl lg:text-5xl mb-4 text-text-primary">{{ shopifyProduct.title }}</h1>
+            <p class="text-lg text-text-secondary">{{ shopifyProduct.description }}</p>
+          </div>
 
-        <!-- Add to Cart Button -->
-        <div>
-          <Button
-            variant="primary"
-            :disabled="!productOptionsRef?.uploadedImage"
-            size="lg"
-            :full-width="true"
-            rounded="lg"
-            icon-right="i-lucide-shopping-cart"
-            right-icon-size="20"
-            @click="handleAddToCart"
-          >
-            Add to Cart
-          </Button>
-          <p
-            v-if="!productOptionsRef?.uploadedImage"
-            class="text-sm text-text-secondary mt-2 text-center"
-          >
-            Please upload a design to continue
-          </p>
+          <!-- Product Options -->
+          <ProductOptions
+            ref="productOptionsRef"
+            :shopify-variant-options="shopifyVariantOptions"
+            :loading="loadingShopify"
+          />
+
+          <!-- Add to Cart Button -->
+          <div>
+            <Button
+              variant="primary"
+              :disabled="!productOptionsRef?.uploadedImage"
+              size="lg"
+              :full-width="true"
+              rounded="lg"
+              icon-right="i-lucide-shopping-cart"
+              right-icon-size="20"
+              @click="handleAddToCart"
+            >
+              Add to Cart
+            </Button>
+            <p
+              v-if="!productOptionsRef?.uploadedImage"
+              class="text-sm text-text-secondary mt-2 text-center"
+            >
+              Please upload a design to continue
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -48,183 +62,320 @@
 </template>
 
 <script setup lang="ts">
-  import { getProductBySlug } from "~/data/products";
-  import { getShopifyVariantId } from "~/utils/shopifyVariants";
-  const route = useRoute();
+import type { ShopifyProduct } from "~/composables/useShopify";
 
-  // Get slug from route params with proper type handling
-  const slug = Array.isArray(route.params.slug) ? route.params.slug[0] : route.params.slug;
+const route = useRoute();
 
-  // Handle case where slug is missing
-  if (!slug) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "Product Not Found",
-      fatal: true,
-    });
-  }
+// Get slug from route params with proper type handling
+const slug = Array.isArray(route.params.slug) ? route.params.slug[0] : route.params.slug;
 
-  const product = getProductBySlug(slug);
-
-  // Handle case where product is not found
-  if (!product) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "Product Not Found",
-      fatal: true,
-    });
-  }
-
-  // SEO Meta Tags - Dynamic per product
-  useSeoMeta({
-    title: `${product.name} | Premium Custom Stickers - TLP`,
-    description: `${product.description} Order waterproof vinyl stickers with fast delivery and free design support. Upload your design today!`,
-    ogTitle: `${product.name} - Custom Printing`,
-    ogDescription: `${product.description} Premium waterproof vinyl, fast 3-5 day delivery, professional quality stickers.`,
-    ogImage: product.thumbnailImg,
-    ogType: "website",
-    twitterCard: "summary_large_image",
-    twitterTitle: `${product.name} | Custom Stickers - TLP`,
-    twitterDescription: `${product.description} Waterproof vinyl with fast delivery.`,
-    twitterImage: product.thumbnailImg,
+// Handle case where slug is missing
+if (!slug) {
+  throw createError({
+    statusCode: 404,
+    statusMessage: "Product Not Found",
+    fatal: true,
   });
+}
 
-  // Structured Data - Product Schema
-  useHead({
-    script: [
-      {
-        type: "application/ld+json",
-        innerHTML: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "Product",
-          name: product.name,
-          description: product.description,
-          image: product.images || [product.thumbnailImg],
-          brand: {
-            "@type": "Brand",
-            name: "The Legendary Prints",
-          },
-          category: product.category,
-          offers: {
-            "@type": "AggregateOffer",
-            priceCurrency: "USD",
-            lowPrice: "2.99",
-            highPrice: "199.99",
-            availability: "https://schema.org/InStock",
-            url: `https://thelegendaryprints.com/products/${product.slug}`,
-          },
-          aggregateRating: {
-            "@type": "AggregateRating",
-            ratingValue: "4.9",
-            reviewCount: "547",
-            bestRating: "5",
-            worstRating: "1",
-          },
-        }),
-      },
-      {
-        type: "application/ld+json",
-        innerHTML: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "BreadcrumbList",
-          itemListElement: [
-            {
-              "@type": "ListItem",
-              position: 1,
-              name: "Home",
-              item: "https://thelegendaryprints.com",
-            },
-            {
-              "@type": "ListItem",
-              position: 2,
-              name: "Products",
-              item: "https://thelegendaryprints.com/products",
-            },
-            {
-              "@type": "ListItem",
-              position: 3,
-              name: product.name,
-              item: `https://thelegendaryprints.com/products/${product.slug}`,
-            },
-          ],
-        }),
-      },
-    ],
-  });
+// Fetch Shopify product
+const shopifyProduct = ref<ShopifyProduct | null>(null);
+const loadingShopify = ref(true);
 
-  // Product options ref
-  const productOptionsRef = ref<any>(null);
+console.log('🔍 Product slug:', slug);
+console.log('🛍️ Fetching product from Shopify...');
 
-  // Cart functionality - use unified cart for both mock and Shopify
-  const cart = useUnifiedCart();
-  const router = useRouter();
+const { fetchProductByHandle } = useShopifyProducts();
 
-  // Handle add to cart
-  const handleAddToCart = async () => {
-    if (productOptionsRef.value) {
-      const opts = productOptionsRef.value;
-      const effectiveSize = opts.customSize || opts.selectedSize;
-      const effectiveQuantity =
-        opts.customQuantity && opts.customQuantity >= 1000
-          ? opts.customQuantity
-          : opts.selectedQuantity;
+// Fetch product on mount
+onMounted(async () => {
+  try {
+    const result = await fetchProductByHandle(slug);
 
-      // Calculate price per unit
-      const basePrice = 0.1; // Price per square inch
-      const squareInches = effectiveSize * effectiveSize;
-      const materialMultipliers: Record<string, number> = {
-        vinyl: 1,
-        matte: 1.2,
-        glossy: 1.3,
-        holographic: 1.8,
-      };
-      const materialMultiplier = materialMultipliers[opts.selectedMaterial] || 1;
-      const pricePerUnit = basePrice * squareInches * materialMultiplier;
-      const totalPrice = pricePerUnit * effectiveQuantity;
-
-      // Add to cart - works for both mock and Shopify mode
-      try {
-        if (cart.isShopifyMode) {
-          // Shopify mode: Get variant ID for this product configuration
-          const variantId = getShopifyVariantId(product, effectiveSize, opts.selectedMaterial);
-
-          if (!variantId) {
-            throw new Error('This product is not available in Shopify. Please add Shopify variant IDs to the product data.');
-          }
-
-          await cart.addItem({
-            merchandiseId: variantId,
-            quantity: effectiveQuantity,
-          });
-        } else {
-          // Mock mode: Use full product details
-          await cart.addItem({
-            productId: product.id,
-            productName: product.name,
-            productSlug: product.slug,
-            size: opts.selectedSize,
-            material: opts.selectedMaterial,
-            quantity: opts.selectedQuantity,
-            pricePerUnit,
-            totalPrice,
-            customSize: opts.customSize,
-            customQuantity: opts.customQuantity,
-            uploadedImage: opts.uploadedImage,
-            uploadedFileName: opts.uploadedFileName,
-          });
-        }
-      } catch (error: any) {
-        alert(`Failed to add to cart: ${error.message}`);
-        return;
-      }
-
-      // Show success message and navigate to cart
-      const message = `Added ${product.name} to cart!\n\nQuantity: ${effectiveQuantity.toLocaleString()}\nPrice: $${totalPrice.toFixed(2)}`;
-      if (confirm(`${message}\n\nGo to cart?`)) {
-        router.push("/cart");
-      }
+    if (result) {
+      shopifyProduct.value = result;
+      console.log('✅ Loaded Shopify product:', result.title);
+      console.log('📦 Variants:', result.variants.edges.length);
+    } else {
+      throw new Error('Product not found');
     }
+  } catch (err: any) {
+    console.error('❌ Failed to load Shopify product:', err);
+
+    // Throw 404 if product not found
+    throw createError({
+      statusCode: 404,
+      statusMessage: "Product Not Found",
+      fatal: true,
+    });
+  } finally {
+    loadingShopify.value = false;
+  }
+});
+
+// Get product images
+const productImages = computed(() => {
+  if (!shopifyProduct.value) return [];
+
+  const images = shopifyProduct.value.images?.edges.map(e => e.node.url) || [];
+
+  // If no images in the images array, use featured image
+  if (images.length === 0 && shopifyProduct.value.featuredImage?.url) {
+    return [shopifyProduct.value.featuredImage.url];
+  }
+
+  return images;
+});
+
+// Extract unique variant options from Shopify product
+const shopifyVariantOptions = computed(() => {
+  if (!shopifyProduct.value) return null;
+
+  const sizes = new Set<number>();
+  const materials = new Set<string>();
+  const quantities = new Set<number>();
+
+  shopifyProduct.value.variants.edges.forEach((edge) => {
+    const title = edge.node.title.toLowerCase();
+
+    // Extract size (e.g., "2 inch", "3\"", "4 in")
+    const sizeMatch = title.match(/(\d+(?:\.\d+)?)\s*(?:inch|in|"|')/i);
+    if (sizeMatch && sizeMatch[1]) {
+      sizes.add(parseFloat(sizeMatch[1]));
+    }
+
+    // Extract material/finish (matte, glossy, vinyl, holographic)
+    if (title.includes('matte')) materials.add('matte');
+    if (title.includes('glossy')) materials.add('glossy');
+    if (title.includes('vinyl')) materials.add('vinyl');
+    if (title.includes('holographic') || title.includes('holo')) materials.add('holographic');
+
+    // Extract quantity if present
+    const qtyMatch = title.match(/(\d+)\s*(?:pack|pcs|count)/i);
+    if (qtyMatch && qtyMatch[1]) {
+      quantities.add(parseInt(qtyMatch[1]));
+    }
+  });
+
+  return {
+    sizes: Array.from(sizes).sort((a, b) => a - b),
+    materials: Array.from(materials),
+    quantities: Array.from(quantities).sort((a, b) => a - b),
   };
+});
+
+// SEO Meta Tags & Structured Data - Dynamic per product
+watchEffect(() => {
+  if (shopifyProduct.value) {
+    const product = shopifyProduct.value;
+
+    useSeoMeta({
+      title: `${product.title} | Premium Custom Stickers - TLP`,
+      description: `${product.description} Order waterproof vinyl stickers with fast delivery and free design support. Upload your design today!`,
+      ogTitle: `${product.title} - Custom Printing`,
+      ogDescription: `${product.description} Premium waterproof vinyl, fast 3-5 day delivery, professional quality stickers.`,
+      ogImage: product.featuredImage?.url,
+      ogType: "website",
+      twitterCard: "summary_large_image",
+      twitterTitle: `${product.title} | Custom Stickers - TLP`,
+      twitterDescription: `${product.description} Waterproof vinyl with fast delivery.`,
+      twitterImage: product.featuredImage?.url,
+    });
+
+    // Add JSON-LD structured data for better SEO
+    useHead({
+      script: [
+        {
+          type: 'application/ld+json',
+          innerHTML: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Product',
+            name: product.title,
+            description: product.description,
+            image: product.featuredImage?.url,
+            brand: {
+              '@type': 'Brand',
+              name: 'The Legendary Prints'
+            },
+            offers: {
+              '@type': 'AggregateOffer',
+              priceCurrency: 'USD',
+              lowPrice: product.priceRange.minVariantPrice.amount,
+              highPrice: product.priceRange.maxVariantPrice.amount,
+              availability: product.availableForSale ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+              url: `https://thelegendaryprints.com/products/${product.handle}`
+            }
+          })
+        }
+      ]
+    });
+  }
+});
+
+// Product options ref
+const productOptionsRef = ref<any>(null);
+
+// Cart functionality
+const cart = useUnifiedCart();
+const toast = useToast();
+
+// Find matching variant by size and material
+const findVariantId = (size: number, material: string): string | null => {
+  if (!shopifyProduct.value) return null;
+
+  console.log('🔍 Looking for variant:', { size, material });
+  console.log('📦 Available variants:');
+  shopifyProduct.value.variants.edges.forEach((edge, i) => {
+    console.log(`  ${i + 1}. ${edge.node.title} (ID: ${edge.node.id})`);
+  });
+
+  // First, try exact match
+  let variant = shopifyProduct.value.variants.edges.find((edge) => {
+    const title = edge.node.title.toLowerCase();
+
+    // Check if size matches
+    const sizeMatch = title.match(/(\d+(?:\.\d+)?)\s*(?:inch|in|"|')/i);
+    const hasMatchingSize = sizeMatch && sizeMatch[1] && parseFloat(sizeMatch[1]) === size;
+
+    // Check if material matches
+    const hasMatchingMaterial = title.includes(material.toLowerCase());
+
+    return hasMatchingSize && hasMatchingMaterial;
+  });
+
+  // If no exact match, find closest size with matching material
+  if (!variant) {
+    console.log(`⚠️ No exact match for ${size}" ${material}`);
+    console.log('🔍 Looking for closest size with matching material...');
+
+    let closestVariant = null;
+    let closestDiff = Infinity;
+
+    shopifyProduct.value.variants.edges.forEach((edge) => {
+      const title = edge.node.title.toLowerCase();
+      const hasMatchingMaterial = title.includes(material.toLowerCase());
+
+      if (hasMatchingMaterial) {
+        const sizeMatch = title.match(/(\d+(?:\.\d+)?)\s*(?:inch|in|"|')/i);
+        if (sizeMatch && sizeMatch[1]) {
+          const variantSize = parseFloat(sizeMatch[1]);
+          const diff = Math.abs(variantSize - size);
+
+          if (diff < closestDiff) {
+            closestDiff = diff;
+            closestVariant = edge;
+          }
+        }
+      }
+    });
+
+    if (closestVariant) {
+      console.log(`✅ Using closest variant: ${closestVariant.node.title}`);
+      variant = closestVariant;
+    }
+  }
+
+  // Final fallback: just use material match
+  if (!variant) {
+    console.log('⚠️ No size match found, trying material only...');
+    variant = shopifyProduct.value.variants.edges.find((edge) => {
+      return edge.node.title.toLowerCase().includes(material.toLowerCase());
+    });
+  }
+
+  // Last resort: first variant
+  if (!variant) {
+    console.warn('⚠️ No match found at all, using first variant');
+    return shopifyProduct.value.variants.edges[0]?.node.id || null;
+  }
+
+  console.log(`✅ Selected variant: ${variant.node.title}`);
+  return variant.node.id;
+};
+
+// Handle add to cart
+const handleAddToCart = async () => {
+  console.log('🛒 Add to cart clicked');
+
+  if (!productOptionsRef.value) {
+    console.error('❌ Product options ref not available');
+    alert('Product options not loaded. Please refresh the page.');
+    return;
+  }
+
+  if (!shopifyProduct.value) {
+    console.error('❌ Shopify product not available');
+    alert('Product not loaded. Please refresh the page.');
+    return;
+  }
+
+  const opts = productOptionsRef.value;
+  console.log('📦 Options:', {
+    uploadedImage: opts.uploadedImage ? 'present' : 'missing',
+    uploadedImageUrl: opts.uploadedImageUrl,
+    uploadedFileName: opts.uploadedFileName,
+    selectedSize: opts.selectedSize,
+    customSize: opts.customSize,
+    selectedMaterial: opts.selectedMaterial,
+    selectedQuantity: opts.selectedQuantity,
+    customQuantity: opts.customQuantity,
+  });
+
+  const effectiveSize = opts.customSize || opts.selectedSize;
+  const effectiveQuantity =
+    opts.customQuantity && opts.customQuantity > 0
+      ? opts.customQuantity
+      : opts.selectedQuantity;
+
+  // Calculate pricing
+  const { calculateTotalPrice } = usePricing();
+  const totalPrice = calculateTotalPrice(effectiveSize, effectiveQuantity, opts.selectedMaterial);
+  const pricePerUnit = totalPrice / effectiveQuantity;
+
+  // Add to cart
+  try {
+    // Find the matching Shopify variant
+    const variantId = findVariantId(effectiveSize, opts.selectedMaterial);
+    console.log('🔍 Variant lookup:', { effectiveSize, material: opts.selectedMaterial, variantId });
+
+    if (!variantId) {
+      throw new Error(`No variant found for ${effectiveSize}" ${opts.selectedMaterial} stickers`);
+    }
+
+    console.log('📤 Adding to cart...');
+    console.log('💰 Pricing:', { totalPrice, pricePerUnit, effectiveQuantity });
+
+    await cart.addItem({
+      merchandiseId: variantId,
+      quantity: effectiveQuantity,
+      uploadedImage: opts.uploadedImageUrl || opts.uploadedImage,
+      uploadedFileName: opts.uploadedFileName,
+      customSize: effectiveSize,
+      customQuantity: effectiveQuantity,
+      customPrice: totalPrice.toFixed(2),
+      customPricePerUnit: pricePerUnit.toFixed(2),
+    });
+
+    console.log('✅ Successfully added to cart!');
+
+    // Show success toast
+    toast.success(`Added ${effectiveQuantity.toLocaleString()} ${shopifyProduct.value.title} to cart!`);
+  } catch (error: any) {
+    console.error('❌ Add to cart failed:', error);
+    toast.error(`Failed to add to cart: ${error.message}`);
+    return;
+  }
+};
 </script>
 
-<style scoped></style>
+<style scoped>
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+</style>

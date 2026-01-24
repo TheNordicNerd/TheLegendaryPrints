@@ -3,14 +3,7 @@
  * Handles all interactions with Shopify's GraphQL API
  */
 
-const SHOPIFY_STORE_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN;
-const SHOPIFY_STOREFRONT_ACCESS_TOKEN = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN;
-
-if (!SHOPIFY_STORE_DOMAIN || !SHOPIFY_STOREFRONT_ACCESS_TOKEN) {
-  console.warn('⚠️  Shopify credentials not configured. Set SHOPIFY_STORE_DOMAIN and SHOPIFY_STOREFRONT_ACCESS_TOKEN in .env');
-}
-
-const SHOPIFY_API_VERSION = '2024-01';
+const SHOPIFY_API_VERSION = "2026-01";
 
 interface ShopifyRequestOptions {
   query: string;
@@ -20,19 +13,29 @@ interface ShopifyRequestOptions {
 /**
  * Make a request to Shopify Storefront API
  */
-export async function shopifyFetch<T = any>({ query, variables }: ShopifyRequestOptions): Promise<T> {
+export async function shopifyFetch<T = any>({
+  query,
+  variables,
+}: ShopifyRequestOptions): Promise<T> {
+  // Get credentials from runtime config
+  const config = useRuntimeConfig();
+  const SHOPIFY_STORE_DOMAIN = config.shopifyStoreDomain;
+  const SHOPIFY_STOREFRONT_ACCESS_TOKEN = config.shopifyStorefrontAccessToken;
+
   if (!SHOPIFY_STORE_DOMAIN || !SHOPIFY_STOREFRONT_ACCESS_TOKEN) {
-    throw new Error('Shopify credentials not configured');
+    throw new Error(
+      "Shopify credentials not configured. Set SHOPIFY_STORE_DOMAIN and SHOPIFY_STOREFRONT_ACCESS_TOKEN in .env",
+    );
   }
 
   const url = `https://${SHOPIFY_STORE_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
 
   try {
     const response = await fetch(url, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'X-Shopify-Storefront-Access-Token': SHOPIFY_STOREFRONT_ACCESS_TOKEN,
+        "Content-Type": "application/json",
+        "X-Shopify-Storefront-Access-Token": SHOPIFY_STOREFRONT_ACCESS_TOKEN,
       },
       body: JSON.stringify({
         query,
@@ -41,19 +44,21 @@ export async function shopifyFetch<T = any>({ query, variables }: ShopifyRequest
     });
 
     if (!response.ok) {
+      const text = await response.text();
+      console.error("Shopify API error:", response.status, text);
       throw new Error(`Shopify API error: ${response.statusText}`);
     }
 
     const json = await response.json();
 
     if (json.errors) {
-      console.error('Shopify GraphQL errors:', json.errors);
-      throw new Error(json.errors[0]?.message || 'GraphQL query failed');
+      console.error("Shopify GraphQL errors:", json.errors);
+      throw new Error(json.errors[0]?.message || "GraphQL query failed");
     }
 
     return json.data as T;
   } catch (error) {
-    console.error('Shopify fetch error:', error);
+    console.error("Shopify fetch error:", error);
     throw error;
   }
 }
@@ -159,6 +164,10 @@ export const CART_FRAGMENT = `
         node {
           id
           quantity
+          attributes {
+            key
+            value
+          }
           cost {
             totalAmount {
               amount

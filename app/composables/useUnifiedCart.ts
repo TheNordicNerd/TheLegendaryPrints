@@ -97,6 +97,8 @@ export const useUnifiedCart = () => {
       customQuantity?: number;
       uploadedImage?: string;
       uploadedFileName?: string;
+      customPrice?: string;
+      customPricePerUnit?: string;
       attributes?: Array<{ key: string; value: string }>; // Shopify cart line attributes
     }) {
       if (isShopifyMode) {
@@ -120,6 +122,12 @@ export const useUnifiedCart = () => {
         }
         if (data.customQuantity) {
           attributes.push({ key: 'Custom Quantity', value: data.customQuantity.toString() });
+        }
+        if (data.customPrice) {
+          attributes.push({ key: 'Custom Price', value: data.customPrice });
+        }
+        if (data.customPricePerUnit) {
+          attributes.push({ key: 'Custom Price Per Unit', value: data.customPricePerUnit });
         }
 
         // Add to Shopify cart with attributes

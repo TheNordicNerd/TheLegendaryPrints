@@ -2,10 +2,21 @@ export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
   css: ["~/assets/css/tailwind.css"],
-  // Use static generation for Netlify
+  // Use static generation for Netlify with SSR fallback
   ssr: true,
   nitro: {
     preset: 'netlify',
+    prerender: {
+      crawlLinks: true,
+      routes: [
+        '/',
+        '/about',
+        '/contact',
+        '/products',
+        '/cart',
+      ],
+      // Prerender product pages will be handled by the hook below
+    },
   },
   modules: [
     "@nuxt/a11y",
@@ -32,6 +43,13 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     githubToken: process.env.GITHUB_TOKEN,
+    // Server-only env vars (not exposed to client)
+    shopifyStoreDomain: process.env.SHOPIFY_STORE_DOMAIN,
+    shopifyStorefrontAccessToken: process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN,
+    // Cloudinary credentials (server-only)
+    cloudinaryCloudName: process.env.CLOUDINARY_CLOUD_NAME,
+    cloudinaryApiKey: process.env.CLOUDINARY_API_KEY,
+    cloudinaryApiSecret: process.env.CLOUDINARY_API_SECRET,
     public: {
       siteUrl: process.env.NUXT_PUBLIC_SITE_URL || "http://localhost:3000",
       siteName: "The Legendary Prints",
@@ -42,6 +60,8 @@ export default defineNuxtConfig({
       currentRepo: process.env.GITHUB_REPO || "client-project",
       currentProject: parseInt(process.env.GITHUB_PROJECT_NUMBER || "1"),
       cartMode: process.env.NUXT_PUBLIC_CART_MODE || "mock",
+      // Public flags for debugging (not the actual credentials)
+      hasShopifyConfig: !!(process.env.SHOPIFY_STORE_DOMAIN && process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN),
     },
   },
   content: {

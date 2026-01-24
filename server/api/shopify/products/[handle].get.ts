@@ -13,21 +13,30 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const gql = `
-    ${PRODUCT_FRAGMENT}
-
-    query GetProductByHandle($handle: String!) {
-      product(handle: $handle) {
-        ...ProductFields
+  const gql = `{
+    product(handle: "${handle}") {
+      id
+      title
+      handle
+      description
+      variants(first: 50) {
+        edges {
+          node {
+            id
+            title
+            price {
+              amount
+              currencyCode
+            }
+            availableForSale
+          }
+        }
       }
     }
-  `;
+  }`;
 
   try {
-    const data = await shopifyFetch({
-      query: gql,
-      variables: { handle },
-    });
+    const data = await shopifyFetch({ query: gql });
 
     if (!data.product) {
       throw createError({

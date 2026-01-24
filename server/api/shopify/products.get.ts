@@ -11,52 +11,49 @@
 export default defineEventHandler(async (event) => {
   const query = getQuery(event);
   const limit = Math.min(Number(query.limit) || 20, 250);
-  const searchQuery = query.query as string | undefined;
-  const sortKey = (query.sortKey as string) || 'CREATED_AT';
-  const reverse = query.reverse === 'true';
 
-  const gql = `
-    ${PRODUCT_FRAGMENT}
-
-    query GetProducts($first: Int!, $query: String, $sortKey: ProductSortKeys, $reverse: Boolean) {
-      products(first: $first, query: $query, sortKey: $sortKey, reverse: $reverse) {
-        pageInfo {
-          hasNextPage
-          hasPreviousPage
-        }
-        edges {
-          cursor
-          node {
-            ...ProductFields
+  const gql = `{
+    products(first: ${limit}) {
+      edges {
+        node {
+          id
+          title
+          handle
+          description
+          variants(first: 50) {
+            edges {
+              node {
+                id
+                title
+                price {
+                  amount
+                  currencyCode
+                }
+                availableForSale
+              }
+            }
           }
         }
       }
     }
-  `;
+  }`;
 
   try {
     const data = await shopifyFetch({
       query: gql,
-      variables: {
-        first: limit,
-        query: searchQuery,
-        sortKey,
-        reverse,
-      },
     });
 
     const products = data.products.edges.map((edge: any) => edge.node);
-    const pageInfo = data.products.pageInfo;
 
     return {
       products,
-      pageInfo,
       count: products.length,
     };
   } catch (error: any) {
+    console.error("Shopify products API error:", error);
     throw createError({
       statusCode: 500,
-      message: error.message || 'Failed to fetch products',
+      message: error.message || "Failed to fetch products",
     });
   }
 });

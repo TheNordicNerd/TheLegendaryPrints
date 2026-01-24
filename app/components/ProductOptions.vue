@@ -9,24 +9,31 @@
 
       <!-- Upload Area -->
       <div
-        v-if="!uploadedImage"
-        @click="triggerFileInput"
-        @dragover.prevent="isDragging = true"
+        v-if="!uploadedImage || isUploading"
+        @click="!isUploading && triggerFileInput()"
+        @dragover.prevent="!isUploading && (isDragging = true)"
         @dragleave.prevent="isDragging = false"
-        @drop.prevent="handleDrop"
-        @keydown.enter="triggerFileInput"
-        @keydown.space.prevent="triggerFileInput"
+        @drop.prevent="!isUploading && handleDrop($event)"
+        @keydown.enter="!isUploading && triggerFileInput()"
+        @keydown.space.prevent="!isUploading && triggerFileInput()"
         tabindex="0"
         role="button"
         aria-label="Click to upload image or drag and drop"
-        class="upload-area border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all duration-200"
+        class="upload-area border-2 border-dashed rounded-lg p-8 text-center transition-all duration-200"
         :class="
-          isDragging
-            ? 'border-accent-500 bg-accent-50 scale-[0.98]'
-            : 'border-border-default hover:border-accent-500 hover:bg-surface-sunken'
+          isUploading
+            ? 'border-accent-500 bg-accent-50 cursor-wait'
+            : isDragging
+              ? 'border-accent-500 bg-accent-50 scale-[0.98] cursor-pointer'
+              : 'border-border-default hover:border-accent-500 hover:bg-surface-sunken cursor-pointer'
         "
       >
-        <div class="flex flex-col items-center gap-3">
+        <div v-if="isUploading" class="flex flex-col items-center gap-4">
+          <div class="animate-bounce">
+            <Icon name="i-lucide-image-up" size="48" class="text-accent-600" />
+          </div>
+        </div>
+        <div v-else class="flex flex-col items-center gap-3">
           <div class="p-4 rounded-full bg-accent-100 grid place-items-center">
             <Icon name="i-lucide-image-plus" size="32" class="text-accent-500" />
           </div>
@@ -117,7 +124,7 @@
             v-model.number="customSize"
             type="number"
             min="1"
-            max="12"
+            max="50"
             step="0.25"
             placeholder="e.g., 6"
             aria-describedby="custom-size-hint"
@@ -132,7 +139,7 @@
           </span>
         </div>
         <p id="custom-size-hint" class="text-xs text-text-tertiary mt-1">
-          Minimum: 1", Maximum: 12" (0.25" increments)
+          Minimum: 1", Maximum: 50" (0.25" increments)
         </p>
       </div>
     </div>
@@ -220,7 +227,7 @@
           @click="selectedQuantity = qty"
           :aria-label="`Select quantity of ${qty}`"
           :aria-pressed="selectedQuantity === qty"
-          class="quantity-option p-4 rounded-lg border-2 transition-all duration-200 text-center font-bold text-lg"
+          class="quantity-option p-4 rounded-lg border-2 transition-all duration-200 text-center font-bold text-lg relative"
           :class="
             selectedQuantity === qty
               ? 'border-accent-700 bg-accent-700 text-text-inverse shadow-md scale-95'
@@ -228,6 +235,13 @@
           "
         >
           {{ qty }}
+          <!-- Discount Badge -->
+          <span
+            v-if="getQuantityDiscountPercent(qty) > 0"
+            class="absolute -top-2 -right-2 bg-success-500 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-md"
+          >
+            {{ getQuantityDiscountPercent(qty) }}% off
+          </span>
         </button>
       </div>
 
@@ -283,12 +297,38 @@
           <p class="font-medium text-text-primary">{{ displayQuantity }}</p>
         </div>
       </div>
-      <div class="pt-4 border-t-2 border-border-default">
-        <div class="flex items-baseline justify-between">
-          <p class="text-lg font-bold text-text-primary">Total:</p>
-          <div class="text-right">
-            <div class="text-3xl font-black text-accent-700">{{ calculatedPrice }}</div>
-            <div class="text-xs text-text-secondary">+ shipping</div>
+      <div class="pt-4 border-t-2 border-border-default space-y-2">
+        <!-- Subtotal -->
+        <div class="flex justify-between text-sm">
+          <p class="text-text-secondary">Subtotal:</p>
+          <p class="font-medium text-text-primary">{{ priceBreakdown.formattedBaseTotal }}</p>
+        </div>
+
+        <!-- Discount (if applicable) -->
+        <div v-if="priceBreakdown.discount > 0" class="flex justify-between text-sm">
+          <p class="text-success-600 font-medium">
+            Discount ({{ Math.round(priceBreakdown.discount * 100) }}% off):
+          </p>
+          <p class="font-medium text-success-600">-{{ priceBreakdown.formattedDiscountAmount }}</p>
+        </div>
+
+        <!-- Minimum order notice -->
+        <div
+          v-if="priceBreakdown.total === 20 && priceBreakdown.baseTotal < 20"
+          class="flex justify-between text-sm"
+        >
+          <p class="text-text-tertiary italic">Minimum order:</p>
+          <p class="font-medium text-text-tertiary italic">$20.00</p>
+        </div>
+
+        <!-- Total -->
+        <div class="pt-2 border-t border-border-subtle">
+          <div class="flex items-baseline justify-between">
+            <p class="text-lg font-bold text-text-primary">Total:</p>
+            <div class="text-right">
+              <div class="text-3xl font-black text-accent-700">{{ calculatedPrice }}</div>
+              <div class="text-xs text-text-secondary">+ shipping</div>
+            </div>
           </div>
         </div>
       </div>
@@ -310,16 +350,40 @@
    * @component
    */
 
-  // Size options
-  const presetSizeOptions: Array<{ value: number; label: string }> = [
+  interface ShopifyVariantOptions {
+    sizes: number[];
+    materials: string[];
+    quantities: number[];
+  }
+
+  interface Props {
+    shopifyVariantOptions?: ShopifyVariantOptions | null;
+    loading?: boolean;
+  }
+
+  const props = defineProps<Props>();
+
+  // Default size options
+  const defaultSizeOptions: Array<{ value: number; label: string }> = [
     { value: 2, label: '2"' },
     { value: 3, label: '3"' },
     { value: 4, label: '4"' },
     { value: 5, label: '5"' },
   ];
 
-  // Material options
-  const materialOptions = [
+  // Size options - use Shopify variants if available, otherwise use defaults
+  const presetSizeOptions = computed(() => {
+    if (props.shopifyVariantOptions?.sizes && props.shopifyVariantOptions.sizes.length > 0) {
+      return props.shopifyVariantOptions.sizes.map((size) => ({
+        value: size,
+        label: `${size}"`,
+      }));
+    }
+    return defaultSizeOptions;
+  });
+
+  // Material option definitions
+  const allMaterialOptions = [
     {
       value: "vinyl",
       label: "Premium Vinyl",
@@ -346,63 +410,142 @@
     },
   ];
 
-  // Quantity options
-  const quantityOptions = [50, 100, 250, 500, 1000];
+  // Material options - filter based on Shopify variants if available
+  const materialOptions = computed(() => {
+    if (
+      props.shopifyVariantOptions?.materials &&
+      props.shopifyVariantOptions.materials.length > 0
+    ) {
+      return allMaterialOptions.filter((m) =>
+        props.shopifyVariantOptions!.materials.includes(m.value),
+      );
+    }
+    return allMaterialOptions;
+  });
+
+  // Default quantity options
+  const defaultQuantityOptions = [50, 100, 250, 500, 1000];
+
+  // Quantity options - use Shopify variants if available, otherwise use defaults
+  const quantityOptions = computed(() => {
+    if (
+      props.shopifyVariantOptions?.quantities &&
+      props.shopifyVariantOptions.quantities.length > 0
+    ) {
+      return props.shopifyVariantOptions.quantities;
+    }
+    return defaultQuantityOptions;
+  });
 
   // State
-  const selectedSize = ref<number>(3);
+  const selectedSize = ref<number>(2);
   const customSize = ref<number | null>(null);
-  const selectedMaterial = ref("vinyl");
+  const selectedMaterial = ref("glossy");
   const selectedQuantity = ref(100);
   const customQuantity = ref<number | null>(null);
   const uploadedImage = ref<string | null>(null);
   const uploadedFileName = ref("");
+  const uploadedImageUrl = ref<string | null>(null); // Cloudinary URL
+  const uploadedImagePublicId = ref<string | null>(null); // Cloudinary public ID
   const isDragging = ref(false);
   const fileInput = ref<HTMLInputElement | null>(null);
+  const isUploading = ref(false); // Upload loading state
+
+  // Watch for Shopify variant options and set defaults
+  watch(
+    () => props.shopifyVariantOptions,
+    (options) => {
+      if (options) {
+        // Set default size to first available size (prefer 2" if available)
+        if (options.sizes.length > 0 && selectedSize.value === 2 && !options.sizes.includes(2)) {
+          const firstSize = options.sizes[0];
+          if (firstSize !== undefined) {
+            selectedSize.value = firstSize;
+          }
+        }
+
+        // Set default material to first available material (prefer glossy if available)
+        if (
+          options.materials.length > 0 &&
+          selectedMaterial.value === "glossy" &&
+          !options.materials.includes("glossy")
+        ) {
+          const firstMaterial = options.materials[0];
+          if (firstMaterial !== undefined) {
+            selectedMaterial.value = firstMaterial;
+          }
+        }
+
+        // Set default quantity to first available quantity (prefer 100 if available)
+        if (
+          options.quantities.length > 0 &&
+          selectedQuantity.value === 100 &&
+          !options.quantities.includes(100)
+        ) {
+          const firstQuantity = options.quantities[0];
+          if (firstQuantity !== undefined) {
+            selectedQuantity.value = firstQuantity;
+          }
+        }
+      }
+    },
+    { immediate: true },
+  );
 
   // Computed
   const selectedSizeLabel = computed(() => {
     // Use custom size if provided, otherwise use selected preset
     const effectiveSize = customSize.value || selectedSize.value;
-    return `${effectiveSize}" × ${effectiveSize}"`;
+    return `${effectiveSize}"`;
   });
 
   const selectedMaterialLabel = computed(() => {
-    const material = materialOptions.find((m) => m.value === selectedMaterial.value);
+    const material = materialOptions.value.find((m) => m.value === selectedMaterial.value);
     return material?.label || "Not selected";
   });
 
   const displayQuantity = computed(() => {
-    return customQuantity.value && customQuantity.value >= 1000
+    // Use custom quantity if it's a valid number, otherwise use selected preset
+    return customQuantity.value && customQuantity.value > 0
       ? customQuantity.value.toLocaleString()
       : selectedQuantity.value.toLocaleString();
   });
 
-  const calculatedPrice = computed(() => {
-    // Calculate based on square inches
-    const basePrice = 0.1; // Price per square inch
+  const priceBreakdown = computed(() => {
+    const { formatPrice, getQuantityDiscount, getSizeMultiplier, getFinishMultiplier } =
+      usePricing();
 
     // Get the actual size in inches (use custom size if provided, otherwise use preset)
-    const sizeInInches = customSize.value || selectedSize.value;
+    const size = customSize.value || selectedSize.value;
 
-    // Calculate square inches (width × height, since it's square)
-    const squareInches = sizeInInches * sizeInInches;
-
-    const materialMultiplier =
-      {
-        vinyl: 1,
-        matte: 1.2,
-        glossy: 1.3,
-        holographic: 1.8,
-      }[selectedMaterial.value] || 1;
-
+    // Get the quantity (use custom quantity if valid, otherwise use preset)
     const qty =
-      customQuantity.value && customQuantity.value >= 1000
+      customQuantity.value && customQuantity.value > 0
         ? customQuantity.value
         : selectedQuantity.value;
 
-    const total = basePrice * squareInches * materialMultiplier * qty;
-    return `$${total.toFixed(2)}`;
+    // Calculate breakdown
+    const sizeMult = getSizeMultiplier(size);
+    const finishMult = getFinishMultiplier(selectedMaterial.value);
+    const baseTotal = 0.2 * qty * sizeMult * finishMult;
+    const discount = getQuantityDiscount(qty);
+    const discountAmount = baseTotal * discount;
+    const totalWithDiscount = baseTotal - discountAmount;
+    const total = Math.max(totalWithDiscount, 20);
+
+    return {
+      baseTotal,
+      discount,
+      discountAmount,
+      total,
+      formattedBaseTotal: formatPrice(baseTotal),
+      formattedDiscountAmount: formatPrice(discountAmount),
+      formattedTotal: formatPrice(total),
+    };
+  });
+
+  const calculatedPrice = computed(() => {
+    return priceBreakdown.value.formattedTotal;
   });
 
   // Methods
@@ -413,9 +556,8 @@
   };
 
   const handleCustomSize = () => {
-    if (customSize.value && customSize.value >= 1) {
-      selectedSize.value = 0; // Deselect preset sizes
-    }
+    // Custom size input handler - no need to deselect presets
+    // The computed properties will use customSize when it's valid
   };
 
   const triggerFileInput = () => {
@@ -438,32 +580,74 @@
     }
   };
 
-  const processFile = (file: File) => {
-    if (file.size > 10 * 1024 * 1024) {
-      alert("File size must be less than 10MB");
+  const processFile = async (file: File) => {
+    const { uploadImage, validateImage } = useCloudinary();
+
+    // Validate file
+    const validation = validateImage(file);
+    if (!validation.valid) {
+      alert(validation.error);
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      uploadedImage.value = e.target?.result as string;
+    try {
+      isUploading.value = true;
+
+      // Upload to Cloudinary (this shows the loading spinner)
+      const result = await uploadImage(file, file.name);
+
+      // After successful upload, set preview to Cloudinary URL
+      uploadedImage.value = result.url;
+      uploadedImageUrl.value = result.url;
+      uploadedImagePublicId.value = result.publicId;
       uploadedFileName.value = file.name;
-    };
-    reader.readAsDataURL(file);
+
+      console.log("✅ Image uploaded to Cloudinary:", result.url);
+    } catch (error: any) {
+      console.error("❌ Failed to upload image:", error);
+      alert(`Failed to upload image: ${error.message || "Unknown error"}`);
+      // Clear state on error
+      uploadedImage.value = null;
+      uploadedImageUrl.value = null;
+      uploadedImagePublicId.value = null;
+      uploadedFileName.value = "";
+    } finally {
+      isUploading.value = false;
+    }
   };
 
-  const removeImage = () => {
+  const removeImage = async () => {
+    // Delete from Cloudinary if we have a public ID
+    if (uploadedImagePublicId.value) {
+      try {
+        const { deleteImage } = useCloudinary();
+        await deleteImage(uploadedImagePublicId.value);
+        console.log("✅ Image deleted from Cloudinary");
+      } catch (error) {
+        console.error("❌ Failed to delete image from Cloudinary:", error);
+        // Continue with local cleanup even if Cloudinary delete fails
+      }
+    }
+
+    // Clear local state
     uploadedImage.value = null;
     uploadedFileName.value = "";
+    uploadedImageUrl.value = null;
+    uploadedImagePublicId.value = null;
     if (fileInput.value) {
       fileInput.value.value = "";
     }
   };
 
   const handleCustomQuantity = () => {
-    if (customQuantity.value && customQuantity.value >= 1000) {
-      selectedQuantity.value = 0; // Deselect preset quantities
-    }
+    // Custom quantity input handler - no need to deselect presets
+    // The computed properties will use customQuantity when it's valid
+  };
+
+  // Helper to get discount percentage for a quantity (for display on buttons)
+  const getQuantityDiscountPercent = (quantity: number): number => {
+    const { getQuantityDiscount } = usePricing();
+    return Math.round(getQuantityDiscount(quantity) * 100);
   };
 
   // Expose selected values for parent component
@@ -474,7 +658,11 @@
     selectedQuantity,
     customQuantity,
     uploadedImage,
+    uploadedImageUrl,
+    uploadedImagePublicId,
+    uploadedFileName,
     calculatedPrice,
+    isUploading,
   });
 </script>
 

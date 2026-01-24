@@ -96,6 +96,10 @@ export interface ShopifyCart {
       node: {
         id: string;
         quantity: number;
+        attributes: Array<{
+          key: string;
+          value: string;
+        }>;
         cost: {
           totalAmount: {
             amount: string;
@@ -129,68 +133,47 @@ export const useShopify = () => {
     reverse?: boolean;
   }) => {
     const params = new URLSearchParams();
-    if (options?.limit) params.append('limit', options.limit.toString());
-    if (options?.query) params.append('query', options.query);
-    if (options?.sortKey) params.append('sortKey', options.sortKey);
-    if (options?.reverse) params.append('reverse', 'true');
+    if (options?.limit) params.append("limit", options.limit.toString());
+    if (options?.query) params.append("query", options.query);
+    if (options?.sortKey) params.append("sortKey", options.sortKey);
+    if (options?.reverse) params.append("reverse", "true");
 
-    const { data, error } = await useFetch<{
+    const data = await $fetch<{
       products: ShopifyProduct[];
-      pageInfo: any;
       count: number;
     }>(`/api/shopify/products?${params.toString()}`);
 
-    if (error.value) {
-      console.error('Failed to fetch products:', error.value);
-      throw error.value;
-    }
-
-    return data.value;
+    return data;
   };
 
   /**
    * Fetch single product by handle
    */
   const getProduct = async (handle: string) => {
-    const { data, error } = await useFetch<ShopifyProduct>(`/api/shopify/products/${handle}`);
-
-    if (error.value) {
-      console.error(`Failed to fetch product ${handle}:`, error.value);
-      throw error.value;
-    }
-
-    return data.value;
+    const data = await $fetch<ShopifyProduct>(`/api/shopify/products/${handle}`);
+    return data;
   };
 
   /**
    * Create a new cart
    */
   const createCart = async (lines?: Array<{ merchandiseId: string; quantity: number }>) => {
-    const { data, error } = await useFetch<ShopifyCart>('/api/shopify/cart/create', {
-      method: 'POST',
+    const data = await $fetch<ShopifyCart>("/api/shopify/cart/create", {
+      method: "POST",
       body: { lines: lines || [] },
     });
-
-    if (error.value) {
-      console.error('Failed to create cart:', error.value);
-      throw error.value;
-    }
-
-    return data.value;
+    return data;
   };
 
   /**
    * Get cart by ID
    */
   const getCart = async (cartId: string) => {
-    const { data, error } = await useFetch<ShopifyCart>(`/api/shopify/cart/${cartId}`);
-
-    if (error.value) {
-      console.error('Failed to fetch cart:', error.value);
-      throw error.value;
-    }
-
-    return data.value;
+    const data = await $fetch<ShopifyCart>('/api/shopify/cart/get', {
+      method: 'POST',
+      body: { cartId },
+    });
+    return data;
   };
 
   /**
@@ -202,19 +185,13 @@ export const useShopify = () => {
       merchandiseId: string;
       quantity: number;
       attributes?: Array<{ key: string; value: string }>;
-    }>
+    }>,
   ) => {
-    const { data, error } = await useFetch<ShopifyCart>('/api/shopify/cart/add-lines', {
-      method: 'POST',
+    const data = await $fetch<ShopifyCart>("/api/shopify/cart/add-lines", {
+      method: "POST",
       body: { cartId, lines },
     });
-
-    if (error.value) {
-      console.error('Failed to add to cart:', error.value);
-      throw error.value;
-    }
-
-    return data.value;
+    return data;
   };
 
   /**
@@ -222,45 +199,54 @@ export const useShopify = () => {
    */
   const updateCartLines = async (
     cartId: string,
-    lines: Array<{ id: string; quantity: number }>
+    lines: Array<{ id: string; quantity: number }>,
   ) => {
-    const { data, error } = await useFetch<ShopifyCart>('/api/shopify/cart/update-lines', {
-      method: 'POST',
+    const data = await $fetch<ShopifyCart>("/api/shopify/cart/update-lines", {
+      method: "POST",
       body: { cartId, lines },
     });
-
-    if (error.value) {
-      console.error('Failed to update cart:', error.value);
-      throw error.value;
-    }
-
-    return data.value;
+    return data;
   };
 
   /**
    * Remove items from cart
    */
   const removeFromCart = async (cartId: string, lineIds: string[]) => {
-    const { data, error } = await useFetch<ShopifyCart>('/api/shopify/cart/remove-lines', {
-      method: 'POST',
+    const data = await $fetch<ShopifyCart>("/api/shopify/cart/remove-lines", {
+      method: "POST",
       body: { cartId, lineIds },
     });
+    return data;
+  };
 
-    if (error.value) {
-      console.error('Failed to remove from cart:', error.value);
-      throw error.value;
-    }
+  /**
+   * Fetch products from a collection
+   */
+  const getCollectionProducts = async (collectionHandle: string, options?: { limit?: number }) => {
+    const params = new URLSearchParams();
+    if (options?.limit) params.append("limit", options.limit.toString());
 
-    return data.value;
+    const data = await $fetch<{
+      collection: {
+        id: string;
+        title: string;
+        handle: string;
+        description: string;
+      };
+      products: ShopifyProduct[];
+      count: number;
+    }>(`/api/shopify/collections/${collectionHandle}/products?${params.toString()}`);
+
+    return data;
   };
 
   /**
    * Format price for display
    */
-  const formatPrice = (amount: string, currencyCode: string = 'USD') => {
+  const formatPrice = (amount: string, currencyCode: string = "USD") => {
     const price = parseFloat(amount);
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
       currency: currencyCode,
     }).format(price);
   };
@@ -268,6 +254,7 @@ export const useShopify = () => {
   return {
     getProducts,
     getProduct,
+    getCollectionProducts,
     createCart,
     getCart,
     addToCart,

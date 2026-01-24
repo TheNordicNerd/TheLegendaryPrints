@@ -164,10 +164,18 @@
 </template>
 
 <script setup lang="ts">
-  // Using mock cart for now (useCart), but can be switched to useUnifiedCart()
-  const { items, itemCount, totalQuantity, formattedTotalPrice, isEmpty, removeFromCart, clearCart } =
-    useCart();
+  // Use unified cart (switches between mock and Shopify based on config)
+  const cart = useUnifiedCart();
+  const { items, itemCount, totalQuantity, formattedTotalPrice, isEmpty } = cart;
   const router = useRouter();
+
+  const removeFromCart = async (id: string) => {
+    await cart.removeItem(id);
+  };
+
+  const clearCart = async () => {
+    await cart.clearCart();
+  };
 
   // SEO Meta Tags
   useSeoMeta({
@@ -180,8 +188,6 @@
   });
 
   const handleCheckout = () => {
-    const cart = useUnifiedCart();
-
     if (cart.isShopifyMode) {
       // Shopify mode: Redirect to Shopify's secure checkout
       const checkoutUrl = cart.checkoutUrl.value;

@@ -18,7 +18,38 @@ export const useShopifyCartStore = defineStore(
     // Getters
     const items = computed(() => {
       if (!cart.value) return [];
-      return cart.value.lines.edges.map((edge) => edge.node);
+      return cart.value.lines.edges.map((edge) => {
+        const node = edge.node;
+        const attributes = node.attributes || [];
+
+        // Extract custom attributes
+        const uploadedImage = attributes.find(a => a.key === 'Custom Design URL')?.value;
+        const uploadedFileName = attributes.find(a => a.key === 'Design Filename')?.value;
+        const customSizeStr = attributes.find(a => a.key === 'Custom Size')?.value;
+        const customQuantityStr = attributes.find(a => a.key === 'Custom Quantity')?.value;
+        const customPriceStr = attributes.find(a => a.key === 'Custom Price')?.value;
+        const customPricePerUnitStr = attributes.find(a => a.key === 'Custom Price Per Unit')?.value;
+
+        // Use custom pricing if available, otherwise fall back to Shopify pricing
+        const totalPrice = customPriceStr ? parseFloat(customPriceStr) : parseFloat(node.cost.totalAmount.amount);
+        const pricePerUnit = customPricePerUnitStr ? parseFloat(customPricePerUnitStr) : (totalPrice / node.quantity);
+
+        // Transform to cart item format for display
+        return {
+          ...node,
+          uploadedImage,
+          uploadedFileName,
+          customSize: customSizeStr ? parseFloat(customSizeStr.replace('"', '')) : undefined,
+          customQuantity: customQuantityStr ? parseInt(customQuantityStr) : undefined,
+          // Add fields needed by cart page
+          productName: node.merchandise.product.title,
+          productSlug: node.merchandise.product.handle,
+          size: customSizeStr ? parseFloat(customSizeStr.replace('"', '')) : 2,
+          material: node.merchandise.title.toLowerCase().includes('matte') ? 'matte' : 'glossy',
+          pricePerUnit,
+          totalPrice,
+        };
+      });
     });
 
     const itemCount = computed(() => {
@@ -31,41 +62,34 @@ export const useShopifyCartStore = defineStore(
 
     const subtotal = computed(() => {
       if (!cart.value) return '0.00';
-      return cart.value.cost.subtotalAmount.amount;
+      // Calculate subtotal from custom pricing in items
+      const customTotal = items.value.reduce((sum, item) => sum + item.totalPrice, 0);
+      return customTotal > 0 ? customTotal.toFixed(2) : cart.value.cost.subtotalAmount.amount;
     });
 
     const total = computed(() => {
       if (!cart.value) return '0.00';
-      return cart.value.cost.totalAmount.amount;
+      // Use subtotal as total (no tax for now)
+      return subtotal.value;
     });
 
     const tax = computed(() => {
-      if (!cart.value?.cost.totalTaxAmount) return '0.00';
-      return cart.value.cost.totalTaxAmount.amount;
+      // No tax calculation for custom pricing
+      return '0.00';
     });
 
     const formattedSubtotal = computed(() => {
       if (!cart.value) return '$0.00';
-      const { formatPrice } = useShopify();
-      return formatPrice(
-        cart.value.cost.subtotalAmount.amount,
-        cart.value.cost.subtotalAmount.currencyCode
-      );
+      return `$${subtotal.value}`;
     });
 
     const formattedTotal = computed(() => {
       if (!cart.value) return '$0.00';
-      const { formatPrice } = useShopify();
-      return formatPrice(cart.value.cost.totalAmount.amount, cart.value.cost.totalAmount.currencyCode);
+      return `$${total.value}`;
     });
 
     const formattedTax = computed(() => {
-      if (!cart.value?.cost.totalTaxAmount) return '$0.00';
-      const { formatPrice } = useShopify();
-      return formatPrice(
-        cart.value.cost.totalTaxAmount.amount,
-        cart.value.cost.totalTaxAmount.currencyCode
-      );
+      return '$0.00';
     });
 
     const checkoutUrl = computed(() => {
@@ -121,17 +145,27 @@ export const useShopifyCartStore = defineStore(
           if (existingCart) {
             cart.value = existingCart;
             cartId.value = existingCart.id;
+            console.log('✅ Loaded existing cart:', existingCart.id);
           } else {
+            console.log('⚠️ Cart not found, creating new one');
+            localStorage.removeItem('shopifyCartId'); // Clear invalid cart ID
             await createNewCart();
           }
         } else {
           // Create new cart
+          console.log('🆕 No saved cart, creating new one');
           await createNewCart();
         }
       } catch (err: any) {
-        console.error('Failed to initialize cart:', err);
-        // If cart not found or error, create new one
-        await createNewCart();
+        console.error('❌ Failed to initialize cart:', err);
+        // If cart not found or error, clear localStorage and create new one
+        localStorage.removeItem('shopifyCartId');
+        try {
+          await createNewCart();
+        } catch (createErr: any) {
+          console.error('❌ Failed to create new cart:', createErr);
+          error.value = 'Failed to initialize cart';
+        }
       } finally {
         isLoading.value = false;
       }

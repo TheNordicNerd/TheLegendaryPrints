@@ -322,7 +322,8 @@
   };
 
   // Cart management
-  const { itemCount: cartItemCount } = useCart();
+  const cart = useUnifiedCart();
+  const cartItemCount = cart.itemCount;
   const router = useRouter();
 
   const handleCartClick = (event: MouseEvent) => {

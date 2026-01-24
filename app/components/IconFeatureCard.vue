@@ -21,12 +21,12 @@
     </div>
 
     <!-- Title -->
-    <h3 class="text-xl font-bold text-text-primary mb-2" :class="[stepNumber ? 'text-center' : '']">
+    <h3 class="text-xl text-center font-bold text-text-primary mb-2">
       {{ title }}
     </h3>
 
     <!-- Description -->
-    <p class="text-text-secondary" :class="[stepNumber ? 'text-center' : '']">
+    <p class="text-text-secondary text-center">
       {{ description }}
     </p>
   </div>

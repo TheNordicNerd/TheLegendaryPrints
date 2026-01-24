@@ -78,6 +78,23 @@ export const products: Product[] = [
     featured: true,
   },
   {
+    id: "round-stickers",
+    name: "Round Stickers",
+    slug: "round-stickers",
+    description: "Premium round stickers perfect for branding and labels. Waterproof and durable.",
+    icon: "i-lucide-circle-dot",
+    category: "shapes",
+    tags: ["circular", "round", "weather-resistant"],
+    thumbnailImg: "https://images.pexels.com/photos/16896038/pexels-photo-16896038.jpeg",
+    images: [
+      "https://images.pexels.com/photos/16896038/pexels-photo-16896038.jpeg",
+      "https://images.pexels.com/photos/19919391/pexels-photo-19919391.jpeg",
+      "https://images.pexels.com/photos/9381081/pexels-photo-9381081.jpeg",
+      "https://images.unsplash.com/photo-1484256017452-47f3e80eae7c?q=80&w=4170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    ],
+    featured: true,
+  },
+  {
     id: "sticker-sheets",
     name: "Sticker Sheets",
     slug: "sticker-sheets",
