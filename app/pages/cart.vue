@@ -53,7 +53,7 @@
               <!-- Item Details -->
               <div class="flex-1 min-w-0">
                 <div class="flex items-start justify-between gap-4 mb-3">
-                  <div>
+                  <div class="flex-1">
                     <h3 class="text-lg font-bold text-text-primary mb-1">
                       <NuxtLink
                         :to="`/products/${item.productSlug}`"
@@ -62,14 +62,80 @@
                         {{ item.productName }}
                       </NuxtLink>
                     </h3>
-                    <p class="text-sm text-text-secondary">
-                      Size:
-                      {{ item.customSize || item.size }}" × {{ item.customSize || item.size }}"
-                    </p>
-                    <p class="text-sm text-text-secondary capitalize">
-                      Material: {{ item.material }}
-                    </p>
+
+                    <!-- Editable Fields -->
+                    <div v-if="editingItem === item.id" class="space-y-3 mt-2">
+                      <!-- Size Buttons -->
+                      <div>
+                        <label class="text-sm font-medium text-text-secondary mb-2 block">Size:</label>
+                        <div class="flex flex-wrap gap-2">
+                          <button
+                            v-for="size in sizeOptions"
+                            :key="size"
+                            @click="editedSize = size"
+                            class="px-3 py-1.5 text-sm font-medium rounded-lg border-2 transition-all"
+                            :class="editedSize === size
+                              ? 'border-accent-700 bg-accent-700 text-white'
+                              : 'border-border-default hover:border-accent-500 text-text-primary'"
+                          >
+                            {{ size }}"
+                          </button>
+                        </div>
+                      </div>
+
+                      <!-- Quantity Buttons -->
+                      <div>
+                        <label class="text-sm font-medium text-text-secondary mb-2 block">Quantity:</label>
+                        <div class="flex flex-wrap gap-2">
+                          <button
+                            v-for="qty in quantityOptions"
+                            :key="qty"
+                            @click="editedQuantity = qty"
+                            class="px-3 py-1.5 text-sm font-medium rounded-lg border-2 transition-all"
+                            :class="editedQuantity === qty
+                              ? 'border-accent-700 bg-accent-700 text-white'
+                              : 'border-border-default hover:border-accent-500 text-text-primary'"
+                          >
+                            {{ qty.toLocaleString() }}
+                          </button>
+                        </div>
+                      </div>
+
+                      <!-- Action Buttons -->
+                      <div class="flex gap-2 pt-2">
+                        <button
+                          @click="saveEdit(item)"
+                          class="px-4 py-2 text-sm font-medium bg-accent-700 text-white rounded-lg hover:bg-accent-800 transition-colors"
+                        >
+                          Save Changes
+                        </button>
+                        <button
+                          @click="cancelEdit"
+                          class="px-4 py-2 text-sm font-medium border border-border-default text-text-secondary hover:text-text-primary hover:border-border-emphasis rounded-lg transition-colors"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Display Mode -->
+                    <div v-else>
+                      <p class="text-sm text-text-secondary">
+                        Size:
+                        {{ item.customSize || item.size }}" × {{ item.customSize || item.size }}"
+                      </p>
+                      <p class="text-sm text-text-secondary capitalize">
+                        Material: {{ item.material }}
+                      </p>
+                      <button
+                        @click="startEdit(item)"
+                        class="text-sm font-medium text-accent-500 hover:text-accent-600 transition-colors mt-1"
+                      >
+                        Edit
+                      </button>
+                    </div>
                   </div>
+
                   <Button
                     variant="ghost"
                     size="sm"
@@ -81,7 +147,7 @@
                 </div>
 
                 <!-- Quantity and Price -->
-                <div class="flex items-center justify-between">
+                <div class="flex items-center justify-between" v-if="editingItem !== item.id">
                   <div class="flex items-center gap-2">
                     <span class="text-sm text-text-secondary">Quantity:</span>
                     <span class="font-medium text-text-primary">
@@ -174,6 +240,43 @@
   const { items, itemCount, totalQuantity, formattedTotalPrice, isEmpty } = cart;
   const router = useRouter();
   const toast = useToast();
+
+  // Edit state
+  const editingItem = ref<string | null>(null);
+  const editedSize = ref<number>(2);
+  const editedQuantity = ref<number>(100);
+
+  // Available options for editing
+  const sizeOptions = [2, 3, 4, 5, 6];
+  const quantityOptions = [100, 250, 500, 1000, 2500, 5000];
+
+  const startEdit = (item: any) => {
+    editingItem.value = item.id;
+    editedSize.value = item.customSize || item.size || 2;
+    editedQuantity.value = item.customQuantity || item.quantity || 100;
+  };
+
+  const cancelEdit = () => {
+    editingItem.value = null;
+    editedSize.value = 2;
+    editedQuantity.value = 100;
+  };
+
+  const saveEdit = async (item: any) => {
+    try {
+      // Update the cart item with new values
+      await cart.updateItem(item.id, {
+        customSize: editedSize.value,
+        customQuantity: editedQuantity.value,
+      });
+
+      toast.success('Cart item updated successfully!');
+      cancelEdit();
+    } catch (error) {
+      console.error('Failed to update cart item:', error);
+      toast.error('Failed to update item. Please try again.');
+    }
+  };
 
   const removeFromCart = async (id: string) => {
     await cart.removeItem(id);

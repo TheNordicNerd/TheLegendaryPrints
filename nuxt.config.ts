@@ -1,7 +1,7 @@
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
-  css: ["~/assets/css/tailwind.css", "~/assets/css/palettes.css"],
+  css: ["~/assets/css/tailwind.css", "~/assets/css/palettes.css", "~/assets/css/fonts.css"],
   // Use static generation for Netlify with SSR fallback
   ssr: true,
   nitro: {
@@ -33,6 +33,11 @@ export default defineNuxtConfig({
   app: {
     head: {
       titleTemplate: "%s",
+    },
+  },
+  fonts: {
+    defaults: {
+      weights: [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000],
     },
   },
   runtimeConfig: {

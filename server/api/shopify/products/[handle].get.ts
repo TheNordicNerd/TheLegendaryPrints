@@ -4,12 +4,12 @@
  */
 
 export default defineEventHandler(async (event) => {
-  const handle = getRouterParam(event, 'handle');
+  const handle = getRouterParam(event, "handle");
 
   if (!handle) {
     throw createError({
       statusCode: 400,
-      message: 'Product handle is required',
+      message: "Product handle is required",
     });
   }
 
@@ -19,16 +19,39 @@ export default defineEventHandler(async (event) => {
       title
       handle
       description
+      descriptionHtml
+      tags
+      availableForSale
+      featuredImage {
+        url
+      }
+      images(first: 10) {
+        edges {
+          node {
+            url
+          }
+        }
+      }
+      priceRange {
+        minVariantPrice {
+          amount
+          currencyCode
+        }
+        maxVariantPrice {
+          amount
+          currencyCode
+        }
+      }
       variants(first: 250) {
         edges {
           node {
             id
             title
+            availableForSale
             price {
               amount
               currencyCode
             }
-            availableForSale
             selectedOptions {
               name
               value
@@ -55,7 +78,7 @@ export default defineEventHandler(async (event) => {
 
     throw createError({
       statusCode: 500,
-      message: error.message || 'Failed to fetch product',
+      message: error.message || "Failed to fetch product",
     });
   }
 });

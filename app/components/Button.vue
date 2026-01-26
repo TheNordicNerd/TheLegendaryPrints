@@ -228,7 +228,7 @@
       primary:
         "text-text-inverse bg-primary-500 hover:bg-primary-600 shadow-lg shadow-primary-500/30 hover:shadow-primary-600/40",
       secondary:
-        "text-text-inverse bg-neutral-700 hover:bg-neutral-800 shadow-lg shadow-neutral-500/20 hover:shadow-neutral-600/30",
+        "text-text-inverse bg-secondary-700 hover:bg-secondary-800 shadow-lg shadow-secondary-500/20 hover:shadow-secondary-600/30",
       outline:
         "text-primary-500 border-2 border-primary-500 bg-transparent hover:bg-primary-500 hover:text-text-inverse shadow-lg hover:shadow-xl",
       ghost: "text-text-primary bg-transparent hover:bg-neutral-100 dark:hover:bg-neutral-800",

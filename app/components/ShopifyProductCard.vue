@@ -12,10 +12,7 @@
         class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
         loading="lazy"
       />
-      <div
-        v-else
-        class="w-full h-full flex items-center justify-center text-text-tertiary"
-      >
+      <div v-else class="w-full h-full flex items-center justify-center text-text-tertiary">
         <Icon name="i-lucide-image" size="64" />
       </div>
 
@@ -32,14 +29,18 @@
     <!-- Product Info -->
     <div class="p-4 space-y-2">
       <!-- Product Title -->
-      <h3 class="text-lg font-bold text-text-primary line-clamp-2 group-hover:text-accent-700 transition-colors">
+      <h3
+        class="text-lg font-bold text-text-primary line-clamp-2 group-hover:text-accent-700 transition-colors"
+      >
         {{ product.title }}
       </h3>
 
       <!-- Product Description -->
-      <p v-if="product.description" class="text-sm text-text-secondary line-clamp-2">
-        {{ product.description }}
-      </p>
+      <p
+        v-if="product.description"
+        class="text-sm text-text-secondary line-clamp-2"
+        v-html="product.descriptionHtml"
+      ></p>
 
       <!-- Price Range -->
       <div class="flex items-baseline gap-2 pt-2">
@@ -53,70 +54,70 @@
 
       <!-- Variant Count -->
       <p class="text-xs text-text-tertiary">
-        {{ variantCount }} {{ variantCount === 1 ? 'option' : 'options' }} available
+        {{ variantCount }} {{ variantCount === 1 ? "option" : "options" }} available
       </p>
     </div>
   </NuxtLink>
 </template>
 
 <script setup lang="ts">
-import type { ShopifyProduct } from '~/composables/useShopify';
+  import type { ShopifyProduct } from "~/composables/useShopify";
 
-interface Props {
-  product: ShopifyProduct;
-  showBadge?: boolean;
-  badgeText?: string;
-}
+  interface Props {
+    product: ShopifyProduct;
+    showBadge?: boolean;
+    badgeText?: string;
+  }
 
-const props = defineProps<Props>();
+  const props = defineProps<Props>();
 
-const { formatPrice: shopifyFormatPrice } = useShopify();
+  const { formatPrice: shopifyFormatPrice } = useShopify();
 
-// Format price
-const formatPrice = (amount: string) => {
-  return shopifyFormatPrice(amount, props.product.priceRange.minVariantPrice.currencyCode);
-};
+  // Format price
+  const formatPrice = (amount: string) => {
+    return shopifyFormatPrice(amount, props.product.priceRange.minVariantPrice.currencyCode);
+  };
 
-// Check if product has varied pricing
-const hasVariedPricing = computed(() => {
-  const min = parseFloat(props.product.priceRange.minVariantPrice.amount);
-  const max = parseFloat(props.product.priceRange.maxVariantPrice.amount);
-  return min !== max;
-});
+  // Check if product has varied pricing
+  const hasVariedPricing = computed(() => {
+    const min = parseFloat(props.product.priceRange.minVariantPrice.amount);
+    const max = parseFloat(props.product.priceRange.maxVariantPrice.amount);
+    return min !== max;
+  });
 
-// Count variants
-const variantCount = computed(() => {
-  return props.product.variants.edges.length;
-});
+  // Count variants
+  const variantCount = computed(() => {
+    return props.product.variants.edges.length;
+  });
 </script>
 
 <style scoped>
-.shopify-product-card {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.shopify-product-card:focus-visible {
-  outline: 2px solid var(--color-accent-700);
-  outline-offset: 2px;
-}
-
-/* Text truncation */
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-/* Reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  .shopify-product-card,
-  .shopify-product-card img {
-    transition-duration: 0.01ms !important;
+  .shopify-product-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  .shopify-product-card:hover {
-    transform: none !important;
+  .shopify-product-card:focus-visible {
+    outline: 2px solid var(--color-accent-700);
+    outline-offset: 2px;
   }
-}
+
+  /* Text truncation */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .shopify-product-card,
+    .shopify-product-card img {
+      transition-duration: 0.01ms !important;
+    }
+
+    .shopify-product-card:hover {
+      transform: none !important;
+    }
+  }
 </style>

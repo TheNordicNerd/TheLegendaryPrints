@@ -71,7 +71,6 @@ export const PRODUCT_FRAGMENT = `
     id
     handle
     title
-    description
     descriptionHtml
     vendor
     productType

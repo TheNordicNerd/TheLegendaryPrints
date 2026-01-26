@@ -20,20 +20,20 @@
       class="upload-area border-2 border-dashed rounded-lg p-8 text-center transition-all duration-200"
       :class="
         isUploading
-          ? 'border-accent-500 bg-accent-50 cursor-wait'
+          ? 'border-secondary-500 bg-secondary-50 cursor-wait'
           : isDragging
-            ? 'border-accent-500 bg-accent-50 scale-[0.98] cursor-pointer'
-            : 'border-border-default hover:border-accent-500 hover:bg-surface-sunken cursor-pointer'
+            ? 'border-secondary-500 bg-secondary-50 scale-[0.98] cursor-pointer'
+            : 'border-border-default hover:border-secondary-500 hover:bg-surface-sunken cursor-pointer'
       "
     >
       <div v-if="isUploading" class="flex flex-col items-center gap-4">
         <div class="animate-bounce">
-          <Icon name="i-lucide-image-up" size="48" class="text-accent-600" />
+          <Icon name="i-lucide-image-up" size="48" class="text-secondary-600" />
         </div>
       </div>
       <div v-else class="flex flex-col items-center gap-3">
-        <div class="p-4 rounded-full bg-accent-100 grid place-items-center">
-          <Icon name="i-lucide-image-plus" size="32" class="text-accent-500" />
+        <div class="p-4 rounded-full bg-secondary-100 grid place-items-center">
+          <Icon name="i-lucide-image-plus" size="32" class="text-secondary-500" />
         </div>
         <div>
           <p class="text-lg font-semibold text-text-primary mb-1">
@@ -69,7 +69,7 @@
           @click="triggerFileInput"
           type="button"
           aria-label="Change uploaded image"
-          class="text-sm font-medium text-accent-500 hover:text-accent-600 transition-colors duration-200"
+          class="text-sm font-medium text-secondary-500 hover:text-secondary-600 transition-colors duration-200"
         >
           Change Image
         </button>
@@ -89,7 +89,7 @@
 
 <script setup lang="ts">
   const uploadedImage = ref<string | null>(null);
-  const uploadedFileName = ref('');
+  const uploadedFileName = ref("");
   const uploadedImageUrl = ref<string | null>(null);
   const uploadedImagePublicId = ref<string | null>(null);
   const isDragging = ref(false);
@@ -111,14 +111,13 @@
   const handleDrop = (event: DragEvent) => {
     isDragging.value = false;
     const file = event.dataTransfer?.files[0];
-    if (file && file.type.startsWith('image/')) {
+    if (file && file.type.startsWith("image/")) {
       processFile(file);
     }
   };
 
   const processFile = async (file: File) => {
     const { uploadImage, validateImage } = useCloudinary();
-    const { generateShareToken } = useFileSharing();
 
     const validation = validateImage(file);
     if (!validation.valid) {
@@ -130,23 +129,19 @@
       isUploading.value = true;
       const result = await uploadImage(file, file.name);
 
-      // Generate shareable link
-      const shareLink = await generateShareToken(result.url, file.name);
-
       uploadedImage.value = result.url;
-      uploadedImageUrl.value = shareLink.shareUrl; // Use shareable URL instead
+      uploadedImageUrl.value = result.url;
       uploadedImagePublicId.value = result.publicId;
       uploadedFileName.value = file.name;
 
-      console.log('✅ Image uploaded to Cloudinary:', result.url);
-      console.log('🔗 Shareable link:', shareLink.shareUrl);
+      console.log("✅ Image uploaded to Cloudinary:", result.url);
     } catch (error: any) {
-      console.error('❌ Failed to upload image:', error);
-      alert(`Failed to upload image: ${error.message || 'Unknown error'}`);
+      console.error("❌ Failed to upload image:", error);
+      alert(`Failed to upload image: ${error.message || "Unknown error"}`);
       uploadedImage.value = null;
       uploadedImageUrl.value = null;
       uploadedImagePublicId.value = null;
-      uploadedFileName.value = '';
+      uploadedFileName.value = "";
     } finally {
       isUploading.value = false;
     }
@@ -157,18 +152,18 @@
       try {
         const { deleteImage } = useCloudinary();
         await deleteImage(uploadedImagePublicId.value);
-        console.log('✅ Image deleted from Cloudinary');
+        console.log("✅ Image deleted from Cloudinary");
       } catch (error) {
-        console.error('❌ Failed to delete image from Cloudinary:', error);
+        console.error("❌ Failed to delete image from Cloudinary:", error);
       }
     }
 
     uploadedImage.value = null;
-    uploadedFileName.value = '';
+    uploadedFileName.value = "";
     uploadedImageUrl.value = null;
     uploadedImagePublicId.value = null;
     if (fileInput.value) {
-      fileInput.value.value = '';
+      fileInput.value.value = "";
     }
   };
 
@@ -187,7 +182,7 @@
   }
 
   .upload-area:focus-visible {
-    outline: 2px solid var(--color-accent-700);
+    outline: 2px solid var(--color-secondary-700);
     outline-offset: 2px;
   }
 </style>

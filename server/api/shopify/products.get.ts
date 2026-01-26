@@ -20,6 +20,7 @@ export default defineEventHandler(async (event) => {
           title
           handle
           description
+          descriptionHtml
           tags
           availableForSale
           featuredImage {

@@ -39,7 +39,8 @@
   onMounted(async () => {
     try {
       const fetchedProducts = await fetchProducts(4);
-      shopifyProducts.value = fetchedProducts;
+
+      shopifyProducts.value = fetchedProducts.filter((product) => product.title !== "SAMPLE PACK");
     } catch (error) {
       // Silently fail - products will remain empty array
     }

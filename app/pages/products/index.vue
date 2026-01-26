@@ -1,6 +1,6 @@
 <template>
   <Section inner-classes="p-4 py-12">
-    <div class="max-w-7xl mx-auto">
+    <div class="max-w-4xl mx-auto">
       <!-- Page Header -->
       <div class="mb-8">
         <h1 class="text-4xl lg:text-5xl mb-4 text-text-primary">Our Products</h1>
@@ -11,158 +11,9 @@
 
       <div class="flex flex-col lg:flex-row gap-8">
         <!-- Desktop Sidebar Filters -->
-        <aside class="hidden lg:block w-64 flex-shrink-0" aria-label="Product filters">
-          <div class="sticky top-24 space-y-6">
-            <!-- Search -->
-            <div class="filter-section">
-              <h3 class="filter-heading">Search</h3>
-              <div class="relative">
-                <input
-                  v-model="searchQuery"
-                  type="text"
-                  placeholder="Search products..."
-                  class="w-full px-4 py-2.5 pl-10 rounded-lg border-2 border-border-default focus:border-accent-500 focus:outline-none bg-surface-base text-text-primary transition-colors duration-200"
-                  aria-label="Search products"
-                />
-                <Icon
-                  name="i-lucide-search"
-                  size="18"
-                  class="absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary"
-                  aria-hidden="true"
-                />
-              </div>
-            </div>
-
-            <!-- Category Filter -->
-            <div class="filter-section">
-              <h3 class="filter-heading">Category</h3>
-              <div class="space-y-2">
-                <button
-                  v-for="category in categories"
-                  :key="category.value"
-                  @click="toggleCategory(category.value)"
-                  class="filter-option w-full flex items-center justify-between p-3 rounded-lg transition-all duration-200"
-                  :class="
-                    selectedCategories.includes(category.value)
-                      ? 'bg-accent-700 text-text-inverse'
-                      : 'bg-surface-raised hover:bg-surface-sunken text-text-primary'
-                  "
-                  :aria-pressed="selectedCategories.includes(category.value)"
-                >
-                  <span class="flex items-center gap-2">
-                    <Icon :name="category.icon" size="18" aria-hidden="true" />
-                    <span class="font-medium">{{ category.label }}</span>
-                  </span>
-                  <Icon
-                    v-if="selectedCategories.includes(category.value)"
-                    name="i-lucide-check"
-                    size="18"
-                    aria-hidden="true"
-                  />
-                </button>
-              </div>
-            </div>
-
-            <!-- Tags Filter -->
-            <div class="filter-section">
-              <h3 class="filter-heading">Tags</h3>
-              <div class="flex flex-wrap gap-2">
-                <button
-                  v-for="tag in availableTags"
-                  :key="tag"
-                  @click="toggleTag(tag)"
-                  class="filter-tag px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200"
-                  :class="
-                    selectedTags.includes(tag)
-                      ? 'bg-accent-700 text-text-inverse'
-                      : 'bg-surface-raised hover:bg-surface-sunken text-text-primary border border-border-subtle'
-                  "
-                  :aria-pressed="selectedTags.includes(tag)"
-                >
-                  {{ formatTag(tag) }}
-                </button>
-              </div>
-            </div>
-
-            <!-- Clear Filters -->
-            <button
-              v-if="hasActiveFilters"
-              @click="clearFilters"
-              class="w-full px-4 py-2.5 rounded-lg font-medium text-error-500 hover:bg-error-50 border border-error-500 transition-colors duration-200"
-            >
-              Clear All Filters
-            </button>
-          </div>
-        </aside>
 
         <!-- Main Content -->
         <div class="flex-1 min-w-0">
-          <!-- Mobile Filter Button & Sort -->
-          <div class="lg:hidden flex items-center gap-3 mb-6">
-            <!-- Mobile Filter Button -->
-            <Button
-              variant="outline"
-              size="md"
-              :full-width="false"
-              rounded="lg"
-              icon-left="i-lucide-filter"
-              @click="showMobileFilters = true"
-              class="flex-1"
-            >
-              Filters
-              <span
-                v-if="activeFilterCount > 0"
-                class="ml-2 px-2 py-0.5 bg-accent-700 text-text-inverse text-xs font-bold rounded-full"
-              >
-                {{ activeFilterCount }}
-              </span>
-            </Button>
-
-            <!-- Sort Dropdown -->
-            <div class="relative flex-1">
-              <button
-                @click="showSortDropdown = !showSortDropdown"
-                class="w-full px-4 py-2.5 rounded-lg border-2 border-border-default bg-surface-base text-text-primary font-medium flex items-center justify-between hover:border-accent-500 transition-colors duration-200"
-                :aria-expanded="showSortDropdown"
-                aria-label="Sort products"
-              >
-                <span class="flex items-center gap-2">
-                  <Icon name="i-lucide-arrow-up-down" size="18" aria-hidden="true" />
-                  Sort
-                </span>
-                <Icon
-                  name="i-lucide-chevron-down"
-                  size="18"
-                  class="transition-transform duration-200"
-                  :class="{ 'rotate-180': showSortDropdown }"
-                  aria-hidden="true"
-                />
-              </button>
-              <div
-                v-show="showSortDropdown"
-                class="absolute z-10 mt-2 w-full bg-surface-raised rounded-lg shadow-xl border border-border-subtle py-2"
-              >
-                <button
-                  v-for="option in sortOptions"
-                  :key="option.value"
-                  @click="selectSort(option.value)"
-                  class="w-full px-4 py-2.5 text-left hover:bg-surface-sunken transition-colors duration-200 flex items-center justify-between"
-                  :class="
-                    sortBy === option.value ? 'text-accent-700 font-medium' : 'text-text-primary'
-                  "
-                >
-                  {{ option.label }}
-                  <Icon
-                    v-if="sortBy === option.value"
-                    name="i-lucide-check"
-                    size="18"
-                    aria-hidden="true"
-                  />
-                </button>
-              </div>
-            </div>
-          </div>
-
           <!-- Desktop Sort & Results Count -->
           <div class="hidden lg:flex items-center justify-between mb-6">
             <p class="text-text-secondary">

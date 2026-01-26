@@ -24,9 +24,12 @@
 
         <!-- Product Info -->
         <div class="product-info flex flex-col gap-6">
-          <div>
+          <div class="border border-border-subtle p-4 rounded-lg">
             <h1 class="text-4xl lg:text-5xl mb-4 text-text-primary">{{ shopifyProduct.title }}</h1>
-            <p class="text-lg text-text-secondary">{{ shopifyProduct.description }}</p>
+            <div
+              class="max-w-none max-h-[400px] overflow-y-auto description"
+              v-html="shopifyProduct.descriptionHtml"
+            />
           </div>
 
           <!-- Product Options -->
@@ -124,7 +127,6 @@
     return images;
   });
 
-
   // SEO Meta Tags & Structured Data - Dynamic per product
   watchEffect(() => {
     if (shopifyProduct.value) {
@@ -201,11 +203,11 @@
     const customValues = opts.customValues;
     const effectiveQuantity = opts.effectiveQuantity;
 
-    console.log('RAW OPTIONS from component:', {
+    console.log("RAW OPTIONS from component:", {
       selections,
       customValues,
       effectiveQuantity,
-      allOpts: opts
+      allOpts: opts,
     });
 
     // Use the new composable to get variant info
@@ -217,43 +219,37 @@
       return;
     }
 
-    // Calculate pricing
-    const { calculateTotalPrice } = usePricing();
-
-    // Get effective size (check both selections and custom values)
+    // Get effective size (for cart attributes only)
     let effectiveSize = 2; // Default
     const sizeSelection = selections.Size || selections.size;
-    if (sizeSelection === 'Custom' && customValues.Size) {
+    if (sizeSelection === "Custom" && customValues.Size) {
       effectiveSize = parseFloat(customValues.Size) || 2;
     } else if (sizeSelection) {
       // Parse size from string (e.g., "3\"" -> 3)
-      effectiveSize = parseFloat(String(sizeSelection).replace(/[^0-9.]/g, '')) || 2;
+      effectiveSize = parseFloat(String(sizeSelection).replace(/[^0-9.]/g, "")) || 2;
     }
 
-    // Get effective material
-    const effectiveMaterial = selections.Material || selections.material || 'glossy';
+    // Get price from the selected variant
+    const variantPrice = parseFloat(variantInfo.variant.price.amount);
+    const totalPrice = variantPrice;
+    const pricePerUnit = variantPrice; // Variant price is already per unit or total based on Shopify setup
 
-    console.log('Add to cart - pricing calculation:', {
-      effectiveSize,
-      effectiveQuantity,
-      effectiveMaterial,
-      selections,
-      customValues
-    });
-
-    const totalPrice = calculateTotalPrice(effectiveSize, effectiveQuantity, effectiveMaterial);
-    const pricePerUnit = totalPrice / effectiveQuantity;
-
-    console.log('Add to cart - calculated prices:', {
+    console.log("Add to cart - variant pricing:", {
+      variantPrice,
       totalPrice,
-      pricePerUnit
+      pricePerUnit,
+      effectiveQuantity,
+      effectiveSize,
     });
 
     // Add to cart
+    // IMPORTANT: Add quantity as 1 to avoid double-multiplication
+    // The totalPrice already includes the quantity (e.g., 500 stickers)
+    // Store the actual quantity in customQuantity attribute
     try {
       await cart.addItem({
         merchandiseId: variantInfo.id,
-        quantity: effectiveQuantity,
+        quantity: 1, // Always 1 to prevent Shopify from multiplying the price
         uploadedImage: opts.uploadedImageUrl || opts.uploadedImage,
         uploadedFileName: opts.uploadedFileName,
         customSize: effectiveSize,
@@ -267,7 +263,12 @@
         `Added ${effectiveQuantity.toLocaleString()} ${shopifyProduct.value.title} to cart!`,
       );
 
-      console.log("✅ Added variant to cart:", variantInfo.variant.title, "at", variantInfo.variant.price);
+      console.log(
+        "✅ Added variant to cart:",
+        variantInfo.variant.title,
+        "at",
+        variantInfo.variant.price,
+      );
     } catch (error: any) {
       toast.error(`Failed to add to cart: ${error.message}`);
       return;
@@ -284,5 +285,208 @@
 
   .animate-spin {
     animation: spin 1s linear infinite;
+  }
+
+  .description {
+    /* Base text styles */
+    :deep(p) {
+      color: var(--color-text-secondary);
+      font-size: 1rem;
+      line-height: 1.75;
+      margin: 1rem 0;
+    }
+
+    /* Headings */
+    :deep(h1),
+    :deep(h2),
+    :deep(h3),
+    :deep(h4),
+    :deep(h5),
+    :deep(h6) {
+      color: var(--color-text-primary);
+      font-weight: 700;
+      margin: 1.5rem 0 0.75rem 0;
+      line-height: 1.3;
+    }
+
+    :deep(h1) {
+      font-size: 2rem;
+    }
+
+    :deep(h2) {
+      font-size: 1.75rem;
+    }
+
+    :deep(h3) {
+      font-size: 1.5rem;
+    }
+
+    :deep(h4) {
+      font-size: 1.25rem;
+    }
+
+    :deep(h5),
+    :deep(h6) {
+      font-size: 1.125rem;
+    }
+
+    /* First element shouldn't have top margin */
+    :deep(*:first-child) {
+      margin-top: 0;
+    }
+
+    /* Bold and strong text */
+    :deep(strong),
+    :deep(b) {
+      color: var(--color-accent-700);
+      font-weight: 600;
+    }
+
+    /* Italic text */
+    :deep(em),
+    :deep(i) {
+      font-style: italic;
+    }
+
+    /* Links */
+    :deep(a) {
+      color: var(--color-accent-600);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    :deep(a:hover) {
+      color: var(--color-accent-700);
+      text-decoration: underline;
+    }
+
+    /* Lists */
+    :deep(ul),
+    :deep(ol) {
+      margin: 1rem 0;
+      padding-left: 1.75rem;
+      color: var(--color-text-secondary);
+    }
+
+    :deep(ul) {
+      list-style-type: disc;
+    }
+
+    :deep(ol) {
+      list-style-type: decimal;
+    }
+
+    :deep(li) {
+      margin: 0.5rem 0;
+      line-height: 1.75;
+    }
+
+    :deep(li::marker) {
+      color: var(--color-accent-700);
+    }
+
+    /* Nested lists */
+    :deep(ul ul),
+    :deep(ol ol),
+    :deep(ul ol),
+    :deep(ol ul) {
+      margin: 0.25rem 0;
+    }
+
+    /* Blockquotes */
+    :deep(blockquote) {
+      border-left: 4px solid var(--color-accent-700);
+      padding-left: 1rem;
+      margin: 1.5rem 0;
+      color: var(--color-text-secondary);
+      font-style: italic;
+    }
+
+    /* Code blocks */
+    :deep(pre) {
+      background-color: var(--color-surface-sunken);
+      border: 1px solid var(--color-border-default);
+      border-radius: 0.5rem;
+      padding: 1rem;
+      margin: 1rem 0;
+      overflow-x: auto;
+    }
+
+    :deep(code) {
+      background-color: var(--color-surface-sunken);
+      color: var(--color-accent-700);
+      padding: 0.125rem 0.375rem;
+      border-radius: 0.25rem;
+      font-size: 0.875em;
+      font-family: "Monaco", "Courier New", monospace;
+    }
+
+    :deep(pre code) {
+      background-color: transparent;
+      padding: 0;
+      border-radius: 0;
+    }
+
+    /* Horizontal rules */
+    :deep(hr) {
+      border: none;
+      border-top: 2px solid var(--color-border-default);
+      margin: 2rem 0;
+    }
+
+    /* Tables */
+    :deep(table) {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+    }
+
+    :deep(th),
+    :deep(td) {
+      padding: 0.75rem;
+      border: 1px solid var(--color-border-default);
+      text-align: left;
+    }
+
+    :deep(th) {
+      background-color: var(--color-surface-raised);
+      color: var(--color-text-primary);
+      font-weight: 600;
+    }
+
+    :deep(td) {
+      color: var(--color-text-secondary);
+    }
+
+    /* Images */
+    :deep(img) {
+      max-width: 100%;
+      height: auto;
+      border-radius: 0.5rem;
+      margin: 1rem 0;
+    }
+
+    /* Custom scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-accent-700) var(--color-surface-sunken);
+  }
+
+  .description::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .description::-webkit-scrollbar-track {
+    background: var(--color-surface-sunken);
+    border-radius: 4px;
+  }
+
+  .description::-webkit-scrollbar-thumb {
+    background: var(--color-accent-700);
+    border-radius: 4px;
+  }
+
+  .description::-webkit-scrollbar-thumb:hover {
+    background: var(--color-accent-800);
   }
 </style>

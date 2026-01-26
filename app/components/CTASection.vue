@@ -1,7 +1,7 @@
 <template>
   <Section
     inner-classes="p-4 py-20 md:py-28"
-    outer-classes="bg-gradient-to-br from-accent-700 via-accent-600 to-accent-800"
+    outer-classes="bg-gradient-to-br from-secondary-500 via-secondary-700 to-secondary-500"
   >
     <div class="max-w-4xl mx-auto text-center">
       <div data-animate="zoom-in">
@@ -14,9 +14,12 @@
         />
       </div>
 
-      <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12" data-animate="fade-up">
+      <div
+        class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12"
+        data-animate="fade-up"
+      >
         <Button
-          variant="secondary"
+          variant="primary"
           size="lg"
           rounded="lg"
           to="/products"
@@ -38,7 +41,10 @@
       </div>
 
       <!-- Trust Indicators -->
-      <div class="flex flex-wrap items-center justify-center gap-8 text-white/80" data-animate-stagger>
+      <div
+        class="flex flex-wrap items-center justify-center gap-8 text-white/80"
+        data-animate-stagger
+      >
         <div class="hover-float">
           <TrustIndicator icon="i-lucide-shield-check" text="100% Guarantee" />
         </div>

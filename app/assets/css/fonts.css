@@ -1,0 +1,52 @@
+/* Base Fonts (Pair 1 as default) */
+:root {
+  --font-heading: "Comfortaa", cursive;
+  --font-body: "Lora", serif;
+}
+
+/* Apply Pair 1: Friendly & Approachable */
+[data-font-pairing="pair1"] {
+  --font-heading: "Comfortaa", cursive;
+  --font-body: "Lora", serif;
+}
+
+/* Apply Pair 2: Warm & Clean */
+[data-font-pairing="pair2"] {
+  --font-heading: "Clash Display", sans-serif;
+  --font-body: "Inter", sans-serif;
+}
+
+/* Apply Pair 3: Trustworthy & Down-to-Earth */
+[data-font-pairing="pair3"] {
+  --font-heading: "Martel Sans", sans-serif;
+  --font-body: "Source Serif Pro", serif;
+}
+
+/* Apply fonts to elements */
+* {
+  font-family: var(--font-body);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.heading,
+.font-heading {
+  font-family: var(--font-heading);
+}
+
+/* Brand/Logo specific */
+.logo,
+.brand-name,
+nav a {
+  font-family: var(--font-heading);
+}
+
+/* Button text can use heading font for emphasis */
+button.primary,
+.btn-primary {
+  font-family: var(--font-heading);
+}

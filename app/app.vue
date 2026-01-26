@@ -55,10 +55,13 @@
   const siteUrl = computed(() => runtimeConfig.public.siteUrl || "https://example.com");
   const ogImage = computed(() => runtimeConfig.public.ogImage || `${siteUrl.value}/og.png`);
 
-  // Initialize color palette on app load
+  // Initialize color palette and font pairing on app load
   if (import.meta.client) {
     const savedPalette = localStorage.getItem("color-palette") || "classic";
     document.documentElement.setAttribute("data-palette", savedPalette);
+
+    const savedFontPairing = localStorage.getItem("fontPairing") || "pair1";
+    document.documentElement.setAttribute("data-font-pairing", savedFontPairing);
   }
 </script>
 

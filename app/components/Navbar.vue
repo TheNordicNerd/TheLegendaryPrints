@@ -97,19 +97,11 @@
               </div>
             </div>
 
+            <!-- Font Pairing Switcher -->
+            <FontPairingSwitcher />
+
             <!-- Palette Switcher -->
             <PaletteSwitcher />
-
-            <!-- Theme Toggle -->
-            <Button
-              variant="ghost"
-              size="sm"
-              rounded="lg"
-              :icon="themeIcon"
-              icon-size="20"
-              label="Toggle theme"
-              @click="handleToggleTheme"
-            />
           </div>
         </div>
 
@@ -128,12 +120,15 @@
             />
             <div
               v-if="cartItemCount > 0"
-              class="absolute -top-1 -right-1 bg-accent-700 text-text-inverse text-xs font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5"
+              class="absolute -top-3 right-0 bg-accent-700 text-text-inverse text-xs font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5"
               aria-label="`${cartItemCount} items in cart`"
             >
               {{ cartItemCount }}
             </div>
           </div>
+
+          <!-- Font Pairing Switcher (Mobile) -->
+          <FontPairingSwitcher />
 
           <!-- Palette Switcher (Mobile) -->
           <PaletteSwitcher />
@@ -167,7 +162,7 @@
       <Transition name="mobile-menu">
         <div
           v-show="isMobileMenuOpen"
-          class="lg:hidden mobile-menu flex mt-4 border-t border-border-subtle bg-surface-base"
+          class="lg:hidden mobile-menu flex flex-col mt-4 border-t border-border-subtle bg-surface-base"
         >
           <ul class="py-4 space-y-1">
             <li v-for="link in links" :key="link.to">

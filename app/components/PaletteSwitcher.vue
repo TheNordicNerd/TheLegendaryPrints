@@ -1,14 +1,15 @@
 <template>
   <div class="relative palette-switcher-container">
     <!-- Palette Toggle Button -->
-    <button
+    <Button
+      variant="ghost"
+      size="sm"
+      rounded="lg"
+      icon="i-lucide-palette"
+      icon-size="20"
+      label="Change palette"
       @click="toggleDropdown"
-      class="flex items-center justify-center p-2 rounded-lg transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-800"
-      :class="{ 'bg-neutral-100 dark:bg-neutral-800': isOpen }"
-      aria-label="Switch color palette"
-    >
-      <Icon name="i-lucide-palette" size="20" class="text-text-primary" />
-    </button>
+    />
 
     <!-- Dropdown Menu -->
     <Transition name="dropdown">

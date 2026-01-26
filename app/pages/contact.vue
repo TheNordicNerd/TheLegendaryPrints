@@ -8,8 +8,8 @@
         <div>
           <h2 class="text-2xl font-bold text-text-primary mb-6">Get in Touch</h2>
           <p class="text-text-secondary mb-8">
-            Have questions about our custom sticker printing services? We're here to help! Reach out to
-            our team for design support, order inquiries, or any other questions.
+            Have questions about our custom sticker printing services? We're here to help! Reach out
+            to our team for design support, order inquiries, or any other questions.
           </p>
 
           <div class="space-y-6">
@@ -38,7 +38,7 @@
                   href="tel:+15551234567"
                   class="text-accent-700 hover:text-accent-800 transition-colors"
                 >
-                  (555) 123-4567
+                  (407) 476-4413
                 </a>
               </div>
             </div>
@@ -61,7 +61,9 @@
           <h2 class="text-2xl font-bold text-text-primary mb-6">Send us a Message</h2>
           <form @submit.prevent="handleSubmit" class="space-y-4">
             <div>
-              <label for="name" class="block text-sm font-medium text-text-primary mb-2">Name</label>
+              <label for="name" class="block text-sm font-medium text-text-primary mb-2"
+                >Name</label
+              >
               <input
                 id="name"
                 v-model="form.name"
@@ -72,7 +74,9 @@
             </div>
 
             <div>
-              <label for="email" class="block text-sm font-medium text-text-primary mb-2">Email</label>
+              <label for="email" class="block text-sm font-medium text-text-primary mb-2"
+                >Email</label
+              >
               <input
                 id="email"
                 v-model="form.email"
@@ -185,4 +189,3 @@
 </script>
 
 <style scoped></style>
-

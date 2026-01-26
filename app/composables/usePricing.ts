@@ -69,12 +69,14 @@ export const usePricing = () => {
    * Format price as currency string
    */
   const formatPrice = (amount: number): string => {
+    // Round to 2 decimal places to avoid floating point precision issues
+    const rounded = Math.round(amount * 100) / 100;
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
-    }).format(amount);
+    }).format(rounded);
   };
 
   /**

@@ -1,7 +1,7 @@
 <template>
   <div class="product-options space-y-6">
     <!-- Upload Design Section -->
-    <ImageUpload ref="imageUploadRef" />
+    <ImageUpload ref="imageUploadRef" v-if="dynamicOptions.length > 1" />
 
     <!-- Dynamic Product Options -->
     <DynamicOptionSelector
@@ -53,8 +53,8 @@
   watch(
     dynamicOptions,
     (options) => {
-      console.log({ options });
       if (options && options.length > 0) {
+        if (options.length === 1 && options[0]?.name === "Title") options.pop();
         options.forEach((option) => {
           if (!selectedOptions.value[option.name] && option.values.length > 0) {
             const firstValue = option.values[0];
@@ -107,52 +107,25 @@
     return parseInt(selectedQty || "100", 10) || 100;
   });
 
-  // Calculate price dynamically based on selections
+  // Get price from selected variant
   const calculatedPrice = computed(() => {
-    const { calculateTotalPrice, formatPrice } = usePricing();
+    if (!props.product) return "$0.00";
 
-    // Get size from selections
-    const sizeOption = dynamicOptions.value.find(
-      (opt) => opt.name.toLowerCase() === "size"
-    );
-    let effectiveSize = 2; // Default 2" sticker
+    const { formatPrice } = useShopify();
+    const { getVariantInfo } = useProductOptions(props.product);
 
-    if (sizeOption) {
-      const selectedSize = selectedOptions.value[sizeOption.name];
-      if (selectedSize === "Custom" && customOptionValues.value[sizeOption.name]) {
-        effectiveSize = parseFloat(customOptionValues.value[sizeOption.name] || "2") || 2;
-      } else if (selectedSize) {
-        // Parse size from string (e.g., "3\"" -> 3)
-        effectiveSize = parseFloat(selectedSize.replace(/[^0-9.]/g, '')) || 2;
-      }
+    // Get the matching variant based on current selections
+    const variantInfo = getVariantInfo(selectedOptions.value, customOptionValues.value);
+
+    if (variantInfo?.variant?.price) {
+      return formatPrice(variantInfo.variant.price.amount, variantInfo.variant.price.currencyCode);
     }
 
-    // Get material/finish from selections
-    const materialOption = dynamicOptions.value.find(
-      (opt) => opt.name.toLowerCase() === "material" || opt.name.toLowerCase() === "finish"
+    // Fallback to minimum price
+    return formatPrice(
+      props.product.priceRange.minVariantPrice.amount,
+      props.product.priceRange.minVariantPrice.currencyCode,
     );
-    const effectiveMaterial = materialOption
-      ? selectedOptions.value[materialOption.name] || "glossy"
-      : "glossy";
-
-    console.log('ProductOptions - Price calculation:', {
-      sizeOption: sizeOption?.name,
-      selectedSize: sizeOption ? selectedOptions.value[sizeOption.name] : 'N/A',
-      effectiveSize,
-      effectiveQuantity: effectiveQuantity.value,
-      materialOption: materialOption?.name,
-      selectedMaterial: materialOption ? selectedOptions.value[materialOption.name] : 'N/A',
-      effectiveMaterial,
-      selectedOptions: selectedOptions.value,
-      customOptionValues: customOptionValues.value
-    });
-
-    // Calculate total price
-    const totalPrice = calculateTotalPrice(effectiveSize, effectiveQuantity.value, effectiveMaterial);
-
-    console.log('ProductOptions - Calculated total:', totalPrice);
-
-    return formatPrice(totalPrice);
   });
 
   // Computed properties to access image upload component values

@@ -8,18 +8,8 @@
       {{ option.name }}
     </h3>
 
-    <!-- Option Values Grid or Row Layout -->
-    <div
-      class="gap-3"
-      :class="
-        option.isRow
-          ? 'flex flex-col'
-          : 'grid ' +
-            (option.values.length > 4 ? 'grid-cols-3 sm:grid-cols-3' : 'grid-cols-2 sm:grid-cols-4')
-      "
-      role="group"
-      :aria-labelledby="`${option.name}-label`"
-    >
+    <!-- Option Values - Small Button Group -->
+    <div class="flex flex-wrap gap-2" role="group" :aria-labelledby="`${option.name}-label`">
       <button
         v-for="value in option.values"
         :key="value"
@@ -27,16 +17,14 @@
         @click="handleSelect(value)"
         :aria-label="`Select ${value}`"
         :aria-pressed="selectedValue === value"
-        :title="option.isRow ? undefined : value"
-        class="option-button p-4 rounded-lg border-2 transition-all duration-200 font-bold text-lg"
+        class="option-button px-4 py-2 rounded-lg border-2 transition-all duration-200 font-medium text-sm"
         :class="[
           selectedValue === value
-            ? 'border-accent-700 bg-accent-700 text-text-inverse shadow-md'
-            : 'border-border-subtle hover:border-accent-300 text-text-primary hover:bg-surface-sunken',
-          option.isRow ? 'text-left w-full ' : 'text-center overflow-hidden',
+            ? 'border-accent-700 bg-secondary-700 text-text-inverse shadow-md'
+            : 'border-border-default hover:border-secondary-500 text-text-primary hover:bg-surface-sunken',
         ]"
       >
-        <span :class="option.isRow ? 'block' : 'block truncate'">{{ value }}</span>
+        {{ value }}
       </button>
     </div>
 

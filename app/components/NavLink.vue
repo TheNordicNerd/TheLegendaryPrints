@@ -4,17 +4,17 @@
     v-slot="{ isActive }"
     :class="[
       isDropDownChild
-        ? 'dropdown-item flex group items-center gap-3 text-text-primary px-4 py-3 text-sm font-medium hover:bg-accent-500/10 hover:text-accent-500 transition-colors duration-150'
-        : 'nav-link flex group items-center gap-2 px-3 text-text-primary py-2 font-semibold hover:text-accent-500 transition-colors duration-200',
+        ? 'dropdown-item flex group items-center gap-3 text-neutral-800 px-4 py-3 text-sm font-medium hover:bg-accent-500/10 hover:text-accent-500 transition-colors duration-150'
+        : 'nav-link flex group items-center gap-2 px-3 text-neutral-800 py-2 font-semibold hover:text-accent-500 transition-colors duration-200',
     ]"
-    active-class="text-accent-600"
+    active-class="text-primary-400"
   >
     <Icon
       v-if="icon"
       :name="icon"
       size="18"
       class="group-hover:text-accent-500"
-      :class="isActive && 'text-accent-600'"
+      :class="isActive && 'text-primary-400'"
     />
     {{ text }}
     <Icon

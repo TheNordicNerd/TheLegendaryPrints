@@ -42,7 +42,7 @@
 
     <!-- Product Info -->
     <div :class="variant === 'hero' ? 'p-4' : 'p-5'">
-      <div class="flex items-start justify-between gap-2 mb-2">
+      <div class="flex items-start justify-center gap-2">
         <h3
           :class="[
             'font-bold text-text-primary group-hover:text-accent-700 transition-colors duration-200',
@@ -51,26 +51,6 @@
         >
           {{ product.name }}
         </h3>
-      </div>
-
-      <p
-        :class="[
-          'text-text-secondary mb-3 line-clamp-2',
-          variant === 'hero' ? 'text-xs sm:text-sm' : 'text-sm',
-        ]"
-      >
-        {{ product.description }}
-      </p>
-
-      <!-- Tags -->
-      <div v-if="showTags && product.tags" class="flex flex-wrap gap-1.5">
-        <span
-          v-for="tag in product.tags.slice(0, maxTags)"
-          :key="tag"
-          class="px-2 py-1 text-xs font-medium bg-surface-sunken text-text-secondary rounded transition-colors duration-200 group-hover:bg-accent-50 group-hover:text-accent-700"
-        >
-          {{ formatTag(tag) }}
-        </span>
       </div>
     </div>
   </NuxtLink>

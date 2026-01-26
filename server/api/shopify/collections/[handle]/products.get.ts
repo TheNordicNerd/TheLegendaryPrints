@@ -4,14 +4,14 @@
  */
 
 export default defineEventHandler(async (event) => {
-  const handle = getRouterParam(event, 'handle');
+  const handle = getRouterParam(event, "handle");
   const query = getQuery(event);
   const limit = Math.min(Number(query.limit) || 20, 250);
 
   if (!handle) {
     throw createError({
       statusCode: 400,
-      message: 'Collection handle is required',
+      message: "Collection handle is required",
     });
   }
 
@@ -20,14 +20,14 @@ export default defineEventHandler(async (event) => {
       id
       title
       handle
-      description
+      descriptionHtml
       products(first: ${limit}) {
         edges {
           node {
             id
             title
             handle
-            description
+            descriptionHtml
             tags
             availableForSale
             featuredImage {
@@ -94,7 +94,7 @@ export default defineEventHandler(async (event) => {
         id: data.collection.id,
         title: data.collection.title,
         handle: data.collection.handle,
-        description: data.collection.description,
+        description: data.collection.descriptionHtml,
       },
       products,
       count: products.length,
@@ -104,7 +104,7 @@ export default defineEventHandler(async (event) => {
 
     throw createError({
       statusCode: 500,
-      message: error.message || 'Failed to fetch collection products',
+      message: error.message || "Failed to fetch collection products",
     });
   }
 });

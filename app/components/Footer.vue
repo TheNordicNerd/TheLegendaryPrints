@@ -1,7 +1,7 @@
 <template>
   <footer class="relative bg-surface-base px-4">
     <!-- Newsletter Section -->
-    <div class="relative pt-24 z-50 sm:pt-28 md:pt-32 pb-12">
+    <div class="relative pt-12 z-50 sm:pt-28 md:pt-32 pb-12">
       <div
         class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-surface-raised shadow-lg py-8 rounded-lg"
       >
@@ -133,7 +133,7 @@
                   href="tel:+15551234567"
                   class="text-text-secondary hover:text-accent-700 transition-colors duration-200"
                 >
-                  (555) 123-4567
+                  (407) 476-4413
                 </a>
               </li>
             </ul>

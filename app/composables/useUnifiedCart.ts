@@ -30,27 +30,12 @@ export const useUnifiedCart = () => {
       customPricePerUnit?: string;
       attributes?: Array<{ key: string; value: string }>;
     }) {
-      // Build attributes array for Shopify
+      // Build attributes array for Shopify - ONLY include Cloudinary image URL
       const attributes = data.attributes || [];
 
-      // Add custom image URL if provided
+      // Add ONLY the Cloudinary image URL (prefixed with _ to hide from customer view)
       if (data.uploadedImage) {
-        attributes.push({ key: 'Custom Design URL', value: data.uploadedImage });
-      }
-      if (data.uploadedFileName) {
-        attributes.push({ key: 'Design Filename', value: data.uploadedFileName });
-      }
-      if (data.customSize) {
-        attributes.push({ key: 'Custom Size', value: `${data.customSize}"` });
-      }
-      if (data.customQuantity) {
-        attributes.push({ key: 'Custom Quantity', value: data.customQuantity.toString() });
-      }
-      if (data.customPrice) {
-        attributes.push({ key: 'Custom Price', value: data.customPrice });
-      }
-      if (data.customPricePerUnit) {
-        attributes.push({ key: 'Custom Price Per Unit', value: data.customPricePerUnit });
+        attributes.push({ key: '_Custom Design URL', value: data.uploadedImage });
       }
 
       // Add to Shopify cart with attributes
@@ -75,6 +60,29 @@ export const useUnifiedCart = () => {
 
     async refreshCart() {
       await shopifyCart.refreshCart();
+    },
+
+    // Update cart item (Shopify doesn't support updating attributes, so we remove and re-add)
+    async updateItem(lineId: string, updates: { customSize?: number; customQuantity?: number }) {
+      // Find the item to get its details
+      const item = shopifyCart.items.find((i) => i.id === lineId);
+      if (!item) {
+        throw new Error('Item not found in cart');
+      }
+
+      // Remove the old item
+      await shopifyCart.removeItem(lineId);
+
+      // Re-add with ONLY the Cloudinary image URL
+      const attributes = [];
+
+      // Preserve ONLY the Cloudinary image URL (prefixed with _ to hide from customer view)
+      if (item.uploadedImage) {
+        attributes.push({ key: '_Custom Design URL', value: item.uploadedImage });
+      }
+
+      // Re-add the item
+      await shopifyCart.addItem(item.merchandise.id, 1, attributes);
     },
   };
 };
