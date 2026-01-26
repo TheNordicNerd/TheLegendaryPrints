@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
       title
       handle
       description
-      variants(first: 50) {
+      variants(first: 250) {
         edges {
           node {
             id
@@ -29,6 +29,10 @@ export default defineEventHandler(async (event) => {
               currencyCode
             }
             availableForSale
+            selectedOptions {
+              name
+              value
+            }
           }
         }
       }

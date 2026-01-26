@@ -5,16 +5,16 @@
     :class="[
       isDropDownChild
         ? 'dropdown-item flex group items-center gap-3 text-text-primary px-4 py-3 text-sm font-medium hover:bg-accent-500/10 hover:text-accent-500 transition-colors duration-150'
-        : 'nav-link flex group items-center gap-2 px-3 text-text-primary py-2 font-semibold hover:text-accent transition-colors duration-200',
+        : 'nav-link flex group items-center gap-2 px-3 text-text-primary py-2 font-semibold hover:text-accent-500 transition-colors duration-200',
     ]"
-    active-class="text-accent"
+    active-class="text-accent-600"
   >
     <Icon
       v-if="icon"
       :name="icon"
       size="18"
-      class="group-hover:text-accent"
-      :class="isActive && 'text-accent'"
+      class="group-hover:text-accent-500"
+      :class="isActive && 'text-accent-600'"
     />
     {{ text }}
     <Icon

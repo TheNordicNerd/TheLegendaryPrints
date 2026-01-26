@@ -1,5 +1,5 @@
 <template>
-  <header class="navbar-header w-full top-0 left-0 right-0 z-50 shadow">
+  <header class="navbar-header w-full top-0 left-0 right-0 z-50 shadow bg-surface-raised">
     <nav
       class="navbar-container mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-6"
       aria-label="Main navigation"
@@ -12,18 +12,7 @@
             class="flex items-center gap-2 font-extrabold hover:text-accent-500-600 transition-colors duration-200"
             aria-label="The Legendary Prints - Home"
           >
-            <div
-              class="p-4 mr-2 flex items-center justify-center rounded-lg text-white bg-accent-500"
-            >
-              <Icon name="i-lucide-printer" size="24" aria-hidden="true" />
-            </div>
-            <div class="flex flex-col justify-start items-start">
-              <h3 class="hidden text-lg sm:inline text-text-primary">The Legendary Prints</h3>
-              <span class="hidden text-xs sm:inline text-text-secondary"
-                >It Just Hits Different.</span
-              >
-              <span class="sm:hidden">TLP</span>
-            </div>
+            <NuxtImg src="/logo-small.png" alt="Legendary Prints" class="h-16" />
           </NuxtLink>
         </div>
 
@@ -79,7 +68,7 @@
           <!-- CTA Button -->
           <Button
             variant="primary"
-            class="text-white rounded-md"
+            rounded="md"
             size="sm"
             icon-left="i-lucide-package"
             left-icon-size="16"
@@ -107,6 +96,9 @@
                 {{ cartItemCount }}
               </div>
             </div>
+
+            <!-- Palette Switcher -->
+            <PaletteSwitcher />
 
             <!-- Theme Toggle -->
             <Button
@@ -142,6 +134,10 @@
               {{ cartItemCount }}
             </div>
           </div>
+
+          <!-- Palette Switcher (Mobile) -->
+          <PaletteSwitcher />
+
           <!-- Theme Toggle (Mobile) -->
           <Button
             variant="ghost"
@@ -510,8 +506,13 @@
   }
 
   /* Active Link Styling */
+  .router-link-active.nav-link {
+    color: var(--color-accent-600);
+  }
+
   .router-link-active.nav-link::after {
     width: 80%;
+    background: var(--color-accent-600);
   }
 
   /* Dropdown Item Hover */

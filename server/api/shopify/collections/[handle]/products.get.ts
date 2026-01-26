@@ -54,7 +54,7 @@ export default defineEventHandler(async (event) => {
                 currencyCode
               }
             }
-            variants(first: 50) {
+            variants(first: 250) {
               edges {
                 node {
                   id
@@ -64,6 +64,10 @@ export default defineEventHandler(async (event) => {
                     currencyCode
                   }
                   availableForSale
+                  selectedOptions {
+                    name
+                    value
+                  }
                 }
               }
             }

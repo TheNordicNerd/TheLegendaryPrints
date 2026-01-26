@@ -3,61 +3,34 @@
  * Based on quantity base prices with size and finish multipliers
  */
 
-interface FinishMultipliers {
-  [key: string]: number;
-}
-
 export const usePricing = () => {
   // Base price per unit for 2" stickers
   const BASE_PRICE_PER_UNIT = 0.2; // $0.20 per 2" sticker
-
-  // Finish multipliers (currently neutral)
-  const FINISH_MULTIPLIER: FinishMultipliers = {
-    glossy: 1,
-    matte: 1,
-  };
 
   // Minimum order total
   const MINIMUM_ORDER_TOTAL = 20;
 
   /**
-   * Get size multiplier - calculated dynamically as size / 2
-   * Examples:
-   * - 2" = 2/2 = 1x
-   * - 10" = 10/2 = 5x
-   * - 25" = 25/2 = 12.5x
+   * Get size multiplier
    */
   const getSizeMultiplier = (size: number): number => {
     if (size < 1 || size > 50) {
-      throw new Error(
-        `Invalid size: ${size}". Size must be between 1" and 50"`,
-      );
+      throw new Error(`Invalid size: ${size}". Size must be between 1" and 50"`);
     }
     return size / 2;
-  };
-
-  /**
-   * Get finish multiplier
-   */
-  const getFinishMultiplier = (finish: string): number => {
-    return FINISH_MULTIPLIER[finish] || 1;
   };
 
   /**
    * Get quantity discount percentage
    */
   const getQuantityDiscount = (quantity: number): number => {
-    if (quantity >= 1000) return 0.15; // 15% off
-    if (quantity >= 500) return 0.10;  // 10% off
-    return 0; // No discount
+    if (quantity >= 1000) return 0.15;
+    if (quantity >= 500) return 0.1;
+    return 0;
   };
 
   /**
    * Calculate total price for an order
-   * Formula:
-   * 1. Calculate base: $0.20 × quantity × sizeMultiplier × finishMultiplier
-   * 2. Apply quantity discount: 10% off at 500+, 15% off at 1000+
-   * 3. Apply $20 minimum if total is less
    */
   const calculateTotalPrice = (
     size: number,
@@ -65,10 +38,9 @@ export const usePricing = () => {
     finish: string = "glossy",
   ): number => {
     const sizeMult = getSizeMultiplier(size);
-    const finishMult = getFinishMultiplier(finish);
 
     // Calculate base total: $0.20 × quantity × size multiplier × finish multiplier
-    const baseTotal = BASE_PRICE_PER_UNIT * quantity * sizeMult * finishMult;
+    const baseTotal = BASE_PRICE_PER_UNIT * quantity * sizeMult;
 
     // Apply quantity discount
     const discount = getQuantityDiscount(quantity);
@@ -113,16 +85,39 @@ export const usePricing = () => {
       return {
         valid: false,
         error: "Quantity must be at least 1",
+        baseTotal: 0,
+        discount: 0,
+        discountAmount: 0,
+        totalPrice: 0,
+        pricePerUnit: 0,
+        formattedBaseTotal: formatPrice(0),
+        formattedDiscountAmount: formatPrice(0),
+        formattedTotalPrice: formatPrice(0),
+        formattedPricePerUnit: formatPrice(0),
+        size: 0,
+        quantity: 0,
+        finish: "",
       };
     }
 
-    const pricePerUnit = calculatePricePerUnit(size, quantity, finish);
-    const totalPrice = calculateTotalPrice(size, quantity, finish);
+    // Calculate all pricing components
+    const sizeMult = getSizeMultiplier(size);
+    const baseTotal = BASE_PRICE_PER_UNIT * quantity * sizeMult;
+    const discount = getQuantityDiscount(quantity);
+    const discountAmount = baseTotal * discount;
+    const totalWithDiscount = baseTotal * (1 - discount);
+    const totalPrice = Math.max(totalWithDiscount, MINIMUM_ORDER_TOTAL);
+    const pricePerUnit = totalPrice / quantity;
 
     return {
       valid: true,
+      baseTotal,
+      discount,
+      discountAmount,
       pricePerUnit,
       totalPrice,
+      formattedBaseTotal: formatPrice(baseTotal),
+      formattedDiscountAmount: formatPrice(discountAmount),
       formattedPricePerUnit: formatPrice(pricePerUnit),
       formattedTotalPrice: formatPrice(totalPrice),
       size,
@@ -149,7 +144,6 @@ export const usePricing = () => {
     getPricingBreakdown,
     getQuantityTiers,
     getSizeMultiplier,
-    getFinishMultiplier,
     getQuantityDiscount,
   };
 };

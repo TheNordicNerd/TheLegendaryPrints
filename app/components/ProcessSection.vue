@@ -50,7 +50,6 @@
           rounded="lg"
           to="/products"
           icon-right="i-lucide-arrow-right"
-          class="hover-grow"
         >
           Start Your Order
         </Button>

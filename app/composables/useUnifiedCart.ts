@@ -7,10 +7,6 @@ export const useUnifiedCart = () => {
   const shopifyCart = useShopifyCartStore();
 
   return {
-    // Mode info (always Shopify now)
-    cartMode: 'shopify',
-    isShopifyMode: true,
-
     // State - direct access to Shopify cart
     items: computed(() => shopifyCart.items),
     itemCount: computed(() => shopifyCart.itemCount),

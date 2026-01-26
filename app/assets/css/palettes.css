@@ -1,0 +1,197 @@
+/* ============================================
+   COLOR PALETTE SYSTEM
+   Client Color Schemes - Works with Tailwind
+   Similar to dark mode, use data-palette attribute
+   ============================================ */
+
+/* ============================================
+   PALETTE 1: Classic Print Shop
+   Charcoal Black, Soft White, Steel Gray, Warm Paper Tan
+   ============================================ */
+
+[data-palette="classic"] {
+  /* Neutral Scale - Charcoal Black based */
+  --color-neutral-50: #fafaf8; /* Soft White */
+  --color-neutral-100: #f0f0ee;
+  --color-neutral-200: #e0e0dd;
+  --color-neutral-300: #c8c8c4;
+  --color-neutral-400: #a0a09c;
+  --color-neutral-500: #6b6e70; /* Steel Gray */
+  --color-neutral-600: #52545b;
+  --color-neutral-700: #3a3b40;
+  --color-neutral-800: #272729;
+  --color-neutral-900: #1e1e1e; /* Charcoal Black */
+
+  /* Primary Scale - Steel Gray as brand */
+  --color-accent-50: #f5f5f6;
+  --color-accent-100: #e8e9eb;
+  --color-accent-200: #d4d5d9;
+  --color-accent-300: #b8babf;
+  --color-accent-400: #989aa2;
+  --color-accent-500: #6b6e70; /* Steel Gray */
+  --color-accent-600: #555860;
+  --color-accent-700: #43454c;
+  --color-accent-800: #393a40;
+  --color-accent-900: #2f3034;
+
+  /* Accent Scale - Warm Paper Tan as accent */
+  --color-primary-50: #faf8f5;
+  --color-primary-100: #f2ede4;
+  --color-primary-200: #e8dcc9;
+  --color-primary-300: #d6cbb8; /* Warm Paper Tan */
+  --color-primary-400: #c4b69d;
+  --color-primary-500: #afa187;
+  --color-primary-600: #8e856f;
+  --color-primary-700: #6f6857;
+  --color-primary-800: #5a5447;
+  --color-primary-900: #4a4539;
+
+  /* Surface Colors */
+  --color-surface-base: #fafaf8;
+  --color-surface-raised: #ffffff;
+  --color-surface-overlay: #ffffff;
+  --color-surface-sunken: #f0f0ee;
+
+  /* Text Colors */
+  --color-text-primary: #1e1e1e;
+  --color-text-secondary: #3a3b40;
+  --color-text-tertiary: #6b6e70;
+  --color-text-disabled: #a0a09c;
+  --color-text-inverse: #fafaf8;
+  --color-text-link: #6b6e70;
+  --color-text-link-hover: #52545b;
+
+  /* Border Colors */
+  --color-border-subtle: #e0e0dd;
+  --color-border-default: #c8c8c4;
+  --color-border-emphasis: #6b6e70;
+  --color-border-focus: #6b6e70;
+}
+
+/* ============================================
+   PALETTE 2: Modern Local Business
+   Graphite, Cool Off-White, Dusty Blue, Concrete Gray
+   ============================================ */
+
+[data-palette="modern"] {
+  /* Neutral Scale - Graphite based */
+  --color-neutral-50: #f9f9f9; /* Cool Off-White - corrected to actual off-white */
+  --color-neutral-100: #f0f0f0;
+  --color-neutral-200: #e3e3e3;
+  --color-neutral-300: #b7b9bc; /* Concrete Gray */
+  --color-neutral-400: #9a9ca0;
+  --color-neutral-500: #7d7f84;
+  --color-neutral-600: #606268;
+  --color-neutral-700: #43454c;
+  --color-neutral-800: #2f3034;
+  --color-neutral-900: #242424; /* Graphite */
+
+  /* Primary Scale - Dusty Blue as brand */
+  --color-primary-50: #f0f4f7;
+  --color-primary-100: #e1e9ef;
+  --color-primary-200: #c3d3df;
+  --color-primary-300: #a5bdcf;
+  --color-primary-400: #829dae;
+  --color-primary-500: #5f7d8c; /* Dusty Blue */
+  --color-primary-600: #4d6470;
+  --color-primary-700: #3e5059;
+  --color-primary-800: #324048;
+  --color-primary-900: #28353c;
+
+  /* Accent Scale - Concrete Gray as accent */
+  --color-accent-50: #f5f5f6;
+  --color-accent-100: #ebebed;
+  --color-accent-200: #d7d8db;
+  --color-accent-300: #c3c5c9;
+  --color-accent-400: #b7b9bc; /* Concrete Gray */
+  --color-accent-500: #9a9ca0;
+  --color-accent-600: #7d7f84;
+  --color-accent-700: #606268;
+  --color-accent-800: #43454c;
+  --color-accent-900: #2f3034;
+
+  /* Surface Colors */
+  --color-surface-base: #f9f9f9;
+  --color-surface-raised: #ffffff;
+  --color-surface-overlay: #ffffff;
+  --color-surface-sunken: #f0f0f0;
+
+  /* Text Colors */
+  --color-text-primary: #242424;
+  --color-text-secondary: #43454c;
+  --color-text-tertiary: #606268;
+  --color-text-disabled: #9a9ca0;
+  --color-text-inverse: #ffffff;
+  --color-text-link: #5f7d8c;
+  --color-text-link-hover: #4d6470;
+
+  /* Border Colors */
+  --color-border-subtle: #e3e3e3;
+  --color-border-default: #b7b9bc;
+  --color-border-emphasis: #5f7d8c;
+  --color-border-focus: #5f7d8c;
+}
+
+/* ============================================
+   PALETTE 3: Ink & Paper
+   Ink Black, Paper White, Oxide Red, Warm Gray
+   ============================================ */
+
+[data-palette="ink"] {
+  /* Neutral Scale - Ink Black based */
+  --color-neutral-50: #fefefe; /* Paper White */
+  --color-neutral-100: #f5f5f5;
+  --color-neutral-200: #e8e8e8;
+  --color-neutral-300: #d1d1d1;
+  --color-neutral-400: #a8a8a8;
+  --color-neutral-500: #8a8a86; /* Warm Gray */
+  --color-neutral-600: #6e6e6a;
+  --color-neutral-700: #525250;
+  --color-neutral-800: #36363a;
+  --color-neutral-900: #1a1a1a; /* Ink Black */
+
+  /* Primary Scale - Oxide Red as brand */
+  --color-primary-50: #fbf2f1;
+  --color-primary-100: #f7e5e3;
+  --color-primary-200: #efcbc7;
+  --color-primary-300: #e7b1ab;
+  --color-primary-400: #c97669;
+  --color-primary-500: #8c3b2f; /* Oxide Red */
+  --color-primary-600: #6f2f26;
+  --color-primary-700: #59251e;
+  --color-primary-800: #461e18;
+  --color-primary-900: #3a1914;
+
+  /* Accent Scale - Warm Gray as accent */
+  --color-accent-50: #f5f5f5;
+  --color-accent-100: #ebebea;
+  --color-accent-200: #d7d7d5;
+  --color-accent-300: #c3c3c0;
+  --color-accent-400: #a6a6a3;
+  --color-accent-500: #8a8a86; /* Warm Gray */
+  --color-accent-600: #6e6e6a;
+  --color-accent-700: #525250;
+  --color-accent-800: #36363a;
+  --color-accent-900: #2a2a28;
+
+  /* Surface Colors */
+  --color-surface-base: #fefefe;
+  --color-surface-raised: #ffffff;
+  --color-surface-overlay: #ffffff;
+  --color-surface-sunken: #f5f5f5;
+
+  /* Text Colors */
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #36363a;
+  --color-text-tertiary: #6e6e6a;
+  --color-text-disabled: #a8a8a8;
+  --color-text-inverse: #ffffff;
+  --color-text-link: #8c3b2f;
+  --color-text-link-hover: #6f2f26;
+
+  /* Border Colors */
+  --color-border-subtle: #e8e8e8;
+  --color-border-default: #d1d1d1;
+  --color-border-emphasis: #8c3b2f;
+  --color-border-focus: #8c3b2f;
+}

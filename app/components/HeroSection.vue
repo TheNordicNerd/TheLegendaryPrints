@@ -5,32 +5,25 @@
     overlay-darkness="medium"
   >
     <div class="bg-"></div>
-    <div class="w-full max-w-xl mx-auto py-24 md:py-48 px-8 md:px-0 text-white">
+    <div class="w-full max-w-5xl mx-auto py-24 md:py-48 px-8 md:px-0 text-white">
       <!-- Animated hero content -->
       <div class="hero-content">
         <h1 class="text-4xl md:text-6xl mb-8 hero-title">
-          Premium Custom Stickers. Zero Compromise.
+          High-quality vinyl stickers, from small runs to large volumes.
         </h1>
-        <p class="text-xl md:text-2xl mb-6 font-bold hero-subtitle">
-          High-quality custom stickers made to last — for brands, creators, and businesses that care
-          about the details.
+        <p class="text-xl max-w-2xl mx-auto md:text-2xl mb-6 font-bold hero-subtitle">
+          The Legendary Prints is a family-run print shop specializing in durable vinyl sticker
+          printing for businesses, artists, schools, and growing brands. We handle everything from
+          short runs to large bulk orders with the same focus on clean prints, consistent color, and
+          dependable turnaround. Big or small, every order is printed with care by people who stand
+          behind their work.
         </p>
         <div class="flex items-center flex-col md:flex-row justify-center gap-4 mb-12 hero-buttons">
           <NuxtLink to="/products">
-            <Button
-              variant="primary"
-              rounded="md"
-              label="Start Your Custom Sticker"
-              class="hover-grow"
-            />
+            <Button variant="primary" rounded="md" label="Professional prints" class="hover-grow" />
           </NuxtLink>
           <NuxtLink to="/products">
-            <Button
-              variant="secondary"
-              rounded="md"
-              label="View Sticker Options"
-              class="hover-grow"
-            />
+            <Button variant="secondary" rounded="md" label="Personal service" class="hover-grow" />
           </NuxtLink>
         </div>
         <p class="text-tertiary text-xs hero-tagline">

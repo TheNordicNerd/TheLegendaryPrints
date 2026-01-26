@@ -11,7 +11,13 @@
         <Icon name="i-lucide-shopping-cart" size="64" class="text-text-tertiary mx-auto mb-4" />
         <h2 class="text-2xl font-bold text-text-primary mb-2">Your cart is empty</h2>
         <p class="text-text-secondary mb-6">Add some products to get started!</p>
-        <Button variant="primary" size="lg" rounded="lg" to="/products" icon-left="i-lucide-package">
+        <Button
+          variant="primary"
+          size="lg"
+          rounded="lg"
+          to="/products"
+          icon-left="i-lucide-package"
+        >
           Browse Products
         </Button>
       </div>
@@ -60,7 +66,9 @@
                       Size:
                       {{ item.customSize || item.size }}" × {{ item.customSize || item.size }}"
                     </p>
-                    <p class="text-sm text-text-secondary capitalize">Material: {{ item.material }}</p>
+                    <p class="text-sm text-text-secondary capitalize">
+                      Material: {{ item.material }}
+                    </p>
                   </div>
                   <Button
                     variant="ghost"
@@ -77,12 +85,7 @@
                   <div class="flex items-center gap-2">
                     <span class="text-sm text-text-secondary">Quantity:</span>
                     <span class="font-medium text-text-primary">
-                      {{
-                        (item.customQuantity && item.customQuantity >= 1000
-                          ? item.customQuantity
-                          : item.quantity
-                        ).toLocaleString()
-                      }}
+                      {{ (item.customQuantity || item.quantity).toLocaleString() }}
                     </span>
                   </div>
                   <div class="text-right">
@@ -113,7 +116,9 @@
               </div>
               <div class="flex justify-between text-text-secondary">
                 <span>Total Quantity:</span>
-                <span class="font-medium text-text-primary">{{ totalQuantity.toLocaleString() }}</span>
+                <span class="font-medium text-text-primary">{{
+                  totalQuantity.toLocaleString()
+                }}</span>
               </div>
             </div>
 
@@ -183,24 +188,15 @@
     description:
       "Review custom sticker order. View cart items, adjust quantities, and checkout for fast professional printing with 3-5 day delivery.",
     ogTitle: "Shopping Cart | Review Order - TLP",
-    ogDescription: "Review and complete your custom sticker order with fast professional printing and delivery.",
+    ogDescription:
+      "Review and complete your custom sticker order with fast professional printing and delivery.",
     robots: "noindex, nofollow", // Cart pages shouldn't be indexed
   });
 
   const handleCheckout = () => {
-    if (cart.isShopifyMode) {
-      // Shopify mode: Redirect to Shopify's secure checkout
-      const checkoutUrl = cart.checkoutUrl.value;
-      if (checkoutUrl) {
-        window.location.href = checkoutUrl;
-      } else {
-        alert("Unable to create checkout. Please try again.");
-      }
-    } else {
-      // Mock mode: Show placeholder or redirect to custom checkout
-      // TODO: Implement custom checkout page at /checkout
-      alert("Checkout functionality coming soon! Switch to Shopify mode for real checkout.");
-    }
+    // Use manual checkout instead of Shopify checkout
+    // This allows us to capture custom pricing
+    router.push('/checkout-manual');
   };
 
   const handleContinueShopping = () => {

@@ -38,7 +38,7 @@
   // Fetch fresh products on mount
   onMounted(async () => {
     try {
-      const fetchedProducts = await fetchProducts();
+      const fetchedProducts = await fetchProducts(4);
       shopifyProducts.value = fetchedProducts;
     } catch (error) {
       // Silently fail - products will remain empty array
@@ -54,8 +54,8 @@
       description: shopifyProduct.description,
       icon: "i-lucide-sticker",
       featured: true,
-      thumbnailImg: shopifyProduct.featuredImage?.url || '',
-      images: shopifyProduct.images?.edges.map(e => e.node.url) || [],
+      thumbnailImg: shopifyProduct.featuredImage?.url || "",
+      images: shopifyProduct.images?.edges.map((e) => e.node.url) || [],
       category: "die-cut" as const,
       tags: shopifyProduct.tags || [],
       shopifyProductId: shopifyProduct.id,

@@ -30,7 +30,7 @@
         <Button
           @click="previousImage"
           variant="custom"
-          class="bg-surface-raised hover:bg-white text-text-primary rounded-full shadow-lg hover:scale-110"
+          class="bg-surface-raised hover:bg-surface-overlay text-text-primary rounded-full shadow-lg hover:scale-110"
           icon="i-lucide-chevron-left"
           icon-size="24"
           size="md"
@@ -45,7 +45,7 @@
         <Button
           @click="nextImage"
           variant="custom"
-          class="bg-surface-raised hover:bg-white text-text-primary rounded-full shadow-lg hover:scale-110"
+          class="bg-surface-raised hover:bg-surface-overlay text-text-primary rounded-full shadow-lg hover:scale-110"
           icon="i-lucide-chevron-right"
           icon-size="24"
           size="md"

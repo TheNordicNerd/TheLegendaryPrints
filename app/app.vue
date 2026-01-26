@@ -29,7 +29,7 @@
       <Link rel="icon" type="image/png" href="/favicon.png" />
     </Head>
 
-    <Body class="bg-background-base antialiased">
+    <Body class="bg-surface-base antialiased">
       <!-- App Layout -->
       <NuxtLayout>
         <NuxtPage />
@@ -54,6 +54,12 @@
   );
   const siteUrl = computed(() => runtimeConfig.public.siteUrl || "https://example.com");
   const ogImage = computed(() => runtimeConfig.public.ogImage || `${siteUrl.value}/og.png`);
+
+  // Initialize color palette on app load
+  if (import.meta.client) {
+    const savedPalette = localStorage.getItem("color-palette") || "classic";
+    document.documentElement.setAttribute("data-palette", savedPalette);
+  }
 </script>
 
 <style>

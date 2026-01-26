@@ -3,15 +3,15 @@
  * Handles fetching, caching, and syncing products from Shopify
  */
 
-import type { ShopifyProduct } from './useShopify';
+import type { ShopifyProduct } from "./useShopify";
 
 export const useShopifyProducts = () => {
   const { getProducts, getProduct } = useShopify();
 
   // Cache products in localStorage
-  const CACHE_KEY = 'shopify_products_cache_v3'; // Changed cache key to force refresh with collection
+  const CACHE_KEY = "shopify_products_cache_v3"; // Changed cache key to force refresh with collection
   const CACHE_DURATION = 1000 * 60 * 60; // 1 hour
-  const COLLECTION_HANDLE = 'custom-stickers'; // Default collection to fetch from
+  const COLLECTION_HANDLE = "custom-stickers"; // Default collection to fetch from
 
   interface CachedProducts {
     products: ShopifyProduct[];
@@ -22,7 +22,7 @@ export const useShopifyProducts = () => {
    * Get cached products from localStorage
    */
   const getCachedProducts = (): ShopifyProduct[] | null => {
-    if (typeof window === 'undefined') return null;
+    if (typeof window === "undefined") return null;
 
     try {
       const cached = localStorage.getItem(CACHE_KEY);
@@ -39,7 +39,7 @@ export const useShopifyProducts = () => {
 
       return data.products;
     } catch (error) {
-      console.error('Failed to get cached products:', error);
+      console.error("Failed to get cached products:", error);
       return null;
     }
   };
@@ -48,7 +48,7 @@ export const useShopifyProducts = () => {
    * Cache products in localStorage
    */
   const cacheProducts = (products: ShopifyProduct[]) => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
 
     try {
       const data: CachedProducts = {
@@ -57,14 +57,14 @@ export const useShopifyProducts = () => {
       };
       localStorage.setItem(CACHE_KEY, JSON.stringify(data));
     } catch (error) {
-      console.error('Failed to cache products:', error);
+      console.error("Failed to cache products:", error);
     }
   };
 
   /**
    * Fetch all products from Shopify with caching
    */
-  const fetchProducts = async (forceRefresh = false): Promise<ShopifyProduct[]> => {
+  const fetchProducts = async (limit = 50, forceRefresh = false): Promise<ShopifyProduct[]> => {
     // Try to get cached products first
     if (!forceRefresh) {
       const cached = getCachedProducts();
@@ -78,7 +78,7 @@ export const useShopifyProducts = () => {
       collection: any;
       products: ShopifyProduct[];
       count: number;
-    }>(`/api/shopify/collections/${COLLECTION_HANDLE}/products?limit=50`);
+    }>(`/api/shopify/collections/${COLLECTION_HANDLE}/products?limit=${limit}`);
 
     if (data?.products) {
       // Cache the products
@@ -107,7 +107,7 @@ export const useShopifyProducts = () => {
       const product = await getProduct(handle);
       return product;
     } catch (error) {
-      console.error('Failed to fetch product:', handle, error);
+      console.error("Failed to fetch product:", handle, error);
       return null;
     }
   };
@@ -181,7 +181,7 @@ export const useShopifyProducts = () => {
    * Clear product cache
    */
   const clearCache = () => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
     localStorage.removeItem(CACHE_KEY);
   };
 

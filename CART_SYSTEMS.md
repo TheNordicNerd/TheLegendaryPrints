@@ -5,6 +5,7 @@ This project supports two cart systems that can be toggled via environment confi
 ## Available Cart Systems
 
 ### 1. Mock Cart (Default)
+
 - **Local storage** - Cart data stored in browser localStorage
 - **Mock products** - Uses products from `~/data/products.ts`
 - **Local pricing** - Prices calculated on the frontend
@@ -12,6 +13,7 @@ This project supports two cart systems that can be toggled via environment confi
 - **Best for**: Development, testing, demos without Shopify account
 
 ### 2. Shopify Cart
+
 - **Shopify Storefront API** - Cart managed by Shopify
 - **Real products** - Products from your Shopify store
 - **Shopify pricing** - Prices managed in Shopify admin
@@ -55,32 +57,29 @@ Use the `useUnifiedCart()` composable which automatically uses the correct cart 
 
 ```vue
 <script setup lang="ts">
-const cart = useUnifiedCart();
+  const cart = useUnifiedCart();
 
-// Check which mode is active
-console.log(cart.cartMode); // "mock" or "shopify"
+  // Add item to cart (works for both systems)
+  await cart.addItem({
+    // Mock mode fields
+    productId: "product-1",
+    productName: "Custom Stickers",
+    productSlug: "custom-stickers",
+    size: 3,
+    material: "vinyl",
+    quantity: 100,
+    pricePerUnit: 0.5,
+    totalPrice: 50.0,
 
-// Add item to cart (works for both systems)
-await cart.addItem({
-  // Mock mode fields
-  productId: 'product-1',
-  productName: 'Custom Stickers',
-  productSlug: 'custom-stickers',
-  size: 3,
-  material: 'vinyl',
-  quantity: 100,
-  pricePerUnit: 0.50,
-  totalPrice: 50.00,
+    // Shopify mode fields
+    merchandiseId: "gid://shopify/ProductVariant/123456",
+  });
 
-  // Shopify mode fields
-  merchandiseId: 'gid://shopify/ProductVariant/123456',
-});
-
-// Access cart data (same API for both)
-console.log(cart.items.value);
-console.log(cart.itemCount.value);
-console.log(cart.formattedTotalPrice.value);
-console.log(cart.isEmpty.value);
+  // Access cart data (same API for both)
+  console.log(cart.items.value);
+  console.log(cart.itemCount.value);
+  console.log(cart.formattedTotalPrice.value);
+  console.log(cart.isEmpty.value);
 </script>
 ```
 
@@ -113,15 +112,15 @@ await cart.refreshCart();
 Access cart state (reactive computed properties):
 
 ```typescript
-cart.items           // Array of cart items
-cart.itemCount       // Number of unique items
-cart.totalQuantity   // Total quantity of all items
-cart.totalPrice      // Total price (string in Shopify, number in mock)
-cart.formattedTotalPrice  // Formatted price string
-cart.isEmpty         // Boolean - is cart empty
-cart.isLoading       // Boolean - loading state (Shopify only)
-cart.error           // String | null - error message (Shopify only)
-cart.checkoutUrl     // String | null - Shopify checkout URL (Shopify only)
+cart.items; // Array of cart items
+cart.itemCount; // Number of unique items
+cart.totalQuantity; // Total quantity of all items
+cart.totalPrice; // Total price (string in Shopify, number in mock)
+cart.formattedTotalPrice; // Formatted price string
+cart.isEmpty; // Boolean - is cart empty
+cart.isLoading; // Boolean - loading state (Shopify only)
+cart.error; // String | null - error message (Shopify only)
+cart.checkoutUrl; // String | null - Shopify checkout URL (Shopify only)
 ```
 
 ---
@@ -131,17 +130,20 @@ cart.checkoutUrl     // String | null - Shopify checkout URL (Shopify only)
 ### Mock Cart System
 
 **Files:**
+
 - `app/composables/useCart.ts` - Cart composable
 - `app/stores/cart.ts` - Pinia store for cart state
 - `app/data/products.ts` - Mock product data
 
 **Features:**
+
 - Persists to localStorage
 - Client-side pricing calculation
 - No external API calls
 - Instant updates
 
 **Limitations:**
+
 - No real checkout
 - No inventory management
 - No order tracking
@@ -150,12 +152,14 @@ cart.checkoutUrl     // String | null - Shopify checkout URL (Shopify only)
 ### Shopify Cart System
 
 **Files:**
+
 - `app/composables/useShopify.ts` - Shopify API composable
 - `app/stores/shopifyCart.ts` - Pinia store for Shopify cart
 - `server/api/shopify/**` - API routes for Shopify
 - `server/utils/shopify.ts` - Shopify GraphQL client
 
 **Features:**
+
 - Real Shopify products
 - Secure checkout via Shopify
 - Inventory management
@@ -165,6 +169,7 @@ cart.checkoutUrl     // String | null - Shopify checkout URL (Shopify only)
 - Shipping rates
 
 **Limitations:**
+
 - Requires Shopify account
 - API rate limits apply
 - Network latency for API calls
@@ -222,14 +227,14 @@ cart.checkoutUrl     // String | null - Shopify checkout URL (Shopify only)
 
 The unified cart provides a consistent API regardless of mode:
 
-| Method | Mock | Shopify | Notes |
-|--------|------|---------|-------|
-| `addItem()` | ✅ | ✅ | Different required fields |
-| `removeItem()` | ✅ | ✅ | Same signature |
-| `updateQuantity()` | ✅ | ✅ | Same signature |
-| `clearCart()` | ✅ | ✅ | Same signature |
-| `initCart()` | No-op | ✅ | Loads cart from Shopify |
-| `refreshCart()` | No-op | ✅ | Syncs with Shopify |
+| Method             | Mock  | Shopify | Notes                     |
+| ------------------ | ----- | ------- | ------------------------- |
+| `addItem()`        | ✅    | ✅      | Different required fields |
+| `removeItem()`     | ✅    | ✅      | Same signature            |
+| `updateQuantity()` | ✅    | ✅      | Same signature            |
+| `clearCart()`      | ✅    | ✅      | Same signature            |
+| `initCart()`       | No-op | ✅      | Loads cart from Shopify   |
+| `refreshCart()`    | No-op | ✅      | Syncs with Shopify        |
 
 ---
 
@@ -246,16 +251,19 @@ The cart mode is set at **build time** via environment variables and cannot be c
 ## Best Practices
 
 ### Development
+
 - Use **mock mode** for local development
 - Faster iteration, no API limits
 - No Shopify account needed
 
 ### Staging
+
 - Use **Shopify mode** with test store
 - Test full checkout flow
 - Verify product sync
 
 ### Production
+
 - Use **Shopify mode** only
 - Real products and checkout
 - Monitor for API errors
@@ -265,18 +273,22 @@ The cart mode is set at **build time** via environment variables and cannot be c
 ## Troubleshooting
 
 ### Cart not persisting
+
 - **Mock**: Check localStorage is enabled
 - **Shopify**: Check cart ID is saved to localStorage
 
 ### Products not loading
+
 - **Mock**: Verify products exist in `~/data/products.ts`
 - **Shopify**: Check API credentials and permissions
 
 ### Checkout not working
+
 - **Mock**: Expected - implement custom checkout or use Shopify
 - **Shopify**: Verify `checkoutUrl` is returned from API
 
 ### Type errors
+
 - Ensure you're passing the correct fields for the active mode
 - Mock requires full product details
 - Shopify requires `merchandiseId`

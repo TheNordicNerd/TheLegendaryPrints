@@ -10,7 +10,7 @@
     :class="buttonClasses"
     :style="customStyles"
     :aria-disabled="disabled ? 'true' : undefined"
-    :aria-label="isIconOnly ? (label || 'Icon button') : undefined"
+    :aria-label="isIconOnly ? label || 'Icon button' : undefined"
     @click="handleClick"
   >
     <!-- Icon Only Mode -->
@@ -226,15 +226,14 @@
 
     const variants = {
       primary:
-        "text-white bg-gradient-to-r from-accent-500 to-accent-500 hover:from-accent-500 hover:to-accent-500 shadow-2xl shadow-accent-500/50 hover:shadow-accent-500/60",
+        "text-text-inverse bg-primary-500 hover:bg-primary-600 shadow-lg shadow-primary-500/30 hover:shadow-primary-600/40",
       secondary:
-        "text-white bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 shadow-xl shadow-gray-500/30 hover:shadow-gray-500/40",
+        "text-text-inverse bg-neutral-700 hover:bg-neutral-800 shadow-lg shadow-neutral-500/20 hover:shadow-neutral-600/30",
       outline:
-        "text-accent-500 border-2 border-accent-500 bg-transparent hover:bg-accent-500 hover:text-white shadow-lg hover:shadow-xl",
-      ghost:
-        "text-gray-700 bg-transparent hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800",
+        "text-primary-500 border-2 border-primary-500 bg-transparent hover:bg-primary-500 hover:text-text-inverse shadow-lg hover:shadow-xl",
+      ghost: "text-text-primary bg-transparent hover:bg-neutral-100 dark:hover:bg-neutral-800",
       danger:
-        "text-white bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 shadow-xl shadow-red-500/30 hover:shadow-red-500/40",
+        "text-text-inverse bg-error-600 hover:bg-error-700 shadow-lg shadow-error-500/30 hover:shadow-error-600/40",
       custom: "",
     };
     return variants[props.variant];

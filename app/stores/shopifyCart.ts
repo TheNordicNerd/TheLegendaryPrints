@@ -22,6 +22,9 @@ export const useShopifyCartStore = defineStore(
         const node = edge.node;
         const attributes = node.attributes || [];
 
+        // Debug: log attributes to see what we're getting
+        console.log('Cart line attributes:', attributes);
+
         // Extract custom attributes
         const uploadedImage = attributes.find(a => a.key === 'Custom Design URL')?.value;
         const uploadedFileName = attributes.find(a => a.key === 'Design Filename')?.value;
@@ -30,9 +33,18 @@ export const useShopifyCartStore = defineStore(
         const customPriceStr = attributes.find(a => a.key === 'Custom Price')?.value;
         const customPricePerUnitStr = attributes.find(a => a.key === 'Custom Price Per Unit')?.value;
 
+        console.log('Extracted custom values:', {
+          customSizeStr,
+          customQuantityStr,
+          customPriceStr,
+          customPricePerUnitStr
+        });
+
         // Use custom pricing if available, otherwise fall back to Shopify pricing
         const totalPrice = customPriceStr ? parseFloat(customPriceStr) : parseFloat(node.cost.totalAmount.amount);
         const pricePerUnit = customPricePerUnitStr ? parseFloat(customPricePerUnitStr) : (totalPrice / node.quantity);
+
+        console.log('Calculated prices:', { totalPrice, pricePerUnit });
 
         // Transform to cart item format for display
         return {
@@ -53,11 +65,16 @@ export const useShopifyCartStore = defineStore(
     });
 
     const itemCount = computed(() => {
-      return cart.value?.totalQuantity || 0;
+      return items.value.length || 0;
     });
 
     const totalQuantity = computed(() => {
-      return cart.value?.totalQuantity || 0;
+      // Sum up custom quantities if available, otherwise use cart's totalQuantity
+      const customTotal = items.value.reduce((sum, item) => {
+        const qty = item.customQuantity || item.quantity;
+        return sum + qty;
+      }, 0);
+      return customTotal || cart.value?.totalQuantity || 0;
     });
 
     const subtotal = computed(() => {

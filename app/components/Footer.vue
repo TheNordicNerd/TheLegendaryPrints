@@ -30,7 +30,6 @@
               size="md"
               rounded="lg"
               :disabled="isSubscribing"
-              class="sm:w-auto whitespace-nowrap"
             >
               {{ isSubscribing ? "Subscribing..." : "Subscribe Now" }}
             </Button>

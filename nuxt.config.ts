@@ -1,20 +1,14 @@
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
-  css: ["~/assets/css/tailwind.css"],
+  css: ["~/assets/css/tailwind.css", "~/assets/css/palettes.css"],
   // Use static generation for Netlify with SSR fallback
   ssr: true,
   nitro: {
-    preset: 'netlify',
+    preset: "netlify",
     prerender: {
       crawlLinks: true,
-      routes: [
-        '/',
-        '/about',
-        '/contact',
-        '/products',
-        '/cart',
-      ],
+      routes: ["/", "/about", "/contact", "/products", "/cart"],
       // Prerender product pages will be handled by the hook below
     },
   },
@@ -59,9 +53,10 @@ export default defineNuxtConfig({
       githubOwner: "nordicnerd",
       currentRepo: process.env.GITHUB_REPO || "client-project",
       currentProject: parseInt(process.env.GITHUB_PROJECT_NUMBER || "1"),
-      cartMode: process.env.NUXT_PUBLIC_CART_MODE || "mock",
       // Public flags for debugging (not the actual credentials)
-      hasShopifyConfig: !!(process.env.SHOPIFY_STORE_DOMAIN && process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN),
+      hasShopifyConfig: !!(
+        process.env.SHOPIFY_STORE_DOMAIN && process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN
+      ),
     },
   },
   content: {
