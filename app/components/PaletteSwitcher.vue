@@ -32,8 +32,7 @@
             @click="selectPalette(palette.id)"
             class="w-full text-left p-3 rounded-md transition-all hover:bg-surface-sunken"
             :class="{
-              'bg-primary-50 dark:bg-primary-900 border-2 border-primary-500':
-                currentPalette === palette.id,
+              'bg-primary-50 border-2 border-primary-500': currentPalette === palette.id,
               'border-2 border-transparent': currentPalette !== palette.id,
             }"
           >

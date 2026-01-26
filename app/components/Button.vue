@@ -231,7 +231,7 @@
         "text-text-inverse bg-secondary-700 hover:bg-secondary-800 shadow-lg shadow-secondary-500/20 hover:shadow-secondary-600/30",
       outline:
         "text-primary-500 border-2 border-primary-500 bg-transparent hover:bg-primary-500 hover:text-text-inverse shadow-lg hover:shadow-xl",
-      ghost: "text-text-primary bg-transparent hover:bg-neutral-100 dark:hover:bg-neutral-800",
+      ghost: "text-text-primary bg-transparent hover:bg-neutral-100",
       danger:
         "text-text-inverse bg-error-600 hover:bg-error-700 shadow-lg shadow-error-500/30 hover:shadow-error-600/40",
       custom: "",
