@@ -53,6 +53,24 @@
                 <p class="text-text-secondary">Saturday - Sunday: Closed</p>
               </div>
             </div>
+
+            <div class="flex items-start gap-4">
+              <div class="p-3 bg-accent-100 rounded-lg">
+                <Icon name="i-lucide-map-pin" size="24" class="text-accent-700" />
+              </div>
+              <div>
+                <h3 class="font-bold text-text-primary mb-1">Location</h3>
+                <a
+                  href="https://maps.google.com/?q=40+N+Charles+Richard+Beall+Blvd,+DeBary,+FL+32713"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-accent-700 hover:text-accent-800 transition-colors"
+                >
+                  40 N Charles Richard Beall Blvd<br />
+                  DeBary, FL 32713
+                </a>
+              </div>
+            </div>
           </div>
         </div>
 

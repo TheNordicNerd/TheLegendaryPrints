@@ -54,7 +54,7 @@
           <Button
             @click="removeImage"
             variant="custom"
-            class="bg-error-500 hover:bg-error-600 text-white rounded-full transition-colors duration-200 shadow-lg"
+            class="bg-red-500 hover:bg-red-600 text-white rounded-full transition-colors duration-200 shadow-lg"
             icon="i-lucide-x"
             aria-label="Remove image"
           />

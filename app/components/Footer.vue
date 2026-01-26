@@ -136,6 +136,17 @@
                   (407) 476-4413
                 </a>
               </li>
+              <li>
+                <a
+                  href="https://maps.google.com/?q=40+N+Charles+Richard+Beall+Blvd,+DeBary,+FL+32713"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-text-secondary hover:text-accent-700 transition-colors duration-200 block"
+                >
+                  <span class="block">40 N Charles Richard Beall Blvd</span>
+                  <span class="block">DeBary, FL 32713</span>
+                </a>
+              </li>
             </ul>
           </div>
         </div>
@@ -152,15 +163,6 @@
             <Icon name="i-lucide-facebook" size="24" />
           </a>
           <a
-            href="https://twitter.com/legendaryprints"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Twitter"
-            class="text-text-secondary hover:text-accent-700 transition-colors duration-200"
-          >
-            <Icon name="i-lucide-twitter" size="24" />
-          </a>
-          <a
             href="https://instagram.com/thelegendaryprints"
             target="_blank"
             rel="noopener noreferrer"
@@ -169,24 +171,25 @@
           >
             <Icon name="i-lucide-instagram" size="24" />
           </a>
-          <a
-            href="https://youtube.com/@thelegendaryprints"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="YouTube"
-            class="text-text-secondary hover:text-accent-700 transition-colors duration-200"
-          >
-            <Icon name="i-lucide-youtube" size="24" />
-          </a>
         </div>
 
         <!-- Bottom Bar -->
         <div class="pt-8 border-t border-border-subtle">
           <div class="flex flex-col md:flex-row items-center justify-between gap-4">
             <!-- Copyright -->
-            <p class="text-xs text-text-secondary text-center md:text-left">
-              © {{ currentYear }} The Legendary Prints. All rights reserved.
-            </p>
+            <div class="flex flex-col items-center md:items-start gap-1">
+              <p class="text-xs text-text-secondary text-center md:text-left">
+                © {{ currentYear }} The Legendary Prints. All rights reserved.
+              </p>
+              <a
+                href="https://thenordicnerd.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-[10px] text-text-tertiary hover:text-accent-700 transition-colors duration-200 text-center md:text-left"
+              >
+                Forged by The Nordic Nerd
+              </a>
+            </div>
 
             <!-- Legal Links -->
             <div class="flex items-center gap-6 text-sm text-text-secondary">
