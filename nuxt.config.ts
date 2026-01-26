@@ -40,6 +40,15 @@ export default defineNuxtConfig({
       weights: [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000],
     },
   },
+  image: {
+    provider: "ipx",
+    domains: ["cdn.shopify.com"],
+    providers: {
+      shopify: {
+        baseURL: "https://cdn.shopify.com",
+      },
+    },
+  },
   runtimeConfig: {
     githubToken: process.env.GITHUB_TOKEN,
     // Server-only env vars (not exposed to client)
