@@ -173,6 +173,7 @@
   const cart = useUnifiedCart();
   const { items, itemCount, totalQuantity, formattedTotalPrice, isEmpty } = cart;
   const router = useRouter();
+  const toast = useToast();
 
   const removeFromCart = async (id: string) => {
     await cart.removeItem(id);
@@ -194,9 +195,13 @@
   });
 
   const handleCheckout = () => {
-    // Use manual checkout instead of Shopify checkout
-    // This allows us to capture custom pricing
-    router.push('/checkout-manual');
+    // Direct Shopify checkout (will charge variant base price, not custom price)
+    const checkoutUrl = cart.checkoutUrl.value;
+    if (checkoutUrl) {
+      window.location.href = checkoutUrl;
+    } else {
+      toast.error("Unable to create Shopify checkout. Please try again.");
+    }
   };
 
   const handleContinueShopping = () => {

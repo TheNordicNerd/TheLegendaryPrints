@@ -118,6 +118,7 @@
 
   const processFile = async (file: File) => {
     const { uploadImage, validateImage } = useCloudinary();
+    const { generateShareToken } = useFileSharing();
 
     const validation = validateImage(file);
     if (!validation.valid) {
@@ -129,12 +130,16 @@
       isUploading.value = true;
       const result = await uploadImage(file, file.name);
 
+      // Generate shareable link
+      const shareLink = await generateShareToken(result.url, file.name);
+
       uploadedImage.value = result.url;
-      uploadedImageUrl.value = result.url;
+      uploadedImageUrl.value = shareLink.shareUrl; // Use shareable URL instead
       uploadedImagePublicId.value = result.publicId;
       uploadedFileName.value = file.name;
 
       console.log('✅ Image uploaded to Cloudinary:', result.url);
+      console.log('🔗 Shareable link:', shareLink.shareUrl);
     } catch (error: any) {
       console.error('❌ Failed to upload image:', error);
       alert(`Failed to upload image: ${error.message || 'Unknown error'}`);

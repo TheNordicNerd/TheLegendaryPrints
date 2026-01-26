@@ -20,10 +20,16 @@
         </p>
         <div class="flex items-center flex-col md:flex-row justify-center gap-4 mb-12 hero-buttons">
           <NuxtLink to="/products">
-            <Button variant="primary" rounded="md" label="Professional prints" class="hover-grow" />
+            <Button
+              variant="primary"
+              size="lg"
+              rounded="md"
+              label="Professional prints"
+              class="hover-grow"
+            />
           </NuxtLink>
           <NuxtLink to="/products">
-            <Button variant="secondary" rounded="md" label="Personal service" class="hover-grow" />
+            <Button variant="secondary" size="lg" rounded="md" label="Quotes" class="hover-grow" />
           </NuxtLink>
         </div>
         <p class="text-tertiary text-xs hero-tagline">
