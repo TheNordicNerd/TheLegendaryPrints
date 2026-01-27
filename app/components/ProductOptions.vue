@@ -146,5 +146,6 @@
     selections,
     customValues,
     effectiveQuantity,
+    dynamicOptions,
   });
 </script>

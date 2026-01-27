@@ -43,7 +43,7 @@
           <div>
             <Button
               variant="primary"
-              :disabled="!productOptionsRef?.uploadedImage"
+              :disabled="requiresImageUpload && !productOptionsRef?.uploadedImage"
               size="lg"
               :full-width="true"
               rounded="lg"
@@ -54,7 +54,7 @@
               Add to Cart
             </Button>
             <p
-              v-if="!productOptionsRef?.uploadedImage"
+              v-if="requiresImageUpload && !productOptionsRef?.uploadedImage"
               class="text-sm text-text-secondary mt-2 text-center"
             >
               Please upload a design to continue
@@ -179,6 +179,19 @@
 
   // Product options ref
   const productOptionsRef = ref<any>(null);
+
+  // Check if product requires image upload
+  // Image upload is shown when dynamicOptions.length > 1 (see ProductOptions.vue line 4)
+  const requiresImageUpload = computed(() => {
+    if (!shopifyProduct.value) return false;
+    if (!productOptionsRef.value) return false;
+
+    // Get the dynamic options from the ProductOptions component
+    const dynamicOptions = productOptionsRef.value.dynamicOptions || [];
+
+    // Image upload requires more than 1 option (excluding default "Title")
+    return dynamicOptions.length > 1;
+  });
 
   // Cart functionality
   const cart = useUnifiedCart();
