@@ -144,6 +144,7 @@ export const CART_FRAGMENT = `
     totalQuantity
     createdAt
     updatedAt
+    completedAt
     cost {
       subtotalAmount {
         amount

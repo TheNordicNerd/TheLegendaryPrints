@@ -77,6 +77,7 @@ export interface ShopifyCart {
   id: string;
   checkoutUrl: string;
   totalQuantity: number;
+  completedAt?: string | null;
   cost: {
     subtotalAmount: {
       amount: string;
