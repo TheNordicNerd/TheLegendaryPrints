@@ -15,12 +15,13 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 py-8">
         <!-- Product Gallery -->
-        <div class="product-gallery-container">
+        <div class="product-gallery-container flex flex-col justify-between">
           <ProductGallery
             :images="productImages"
             :alt="shopifyProduct.title"
             :thumbnail-columns="4"
           />
+          <NuxtImg src="/LP Check List.png" class="hidden lg:block" />
         </div>
 
         <!-- Product Info -->

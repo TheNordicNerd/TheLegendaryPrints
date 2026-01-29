@@ -1,6 +1,6 @@
 <template>
   <Section
-    inner-classes="p-4 py-20 md:py-28"
+    inner-classes="p-4 pt-10 md:pt-28 md:pb-18"
     outer-classes="bg-gradient-to-b from-surface-base via-surface-raised to-surface-sunken"
   >
     <div class="max-w-4xl mx-auto text-center">
@@ -14,7 +14,7 @@
       </div>
 
       <div
-        class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12"
+        class="flex flex-col sm:flex-row gap-4 justify-center items-center"
         data-animate="fade-up"
       >
         <Button
@@ -24,24 +24,16 @@
           to="/products"
           icon-right="i-lucide-arrow-right"
           class="hover-grow"
+          show-lp-background
         >
           Browse Products
         </Button>
-        <Button
-          variant="ghost"
-          size="lg"
-          rounded="lg"
-          to="/contact"
-          icon-left="i-lucide-mail"
-          class="duration-300 border-2 border-transparent hover:border-neutral-900 hover-grow"
-        >
-          Get in Touch
-        </Button>
+        <GhostButton icon-left="i-lucide-mail" top="-100px" label="Get in Touch"> </GhostButton>
       </div>
 
       <!-- Trust Indicators -->
       <div
-        class="flex flex-wrap items-center justify-center gap-8 text-white/80"
+        class="flex flex-wrap items-center justify-center gap-8 text-text-secondary"
         data-animate-stagger
       >
         <div class="hover-float">

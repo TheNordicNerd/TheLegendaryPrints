@@ -81,7 +81,7 @@
   );
 
   const outerClass = computed(() => {
-    return "w-full" + (props.outerClasses ? " " + props.outerClasses : "");
+    return "w-full px-4" + (props.outerClasses ? " " + props.outerClasses : "");
   });
 
   const innerClass = computed(() => {

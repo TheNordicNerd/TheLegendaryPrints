@@ -1,5 +1,5 @@
 <template>
-  <div class="group w-full bg-secondary-100 duration-300 text-secondary-700 py-3 px-4 hover-grow">
+  <div class="group w-full bg-primary-700 duration-300 text-text-inverse py-3 px-4 hover-grow">
     <NuxtLink to="/products" class="p-0 m-0 flex w-full">
       <div class="max-w-7xl mx-auto text-center">
         <p class="text-sm md:text-base font-medium duration-300">

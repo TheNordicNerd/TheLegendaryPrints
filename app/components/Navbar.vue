@@ -12,7 +12,7 @@
             class="flex items-center gap-2 font-extrabold hover:text-accent-500-600 transition-colors duration-200"
             aria-label="The Legendary Prints - Home"
           >
-            <NuxtImg src="/logo-small.png" alt="Legendary Prints" class="h-16" />
+            <NuxtImg src="/LP Logo.png" alt="Legendary Prints" class="h-16" />
           </NuxtLink>
         </div>
 

@@ -7,10 +7,10 @@
   >
     <div class="w-full max-w-5xl mx-auto py-24 md:py-24 px-8 md:px-0 text-white">
       <div class="relative z-10">
-        <h1 class="text-4xl sm:text-5xl md:text-5xl mb-8 md:mb-16 hero-title leading-loose">
+        <h1 class="text-3xl sm:text-5xl md:text-5xl mb-8 md:mb-16 hero-title leading-loose">
           High-quality vinyl stickers, from small runs to large volumes.
         </h1>
-        <p class="text-lg font-medium text-neutral-50 max-w-2xl mx-auto mb-12 hero-subtitle">
+        <p class="text-md font-medium text-neutral-50 max-w-2xl mx-auto mb-12 hero-subtitle">
           The Legendary Prints is a family-run print shop specializing in durable vinyl sticker
           printing for businesses, artists, schools, and growing brands. We handle everything from
           short runs to large bulk orders with the same focus on clean prints, consistent color, and

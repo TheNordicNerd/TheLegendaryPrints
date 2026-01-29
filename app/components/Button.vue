@@ -98,7 +98,7 @@
     inheritAttrs: false,
   });
 
-  interface Props {
+  export interface ButtonProps {
     /** Button label text */
     label?: string;
     /** Visual style variant */
@@ -155,7 +155,7 @@
     gradientHoverTo?: string;
   }
 
-  const props = withDefaults(defineProps<Props>(), {
+  const props = withDefaults(defineProps<ButtonProps>(), {
     label: "",
     variant: "primary",
     size: "md",

@@ -1,9 +1,8 @@
 <template>
   <Section inner-classes="p-4 py-12">
     <div class="max-w-4xl mx-auto">
-      <h1 class="text-4xl text-center py-24 lg:text-7xl mb-8 text-text-primary">
-        About The Legendary Prints
-      </h1>
+      <h1 class="text-4xl text-center pt-24 lg:text-7xl text-text-primary">About</h1>
+      <NuxtImg src="/LP Logo.png" class="w-full" />
 
       <div class="prose prose-lg max-w-none">
         <p class="text-lg text-text-secondary mb-6">

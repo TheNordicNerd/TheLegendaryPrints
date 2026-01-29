@@ -1,5 +1,5 @@
 <template>
-  <Section inner-classes="p-8">
+  <Section inner-classes="p-4 py-12">
     <div class="max-w-7xl mx-auto">
       <!-- Collection Header -->
       <div v-if="collection" class="mb-8">
@@ -39,7 +39,18 @@
           Showing {{ products.length }} {{ products.length === 1 ? "product" : "products" }}
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Mobile: Compact cards -->
+        <div class="grid grid-cols-2 gap-2 sm:gap-3 md:hidden">
+          <ShopifyProductCard
+            v-for="product in products"
+            :key="product.id"
+            :product="product"
+            compact
+          />
+        </div>
+
+        <!-- Desktop: Full cards -->
+        <div class="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           <ShopifyProductCard v-for="product in products" :key="product.id" :product="product" />
         </div>
       </div>

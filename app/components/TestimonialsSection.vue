@@ -2,8 +2,8 @@
   <div>
     <!-- Carousel Section with Background Images -->
     <Section
-      inner-classes="py-20 md:py-32"
-      outer-classes="min-h-[600px] md:min-h-[400px] relative overflow-hidden"
+      inner-classes="py-20 md:py-32 relative"
+      outer-classes="min-h-[600px] px-0 md:min-h-[400px] relative overflow-hidden"
     >
       <!-- Background Images Layer with Crossfade -->
       <div class="absolute inset-0">
@@ -99,6 +99,7 @@
           ></button>
         </div>
       </div>
+      <NuxtImg src="LP Review.png" class="h-24 md:h-64 opacity-40 absolute z-50 bottom-0 left-0" />
     </Section>
 
     <!-- Stats Row -->

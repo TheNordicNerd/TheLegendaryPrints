@@ -75,7 +75,13 @@
         </div>
 
         <!-- Contact Form -->
-        <div class="bg-surface-raised p-8 rounded-lg border border-border-subtle">
+        <div
+          class="bg-surface-raised mt-48 md:mt-14 p-8 rounded-lg border border-border-subtle relative"
+        >
+          <NuxtImg
+            src="/LP Customer Service.png"
+            class="h-64 absolute -top-[204px] left-1/2 -translate-x-1/2"
+          />
           <h2 class="text-2xl font-bold text-text-primary mb-6">Send us a Message</h2>
           <form @submit.prevent="handleSubmit" class="space-y-4">
             <div>
@@ -138,7 +144,7 @@
               rounded="lg"
               :disabled="isSubmitting"
             >
-              {{ isSubmitting ? 'Sending...' : 'Send Message' }}
+              {{ isSubmitting ? "Sending..." : "Send Message" }}
             </Button>
           </form>
         </div>
@@ -162,8 +168,8 @@
     isSubmitting.value = true;
 
     try {
-      await $fetch('/api/contact/submit', {
-        method: 'POST',
+      await $fetch("/api/contact/submit", {
+        method: "POST",
         body: {
           name: form.value.name,
           email: form.value.email,
@@ -172,7 +178,7 @@
         },
       });
 
-      toast.success('Message sent successfully! We\'ll get back to you soon.');
+      toast.success("Message sent successfully! We'll get back to you soon.");
 
       // Reset form
       form.value = {
@@ -182,7 +188,7 @@
         message: "",
       };
     } catch (error: any) {
-      toast.error(error.data?.message || 'Failed to send message. Please try again.');
+      toast.error(error.data?.message || "Failed to send message. Please try again.");
     } finally {
       isSubmitting.value = false;
     }
