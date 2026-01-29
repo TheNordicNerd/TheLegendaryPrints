@@ -27,8 +27,48 @@ export interface ParsedVariant {
   variant: ShopifyVariant;
 }
 
+/**
+ * Extract product options from Shopify product variants
+ */
+const getProductVariantOptions = (product: ShopifyProduct) => {
+  const optionsMap = new Map<string, Set<string>>();
+
+  // Iterate through all variants to collect options
+  product.variants.edges.forEach(({ node: variant }) => {
+    variant.selectedOptions.forEach(({ name, value }) => {
+      if (!optionsMap.has(name)) {
+        optionsMap.set(name, new Set());
+      }
+      optionsMap.get(name)!.add(value);
+    });
+  });
+
+  // Convert to array format
+  const options = Array.from(optionsMap.entries()).map(([name, valuesSet]) => ({
+    name,
+    values: Array.from(valuesSet),
+  }));
+
+  return { options };
+};
+
+/**
+ * Find a variant that matches the selected options
+ */
+const findVariant = (
+  product: ShopifyProduct,
+  selectedOptions: Record<string, string>,
+): ShopifyVariant | null => {
+  const variant = product.variants.edges.find(({ node: variant }) => {
+    return variant.selectedOptions.every(({ name, value }) => {
+      return selectedOptions[name] === value;
+    });
+  });
+
+  return variant?.node || null;
+};
+
 export const useProductOptions = (product: ShopifyProduct) => {
-  const { getProductVariantOptions, findVariant } = useShopifyVariants();
 
   /**
    * Extract product options from Shopify variants
@@ -68,9 +108,9 @@ export const useProductOptions = (product: ShopifyProduct) => {
     // Default pattern: size / material / quantity
     const parsed: Record<string, string> = {};
 
-    if (parts.length >= 1) parsed.Size = parts[0];
-    if (parts.length >= 2) parsed.Material = parts[1];
-    if (parts.length >= 3) parsed.Quantity = parts[2];
+    if (parts.length >= 1 && parts[0]) parsed.Size = parts[0];
+    if (parts.length >= 2 && parts[1]) parsed.Material = parts[1];
+    if (parts.length >= 3 && parts[2]) parsed.Quantity = parts[2];
 
     return parsed;
   };

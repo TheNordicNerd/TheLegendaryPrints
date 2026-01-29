@@ -130,8 +130,15 @@
               ></textarea>
             </div>
 
-            <Button type="submit" variant="primary" size="lg" :full-width="true" rounded="lg">
-              Send Message
+            <Button
+              type="submit"
+              variant="primary"
+              size="lg"
+              :full-width="true"
+              rounded="lg"
+              :disabled="isSubmitting"
+            >
+              {{ isSubmitting ? 'Sending...' : 'Send Message' }}
             </Button>
           </form>
         </div>
@@ -148,15 +155,37 @@
     message: "",
   });
 
-  const handleSubmit = () => {
-    // TODO: Implement form submission
-    alert("Thank you for your message! We'll get back to you soon.");
-    form.value = {
-      name: "",
-      email: "",
-      subject: "",
-      message: "",
-    };
+  const isSubmitting = ref(false);
+  const toast = useToast();
+
+  const handleSubmit = async () => {
+    isSubmitting.value = true;
+
+    try {
+      await $fetch('/api/contact/submit', {
+        method: 'POST',
+        body: {
+          name: form.value.name,
+          email: form.value.email,
+          subject: form.value.subject,
+          message: form.value.message,
+        },
+      });
+
+      toast.success('Message sent successfully! We\'ll get back to you soon.');
+
+      // Reset form
+      form.value = {
+        name: "",
+        email: "",
+        subject: "",
+        message: "",
+      };
+    } catch (error: any) {
+      toast.error(error.data?.message || 'Failed to send message. Please try again.');
+    } finally {
+      isSubmitting.value = false;
+    }
   };
 
   // SEO Meta Tags

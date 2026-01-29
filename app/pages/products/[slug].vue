@@ -116,7 +116,7 @@
   const productImages = computed(() => {
     if (!shopifyProduct.value) return [];
 
-    const images = shopifyProduct.value.images?.edges.map((e) => e.node.url) || [];
+    const images = shopifyProduct.value.images?.edges?.map((e) => e.node.url) || [];
 
     // If no images in the images array, use featured image
     if (images.length === 0 && shopifyProduct.value.featuredImage?.url) {
@@ -186,10 +186,10 @@
     if (!productOptionsRef.value) return false;
 
     // Get the dynamic options from the ProductOptions component
-    const dynamicOptions = productOptionsRef.value.dynamicOptions || [];
+    const dynamicOptions = productOptionsRef.value?.dynamicOptions || [];
 
     // Image upload requires more than 1 option (excluding default "Title")
-    return dynamicOptions.length > 1;
+    return Array.isArray(dynamicOptions) && dynamicOptions.length > 1;
   });
 
   // Cart functionality

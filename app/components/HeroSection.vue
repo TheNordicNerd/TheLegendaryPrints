@@ -20,7 +20,7 @@
         <div class="flex items-center flex-col md:flex-row justify-center gap-4 mb-12 hero-buttons">
           <NuxtLink to="/products">
             <Button
-              variant="primary"
+              variant="secondary"
               size="lg"
               rounded="lg"
               label="Order Now!"
@@ -29,11 +29,11 @@
           </NuxtLink>
           <NuxtLink to="/products">
             <Button
-              variant="secondary"
+              variant="ghost"
               size="lg"
               rounded="lg"
               label="Get a Quote"
-              class="hover-grow"
+              class="hover-grow text-white hover:bg-transparent hover:border-white border-2 border-transparent"
             />
           </NuxtLink>
         </div>

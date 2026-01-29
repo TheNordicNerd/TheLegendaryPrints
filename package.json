@@ -37,6 +37,7 @@
     "nuxt-og-image": "5.1.13",
     "pinia": "^3.0.4",
     "pinia-plugin-persistedstate": "^4.7.1",
+    "resend": "^6.9.1",
     "sass-embedded": "^1.97.2",
     "stripe": "^20.2.0",
     "unstorage": "^1.17.4",

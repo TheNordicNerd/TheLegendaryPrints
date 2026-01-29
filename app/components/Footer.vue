@@ -14,25 +14,44 @@
           </p>
           <form
             @submit.prevent="handleSubscribe"
-            class="flex flex-col sm:flex-row gap-3 max-w-xl mx-auto"
+            class="flex flex-col gap-3 max-w-xl mx-auto"
           >
-            <input
-              v-model="email"
-              type="email"
-              placeholder="Enter your email"
-              required
-              class="flex-1 px-6 py-3.5 rounded-lg border-2 border-border-default focus:border-accent-500 focus:outline-none bg-surface-base text-text-primary transition-colors duration-200"
-              aria-label="Email address"
-            />
-            <Button
-              type="submit"
-              variant="primary"
-              size="md"
-              rounded="lg"
-              :disabled="isSubscribing"
-            >
-              {{ isSubscribing ? "Subscribing..." : "Subscribe Now" }}
-            </Button>
+            <div class="flex flex-col sm:flex-row gap-3">
+              <input
+                v-model="firstName"
+                type="text"
+                placeholder="First name"
+                class="flex-1 px-6 py-3.5 rounded-lg border-2 border-border-default focus:border-accent-500 focus:outline-none bg-surface-base text-text-primary transition-colors duration-200"
+                aria-label="First name"
+              />
+              <input
+                v-model="lastName"
+                type="text"
+                placeholder="Last name"
+                class="flex-1 px-6 py-3.5 rounded-lg border-2 border-border-default focus:border-accent-500 focus:outline-none bg-surface-base text-text-primary transition-colors duration-200"
+                aria-label="Last name"
+              />
+            </div>
+            <div class="flex flex-col sm:flex-row gap-3">
+              <input
+                v-model="email"
+                type="email"
+                placeholder="Enter your email"
+                required
+                class="flex-1 px-6 py-3.5 rounded-lg border-2 border-border-default focus:border-accent-500 focus:outline-none bg-surface-base text-text-primary transition-colors duration-200"
+                aria-label="Email address"
+              />
+              <Button
+                type="submit"
+                variant="primary"
+                size="md"
+                rounded="lg"
+                :disabled="isSubscribing"
+                class="sm:w-auto"
+              >
+                {{ isSubscribing ? "Subscribing..." : "Subscribe Now" }}
+              </Button>
+            </div>
           </form>
           <p
             v-if="subscribeMessage"
@@ -204,33 +223,51 @@
 
 <script setup lang="ts">
   const email = ref("");
+  const firstName = ref("");
+  const lastName = ref("");
   const isSubscribing = ref(false);
   const subscribeMessage = ref("");
   const subscribeSuccess = ref(false);
 
   const currentYear = new Date().getFullYear();
 
+  const toast = useToast();
+
   const handleSubscribe = async () => {
-    if (!email.value) return;
+    if (!email.value || !email.value.includes('@')) {
+      subscribeSuccess.value = false;
+      subscribeMessage.value = "Please enter a valid email address";
+      return;
+    }
 
     isSubscribing.value = true;
     subscribeMessage.value = "";
 
     try {
-      // Simulate API call - replace with actual newsletter subscription
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await $fetch('/api/newsletter/subscribe', {
+        method: 'POST',
+        body: {
+          email: email.value,
+          firstName: firstName.value,
+          lastName: lastName.value,
+        },
+      });
 
       subscribeSuccess.value = true;
       subscribeMessage.value = "Successfully subscribed! Check your email for confirmation.";
+      toast.success('Welcome to The Legendary Prints newsletter!');
       email.value = "";
+      firstName.value = "";
+      lastName.value = "";
 
       // Clear message after 5 seconds
       setTimeout(() => {
         subscribeMessage.value = "";
       }, 5000);
-    } catch (error) {
+    } catch (error: any) {
       subscribeSuccess.value = false;
-      subscribeMessage.value = "Something went wrong. Please try again.";
+      subscribeMessage.value = error.data?.message || "Something went wrong. Please try again.";
+      toast.error('Failed to subscribe to newsletter');
     } finally {
       isSubscribing.value = false;
     }

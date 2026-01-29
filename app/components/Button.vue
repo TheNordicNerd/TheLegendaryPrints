@@ -332,7 +332,7 @@
       {
         "w-full": props.fullWidth,
         "hover:scale-105 hover:-translate-y-1": !props.disabled && !isCustom.value,
-        "opacity-50 cursor-not-allowed pointer-events-none": props.disabled,
+        "opacity-60 cursor-not-allowed pointer-events-none grayscale": props.disabled,
       },
       // Add custom classes from parent component
       attrs.class as string | undefined,
@@ -384,6 +384,8 @@
   .button:disabled,
   .button[aria-disabled="true"] {
     pointer-events: none;
+    opacity: 0.5 !important;
+    filter: grayscale(50%);
   }
 
   .button:disabled:hover,
