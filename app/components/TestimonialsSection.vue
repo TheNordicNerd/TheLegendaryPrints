@@ -49,7 +49,7 @@
               </div>
 
               <!-- Quote -->
-              <p class="text-2xl md:text-4xl font-light italic mb-8 leading-relaxed">
+              <p class="text-2xl md:text-3xl md:px-12 font-light italic mb-8 leading-relaxed">
                 "{{ testimonial.quote }}"
               </p>
 
@@ -81,14 +81,14 @@
         </button>
         <button
           @click="nextSlide"
-          class="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 flex items-center justify-center transition-all duration-200 z-20"
+          class="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 items-center justify-center transition-all duration-200 z-20"
           aria-label="Next testimonial"
         >
           <Icon name="i-lucide-chevron-right" size="24" class="text-white" />
         </button>
 
         <!-- Dots Navigation -->
-        <div class="absolute bottom-8 left-0 right-0 flex justify-center gap-3 z-20">
+        <div class="absolute bottom-0 left-0 right-0 flex justify-center gap-3 z-20">
           <button
             v-for="(_, index) in testimonials"
             :key="index"

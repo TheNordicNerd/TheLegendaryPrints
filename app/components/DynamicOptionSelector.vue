@@ -20,8 +20,8 @@
         class="option-button px-4 py-2 rounded-lg border-2 transition-all duration-200 font-medium text-sm"
         :class="[
           selectedValue === value
-            ? 'border-accent-700 bg-secondary-700 text-text-inverse shadow-md'
-            : 'border-border-default hover:border-secondary-500 text-text-primary hover:bg-surface-sunken',
+            ? 'border-accent-700 bg-accent-700 text-text-inverse shadow-md'
+            : 'border-border-default hover:border-accent-500 text-text-primary hover:bg-surface-sunken',
         ]"
       >
         {{ value }}

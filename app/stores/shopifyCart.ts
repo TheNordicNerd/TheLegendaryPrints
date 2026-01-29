@@ -3,11 +3,11 @@
  * Manages cart state with Shopify Storefront API
  */
 
-import { defineStore } from 'pinia';
-import type { ShopifyCart } from '~/composables/useShopify';
+import { defineStore } from "pinia";
+import type { ShopifyCart } from "~/composables/useShopify";
 
 export const useShopifyCartStore = defineStore(
-  'shopifyCart',
+  "shopifyCart",
   () => {
     // State
     const cart = ref<ShopifyCart | null>(null);
@@ -22,42 +22,36 @@ export const useShopifyCartStore = defineStore(
         const node = edge.node;
         const attributes = node.attributes || [];
 
-        // Debug: log attributes to see what we're getting
-        console.log('Cart line attributes:', attributes);
-
         // Extract custom attributes
-        const uploadedImage = attributes.find(a => a.key === 'Custom Design URL')?.value;
-        const uploadedFileName = attributes.find(a => a.key === 'Design Filename')?.value;
-        const customSizeStr = attributes.find(a => a.key === 'Custom Size')?.value;
-        const customQuantityStr = attributes.find(a => a.key === 'Custom Quantity')?.value;
-        const customPriceStr = attributes.find(a => a.key === 'Custom Price')?.value;
-        const customPricePerUnitStr = attributes.find(a => a.key === 'Custom Price Per Unit')?.value;
-
-        console.log('Extracted custom values:', {
-          customSizeStr,
-          customQuantityStr,
-          customPriceStr,
-          customPricePerUnitStr
-        });
+        const uploadedImage = attributes.find((a) => a.key === "Custom Design URL")?.value;
+        const uploadedFileName = attributes.find((a) => a.key === "Design Filename")?.value;
+        const customSizeStr = attributes.find((a) => a.key === "Custom Size")?.value;
+        const customQuantityStr = attributes.find((a) => a.key === "Custom Quantity")?.value;
+        const customPriceStr = attributes.find((a) => a.key === "Custom Price")?.value;
+        const customPricePerUnitStr = attributes.find(
+          (a) => a.key === "Custom Price Per Unit",
+        )?.value;
 
         // Use custom pricing if available, otherwise fall back to Shopify pricing
-        const totalPrice = customPriceStr ? parseFloat(customPriceStr) : parseFloat(node.cost.totalAmount.amount);
-        const pricePerUnit = customPricePerUnitStr ? parseFloat(customPricePerUnitStr) : (totalPrice / node.quantity);
-
-        console.log('Calculated prices:', { totalPrice, pricePerUnit });
+        const totalPrice = customPriceStr
+          ? parseFloat(customPriceStr)
+          : parseFloat(node.cost.totalAmount.amount);
+        const pricePerUnit = customPricePerUnitStr
+          ? parseFloat(customPricePerUnitStr)
+          : totalPrice / node.quantity;
 
         // Transform to cart item format for display
         return {
           ...node,
           uploadedImage,
           uploadedFileName,
-          customSize: customSizeStr ? parseFloat(customSizeStr.replace('"', '')) : undefined,
+          customSize: customSizeStr ? parseFloat(customSizeStr.replace('"', "")) : undefined,
           customQuantity: customQuantityStr ? parseInt(customQuantityStr) : undefined,
           // Add fields needed by cart page
           productName: node.merchandise.product.title,
           productSlug: node.merchandise.product.handle,
-          size: customSizeStr ? parseFloat(customSizeStr.replace('"', '')) : 2,
-          material: node.merchandise.title.toLowerCase().includes('matte') ? 'matte' : 'glossy',
+          size: customSizeStr ? parseFloat(customSizeStr.replace('"', "")) : 2,
+          material: node.merchandise.title.toLowerCase().includes("matte") ? "matte" : "glossy",
           pricePerUnit,
           totalPrice,
         };
@@ -78,39 +72,39 @@ export const useShopifyCartStore = defineStore(
     });
 
     const subtotal = computed(() => {
-      if (!cart.value) return '0.00';
+      if (!cart.value) return "0.00";
       // Calculate subtotal from custom pricing in items
       const customTotal = items.value.reduce((sum, item) => sum + item.totalPrice, 0);
       return customTotal > 0 ? customTotal.toFixed(2) : cart.value.cost.subtotalAmount.amount;
     });
 
     const total = computed(() => {
-      if (!cart.value) return '0.00';
+      if (!cart.value) return "0.00";
       // Use subtotal as total (no tax for now)
       return subtotal.value;
     });
 
     const tax = computed(() => {
       // No tax calculation for custom pricing
-      return '0.00';
+      return "0.00";
     });
 
     const formattedSubtotal = computed(() => {
-      if (!cart.value) return '$0.00';
+      if (!cart.value) return "$0.00";
       return `$${subtotal.value}`;
     });
 
     const formattedTotal = computed(() => {
-      if (!cart.value) return '$0.00';
+      if (!cart.value) return "$0.00";
       return `$${total.value}`;
     });
 
     const formattedTax = computed(() => {
-      return '$0.00';
+      return "$0.00";
     });
 
     const checkoutUrl = computed(() => {
-      return cart.value?.checkoutUrl || '';
+      return cart.value?.checkoutUrl || "";
     });
 
     const isEmpty = computed(() => {
@@ -131,12 +125,12 @@ export const useShopifyCartStore = defineStore(
         if (newCart) {
           cart.value = newCart;
           cartId.value = newCart.id;
-          if (typeof window !== 'undefined') {
-            localStorage.setItem('shopifyCartId', newCart.id);
+          if (typeof window !== "undefined") {
+            localStorage.setItem("shopifyCartId", newCart.id);
           }
         }
       } catch (err: any) {
-        error.value = err.message || 'Failed to create cart';
+        error.value = err.message || "Failed to create cart";
         throw err;
       } finally {
         isLoading.value = false;
@@ -150,9 +144,9 @@ export const useShopifyCartStore = defineStore(
       const { getCart } = useShopify();
 
       // Try to load cart ID from localStorage
-      if (typeof window === 'undefined') return; // SSR safety
+      if (typeof window === "undefined") return; // SSR safety
 
-      const savedCartId = localStorage.getItem('shopifyCartId');
+      const savedCartId = localStorage.getItem("shopifyCartId");
 
       try {
         if (savedCartId) {
@@ -162,26 +156,21 @@ export const useShopifyCartStore = defineStore(
           if (existingCart) {
             cart.value = existingCart;
             cartId.value = existingCart.id;
-            console.log('✅ Loaded existing cart:', existingCart.id);
           } else {
-            console.log('⚠️ Cart not found, creating new one');
-            localStorage.removeItem('shopifyCartId'); // Clear invalid cart ID
+            localStorage.removeItem("shopifyCartId"); // Clear invalid cart ID
             await createNewCart();
           }
         } else {
           // Create new cart
-          console.log('🆕 No saved cart, creating new one');
           await createNewCart();
         }
       } catch (err: any) {
-        console.error('❌ Failed to initialize cart:', err);
         // If cart not found or error, clear localStorage and create new one
-        localStorage.removeItem('shopifyCartId');
+        localStorage.removeItem("shopifyCartId");
         try {
           await createNewCart();
         } catch (createErr: any) {
-          console.error('❌ Failed to create new cart:', createErr);
-          error.value = 'Failed to initialize cart';
+          error.value = "Failed to initialize cart";
         }
       } finally {
         isLoading.value = false;
@@ -194,7 +183,7 @@ export const useShopifyCartStore = defineStore(
     const addItem = async (
       merchandiseId: string,
       quantity: number = 1,
-      attributes?: Array<{ key: string; value: string }>
+      attributes?: Array<{ key: string; value: string }>,
     ) => {
       const { addToCart } = useShopify();
 
@@ -204,7 +193,7 @@ export const useShopifyCartStore = defineStore(
       }
 
       if (!cartId.value) {
-        throw new Error('Failed to create cart');
+        throw new Error("Failed to create cart");
       }
 
       isLoading.value = true;
@@ -217,7 +206,7 @@ export const useShopifyCartStore = defineStore(
           cart.value = updatedCart;
         }
       } catch (err: any) {
-        error.value = err.message || 'Failed to add item to cart';
+        error.value = err.message || "Failed to add item to cart";
         throw err;
       } finally {
         isLoading.value = false;
@@ -240,7 +229,7 @@ export const useShopifyCartStore = defineStore(
           cart.value = updatedCart;
         }
       } catch (err: any) {
-        error.value = err.message || 'Failed to update quantity';
+        error.value = err.message || "Failed to update quantity";
         throw err;
       } finally {
         isLoading.value = false;
@@ -263,7 +252,7 @@ export const useShopifyCartStore = defineStore(
           cart.value = updatedCart;
         }
       } catch (err: any) {
-        error.value = err.message || 'Failed to remove item';
+        error.value = err.message || "Failed to remove item";
         throw err;
       } finally {
         isLoading.value = false;
@@ -293,7 +282,7 @@ export const useShopifyCartStore = defineStore(
           cart.value = updatedCart;
         }
       } catch (err: any) {
-        console.error('Failed to refresh cart:', err);
+        console.error("Failed to refresh cart:", err);
       } finally {
         isLoading.value = false;
       }
@@ -329,8 +318,8 @@ export const useShopifyCartStore = defineStore(
   },
   {
     persist: {
-      storage: typeof window !== 'undefined' ? localStorage : undefined,
-      pick: ['cartId'],
+      storage: typeof window !== "undefined" ? localStorage : undefined,
+      pick: ["cartId"],
     },
-  }
+  },
 );

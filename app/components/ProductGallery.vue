@@ -76,10 +76,10 @@
           quality="70"
         />
 
-        <!-- Active indicator overlay -->
+        <!-- Active indicator border (neutral, no colored overlay on artwork) -->
         <div
           v-if="currentIndex === index"
-          class="absolute inset-0 bg-primary-100 opacity-50 pointer-events-none"
+          class="absolute inset-0 ring-4 ring-text-primary pointer-events-none rounded-lg"
         ></div>
       </button>
     </div>

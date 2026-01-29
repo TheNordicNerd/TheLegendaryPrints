@@ -1,9 +1,10 @@
 <template>
   <Section inner-classes="p-4">
     <!-- Loading State -->
-    <div v-if="loadingShopify" class="text-center py-12">
+    <div v-if="loadingShopify" class="text-center py-12" role="status" aria-live="polite">
       <div
         class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-accent-700 border-t-transparent"
+        aria-hidden="true"
       ></div>
       <p class="mt-4 text-text-secondary">Loading product...</p>
     </div>
@@ -93,8 +94,6 @@
   onMounted(async () => {
     try {
       const result = await fetchProductByHandle(slug);
-
-      console.log({ result });
 
       if (result) {
         shopifyProduct.value = result;
@@ -216,13 +215,6 @@
     const customValues = opts.customValues;
     const effectiveQuantity = opts.effectiveQuantity;
 
-    console.log("RAW OPTIONS from component:", {
-      selections,
-      customValues,
-      effectiveQuantity,
-      allOpts: opts,
-    });
-
     // Use the new composable to get variant info
     const { getVariantInfo } = useProductOptions(shopifyProduct.value);
     const variantInfo = getVariantInfo(selections, customValues);
@@ -247,14 +239,6 @@
     const totalPrice = variantPrice;
     const pricePerUnit = variantPrice; // Variant price is already per unit or total based on Shopify setup
 
-    console.log("Add to cart - variant pricing:", {
-      variantPrice,
-      totalPrice,
-      pricePerUnit,
-      effectiveQuantity,
-      effectiveSize,
-    });
-
     // Add to cart
     // IMPORTANT: Add quantity as 1 to avoid double-multiplication
     // The totalPrice already includes the quantity (e.g., 500 stickers)
@@ -274,13 +258,6 @@
       // Show success toast
       toast.success(
         `Added ${effectiveQuantity.toLocaleString()} ${shopifyProduct.value.title} to cart!`,
-      );
-
-      console.log(
-        "✅ Added variant to cart:",
-        variantInfo.variant.title,
-        "at",
-        variantInfo.variant.price,
       );
     } catch (error: any) {
       toast.error(`Failed to add to cart: ${error.message}`);

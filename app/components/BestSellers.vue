@@ -3,64 +3,32 @@
     <SectionHeader
       title="Check Out Our Best Sellers"
       description="Choose from some of the top products others are looking at."
+      show-more-button
     ></SectionHeader>
     <div
-      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 px-4 sm:px-8 lg:px-12"
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-4 sm:px-8 lg:px-12"
       role="list"
     >
-      <ProductCard
-        v-for="product in products"
-        :key="product.id"
-        :product="product"
-        variant="hero"
-        :show-tags="false"
-        :image-quality="70"
-      />
+      <ShopifyProductCard v-for="product in shopifyProducts" :key="product.id" :product="product" />
     </div>
   </Section>
 </template>
 
 <script setup lang="ts">
   import type { ShopifyProduct } from "~/composables/useShopify";
-  import type { Product } from "~/types/product";
 
-  const { fetchProducts, getCachedProducts } = useShopifyProducts();
+  const { fetchProductsFromCollection } = useShopifyProducts();
   const shopifyProducts = ref<ShopifyProduct[]>([]);
 
-  // Try to get cached products first
-  if (import.meta.client) {
-    const cached = getCachedProducts();
-    if (cached) {
-      shopifyProducts.value = cached;
-    }
-  }
-
-  // Fetch fresh products on mount
+  // Fetch products from "best-sellers" collection on mount
   onMounted(async () => {
     try {
-      const fetchedProducts = await fetchProducts(4);
+      const fetchedProducts = await fetchProductsFromCollection("best-sellers", 3);
 
       shopifyProducts.value = fetchedProducts.filter((product) => product.title !== "SAMPLE PACK");
     } catch (error) {
       // Silently fail - products will remain empty array
     }
-  });
-
-  // Transform Shopify products to match local Product interface
-  const products = computed<Product[]>(() => {
-    return shopifyProducts.value.map((shopifyProduct) => ({
-      id: shopifyProduct.id,
-      name: shopifyProduct.title,
-      slug: shopifyProduct.handle,
-      description: shopifyProduct.description,
-      icon: "i-lucide-sticker",
-      featured: true,
-      thumbnailImg: shopifyProduct.featuredImage?.url || "",
-      images: shopifyProduct.images?.edges.map((e) => e.node.url) || [],
-      category: "die-cut" as const,
-      tags: shopifyProduct.tags || [],
-      shopifyProductId: shopifyProduct.id,
-    }));
   });
 </script>
 

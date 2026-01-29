@@ -10,7 +10,7 @@
       <Meta name="description" :content="siteDescription" />
 
       <!-- Theme / Branding -->
-      <Meta name="theme-color" content="#0f172a" />
+      <Meta name="theme-color" content="#2C4FA3" />
 
       <!-- Open Graph -->
       <Meta property="og:type" content="website" />
@@ -39,12 +39,6 @@
 </template>
 
 <script setup lang="ts">
-  /**
-   * Global app metadata
-   * Safe defaults for all projects
-   * Override per-page using useSeoMeta or definePageMeta
-   */
-
   const runtimeConfig = useRuntimeConfig();
 
   const siteName = computed(() => runtimeConfig.public.siteName || "The Nordic Base");
@@ -54,15 +48,6 @@
   );
   const siteUrl = computed(() => runtimeConfig.public.siteUrl || "https://example.com");
   const ogImage = computed(() => runtimeConfig.public.ogImage || `${siteUrl.value}/og.png`);
-
-  // Initialize color palette and font pairing on app load
-  if (import.meta.client) {
-    const savedPalette = localStorage.getItem("color-palette") || "classic";
-    document.documentElement.setAttribute("data-palette", savedPalette);
-
-    const savedFontPairing = localStorage.getItem("fontPairing") || "pair1";
-    document.documentElement.setAttribute("data-font-pairing", savedFontPairing);
-  }
 </script>
 
 <style>

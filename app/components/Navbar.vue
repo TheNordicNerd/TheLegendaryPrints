@@ -34,6 +34,9 @@
                 <div
                   @mouseenter="openDesktopDropdown(link.text)"
                   @mouseleave="scheduleCloseDesktopDropdown"
+                  @keydown.enter="toggleDesktopDropdown(link.text)"
+                  @keydown.space.prevent="toggleDesktopDropdown(link.text)"
+                  @keydown.escape="closeDesktopDropdown"
                 >
                   <NavLink
                     to="/products"
@@ -41,6 +44,8 @@
                     :text="link.text"
                     :is-drop-down="true"
                     :active-dropdown="activeDesktopDropdown"
+                    :aria-expanded="activeDesktopDropdown === link.text"
+                    aria-haspopup="true"
                   />
                 </div>
 
@@ -68,7 +73,7 @@
           <!-- CTA Button -->
           <Button
             variant="primary"
-            rounded="md"
+            rounded="lg"
             size="sm"
             icon-left="i-lucide-package"
             left-icon-size="16"
@@ -96,12 +101,6 @@
                 {{ cartItemCount }}
               </div>
             </div>
-
-            <!-- Font Pairing Switcher -->
-            <FontPairingSwitcher />
-
-            <!-- Palette Switcher -->
-            <PaletteSwitcher />
           </div>
         </div>
 
@@ -126,23 +125,6 @@
               {{ cartItemCount }}
             </div>
           </div>
-
-          <!-- Font Pairing Switcher (Mobile) -->
-          <FontPairingSwitcher />
-
-          <!-- Palette Switcher (Mobile) -->
-          <PaletteSwitcher />
-
-          <!-- Theme Toggle (Mobile) -->
-          <Button
-            variant="ghost"
-            size="sm"
-            rounded="lg"
-            :icon="themeIcon"
-            icon-size="20"
-            label="Toggle theme"
-            @click="handleToggleTheme"
-          />
 
           <!-- Mobile Menu Button -->
           <Button
@@ -254,8 +236,6 @@
    * @component
    */
 
-  import type { ShopifyProduct } from "~/composables/useShopify";
-
   interface Link {
     text: string;
     to: string;
@@ -264,40 +244,6 @@
   }
 
   // Fetch products from Shopify
-  const { fetchProducts, getCachedProducts } = useShopifyProducts();
-  const shopifyProducts = ref<ShopifyProduct[]>([]);
-
-  // Try to get cached products first (immediate)
-  if (import.meta.client) {
-    const cached = getCachedProducts();
-    if (cached) {
-      shopifyProducts.value = cached;
-    }
-  }
-
-  // Fetch fresh products on mount
-  onMounted(async () => {
-    try {
-      const products = await fetchProducts();
-      shopifyProducts.value = products;
-    } catch (error) {
-      // Silently fail - products will remain empty array
-    }
-  });
-
-  // Generate product links dynamically from Shopify products
-  const productLinks = computed(() => {
-    if (!shopifyProducts.value || shopifyProducts.value.length === 0) {
-      return [];
-    }
-
-    return shopifyProducts.value.map((product: ShopifyProduct) => ({
-      text: product.title,
-      to: `/products/${product.handle}`,
-      icon: "i-lucide-sticker",
-    }));
-  });
-
   // Navigation links configuration
   const links = computed<Link[]>(() => [
     {
@@ -309,7 +255,23 @@
       text: "Products",
       to: "/products",
       icon: "i-lucide-package",
-      children: productLinks.value,
+      children: [
+        {
+          text: "Best Sellers",
+          to: "/collections/best-sellers",
+          icon: "i-lucide-trending-up",
+        },
+        {
+          text: "Custom Stickers",
+          to: "/collections/custom-stickers",
+          icon: "i-lucide-sticker",
+        },
+        {
+          text: "All Products",
+          to: "/products",
+          icon: "i-lucide-store",
+        },
+      ],
     },
     {
       text: "About",
@@ -330,15 +292,6 @@
   // Desktop dropdown state
   const activeDesktopDropdown = ref<string | null>(null);
   let closeTimer: ReturnType<typeof setTimeout> | null = null;
-
-  // Theme management
-  const { icon: themeIcon, toggleTheme } = useTheme();
-
-  const handleToggleTheme = (event: MouseEvent) => {
-    toggleTheme();
-    // Remove focus from button on mobile to prevent stuck active state
-    (event.target as HTMLElement)?.blur();
-  };
 
   // Cart management
   const cart = useUnifiedCart();

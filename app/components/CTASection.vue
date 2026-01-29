@@ -1,7 +1,7 @@
 <template>
   <Section
     inner-classes="p-4 py-20 md:py-28"
-    outer-classes="bg-gradient-to-br from-secondary-500 via-secondary-700 to-secondary-500"
+    outer-classes="bg-gradient-to-b from-surface-base via-surface-raised to-surface-sunken"
   >
     <div class="max-w-4xl mx-auto text-center">
       <div data-animate="zoom-in">
@@ -9,8 +9,7 @@
           title="Ready to Bring Your Ideas to Life?"
           description="Join thousands of satisfied customers and create stunning custom stickers today. Fast delivery, premium quality, and 100% satisfaction guaranteed."
           title-size="lg"
-          title-color="text-white"
-          description-color="text-white/90"
+          description-color="text-secondary"
         />
       </div>
 
@@ -24,7 +23,7 @@
           rounded="lg"
           to="/products"
           icon-right="i-lucide-arrow-right"
-          class="min-w-[200px] hover-grow"
+          class="hover-grow"
         >
           Browse Products
         </Button>
@@ -34,7 +33,7 @@
           rounded="lg"
           to="/contact"
           icon-left="i-lucide-mail"
-          class="min-w-[200px] text-white border-white hover:bg-white/10 hover-grow"
+          class="duration-300 border-2 border-transparent hover:border-neutral-900 hover-grow"
         >
           Get in Touch
         </Button>

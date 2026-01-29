@@ -1,16 +1,16 @@
 <template>
   <Section
     inner-classes="text-center"
-    background-image="https://images.pexels.com/photos/30101191/pexels-photo-30101191.jpeg"
     overlay-darkness="dark"
+    background-video="/hero.mp4"
+    :video-speed="0.75"
   >
-    <div class="w-full max-w-5xl mx-auto py-24 md:py-64 px-8 md:px-0 text-white">
-      <!-- Animated hero content -->
-      <div>
-        <h1 class="text-4xl sm:text-5xl md:text-7xl mb-8 md:mb-16 hero-title">
+    <div class="w-full max-w-5xl mx-auto py-24 md:py-24 px-8 md:px-0 text-white">
+      <div class="relative z-10">
+        <h1 class="text-4xl sm:text-5xl md:text-5xl mb-8 md:mb-16 hero-title leading-loose">
           High-quality vinyl stickers, from small runs to large volumes.
         </h1>
-        <p class="text-lg text-neutral-50 max-w-2xl mx-auto md:text-2xl mb-12 hero-subtitle">
+        <p class="text-lg font-medium text-neutral-50 max-w-2xl mx-auto mb-12 hero-subtitle">
           The Legendary Prints is a family-run print shop specializing in durable vinyl sticker
           printing for businesses, artists, schools, and growing brands. We handle everything from
           short runs to large bulk orders with the same focus on clean prints, consistent color, and
@@ -22,10 +22,8 @@
             <Button
               variant="primary"
               size="lg"
-              rounded="md"
+              rounded="lg"
               label="Order Now!"
-              icon-right="i-lucide-sticker"
-              icon-left="i-lucide-sticker"
               class="hover-grow"
             />
           </NuxtLink>
@@ -33,7 +31,7 @@
             <Button
               variant="secondary"
               size="lg"
-              rounded="md"
+              rounded="lg"
               label="Get a Quote"
               class="hover-grow"
             />

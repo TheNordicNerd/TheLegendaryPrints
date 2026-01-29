@@ -1,233 +1,85 @@
 /* ============================================
-   COLOR PALETTE SYSTEM
-   Client Color Schemes - Works with Tailwind
-   Similar to dark mode, use data-palette attribute
+   PRINT NEUTRAL BLUE - PRIMARY BRAND SYSTEM
+   Carbon Black, Pure White, Slate Blue Accent
+   Brand stays neutral. Artwork brings the color.
    ============================================ */
 
-/* ============================================
-   PALETTE 1: Classic Print Shop
-   Charcoal Black, Soft White, Steel Gray, Warm Paper Tan
-   ============================================ */
+:root {
+  /* Neutral Scale - Carbon Black to Paper Gray */
+  --color-neutral-50: #FFFFFF; /* Pure White */
+  --color-neutral-100: #F2F3F5; /* Paper Gray */
+  --color-neutral-200: #E5E7EB;
+  --color-neutral-300: #D1D5DB;
+  --color-neutral-400: #9CA3AF;
+  --color-neutral-500: #6B7280;
+  --color-neutral-600: #4B5563;
+  --color-neutral-700: #374151;
+  --color-neutral-800: #1F2937;
+  --color-neutral-900: #0B0B0B; /* Carbon Black */
 
-[data-palette="classic"] {
-  /* Neutral Scale - Charcoal Black based */
-  --color-neutral-50: #fafaf8; /* Soft White */
-  --color-neutral-100: #f0f0ee;
-  --color-neutral-200: #e0e0dd;
-  --color-neutral-300: #c8c8c4;
-  --color-neutral-400: #a0a09c;
-  --color-neutral-500: #6b6e70; /* Steel Gray */
-  --color-neutral-600: #52545b;
-  --color-neutral-700: #3a3b40;
-  --color-neutral-800: #272729;
-  --color-neutral-900: #1e1e1e; /* Charcoal Black */
+  /* Primary Scale - Slate Blue (for buttons, links, icons) */
+  --color-primary-50: #EEF2FF;
+  --color-primary-100: #E0E7FF;
+  --color-primary-200: #C7D2FE;
+  --color-primary-300: #A5B4FC;
+  --color-primary-400: #6F86B6;
+  --color-primary-500: #2C4FA3; /* Slate Blue - Main Accent */
+  --color-primary-600: #234088;
+  --color-primary-700: #1E3A8A;
+  --color-primary-800: #1E3474;
+  --color-primary-900: #1A2C5E;
 
-  /* Primary Scale - Steel Gray as brand */
-  --color-primary-50: #faf8f5;
-  --color-primary-100: #f2ede4;
-  --color-primary-200: #e8dcc9;
-  --color-primary-300: #d6cbb8; /* Warm Paper Tan */
-  --color-primary-400: #c4b69d;
-  --color-primary-500: #afa187;
-  --color-primary-600: #8e856f;
-  --color-primary-700: #6f6857;
-  --color-primary-800: #5a5447;
-  --color-primary-900: #4a4539;
+  /* Secondary Scale - Muted Red (action only: Order Now, Limited, Sale) */
+  --color-secondary-50: #FEF2F2;
+  --color-secondary-100: #FEE2E2;
+  --color-secondary-200: #FECACA;
+  --color-secondary-300: #FCA5A5;
+  --color-secondary-400: #DC2626;
+  --color-secondary-500: #A4161A; /* Muted Print Red - Main */
+  --color-secondary-600: #8B1316;
+  --color-secondary-700: #6E0F12; /* Brick Red */
+  --color-secondary-800: #5A0A0C;
+  --color-secondary-900: #450809;
 
-  /* Secondary Scale - Warm Rust (heritage print accent) */
-  --color-secondary-50: #fbf4f1;
-  --color-secondary-100: #f6e3dc;
-  --color-secondary-200: #edc4b3;
-  --color-secondary-300: #e0a38b;
-  --color-secondary-400: #cc7a5c;
-  --color-secondary-500: #b35f42; /* Warm Rust */
-  --color-secondary-600: #8f4c35;
-  --color-secondary-700: #713b2a;
-  --color-secondary-800: #5a2f22;
-  --color-secondary-900: #49261c;
+  /* Accent Scale - Slate Blue (same as primary for consistency) */
+  --color-accent-50: #EEF2FF;
+  --color-accent-100: #E0E7FF;
+  --color-accent-200: #C7D2FE;
+  --color-accent-300: #A5B4FC;
+  --color-accent-400: #6F86B6;
+  --color-accent-500: #2C4FA3; /* Slate Blue - Main */
+  --color-accent-600: #234088;
+  --color-accent-700: #1E3A8A;
+  --color-accent-800: #1E3474;
+  --color-accent-900: #1A2C5E;
 
-  /* Accent Scale - Warm Paper Tan as accent */
-  --color-accent-50: #f5f5f6;
-  --color-accent-100: #e8e9eb;
-  --color-accent-200: #d4d5d9;
-  --color-accent-300: #b8babf;
-  --color-accent-400: #989aa2;
-  --color-accent-500: #6b6e70; /* Steel Gray */
-  --color-accent-600: #555860;
-  --color-accent-700: #43454c;
-  --color-accent-800: #393a40;
-  --color-accent-900: #2f3034;
+  /* Surface Colors - Clean white/gray for artwork galleries */
+  --color-surface-base: #FFFFFF; /* Pure White */
+  --color-surface-raised: #FFFFFF;
+  --color-surface-overlay: #FFFFFF;
+  --color-surface-sunken: #F2F3F5; /* Paper Gray */
 
-  /* Surface Colors */
-  --color-surface-base: #fafaf8;
-  --color-surface-raised: #ffffff;
-  --color-surface-overlay: #ffffff;
-  --color-surface-sunken: #f0f0ee;
+  /* Text Colors - High contrast on white */
+  --color-text-primary: #0B0B0B; /* Carbon Black */
+  --color-text-secondary: #374151;
+  --color-text-tertiary: #6B7280;
+  --color-text-disabled: #9CA3AF;
+  --color-text-inverse: #FFFFFF;
+  --color-text-link: #2C4FA3; /* Slate Blue */
+  --color-text-link-hover: #234088;
 
-  /* Text Colors */
-  --color-text-primary: #1e1e1e;
-  --color-text-secondary: #3a3b40;
-  --color-text-tertiary: #6b6e70;
-  --color-text-disabled: #a0a09c;
-  --color-text-inverse: #fafaf8;
-  --color-text-link: #6b6e70;
-  --color-text-link-hover: #52545b;
+  /* Border Colors - Subtle and neutral */
+  --color-border-subtle: #E5E7EB;
+  --color-border-default: #D1D5DB;
+  --color-border-emphasis: #2C4FA3; /* Slate Blue */
+  --color-border-focus: #2C4FA3;
 
-  /* Border Colors */
-  --color-border-subtle: #e0e0dd;
-  --color-border-default: #c8c8c4;
-  --color-border-emphasis: #6b6e70;
-  --color-border-focus: #6b6e70;
-}
+  /* Success/Error/Warning (Keep minimal) */
+  --color-success-50: #F0FDF4;
+  --color-success-500: #22C55E;
+  --color-success-900: #14532D;
 
-/* ============================================
-   PALETTE 2: Modern Local Business
-   Graphite, Cool Off-White, Dusty Blue, Concrete Gray
-   ============================================ */
-
-[data-palette="modern"] {
-  /* Neutral Scale - Graphite based */
-  --color-neutral-50: #f9f9f9; /* Cool Off-White - corrected to actual off-white */
-  --color-neutral-100: #f0f0f0;
-  --color-neutral-200: #e3e3e3;
-  --color-neutral-300: #b7b9bc; /* Concrete Gray */
-  --color-neutral-400: #9a9ca0;
-  --color-neutral-500: #7d7f84;
-  --color-neutral-600: #606268;
-  --color-neutral-700: #43454c;
-  --color-neutral-800: #2f3034;
-  --color-neutral-900: #242424; /* Graphite */
-
-  /* Primary Scale - Dusty Blue as brand */
-  --color-primary-50: #f0f4f7;
-  --color-primary-100: #e1e9ef;
-  --color-primary-200: #c3d3df;
-  --color-primary-300: #a5bdcf;
-  --color-primary-400: #829dae;
-  --color-primary-500: #5f7d8c; /* Dusty Blue */
-  --color-primary-600: #4d6470;
-  --color-primary-700: #3e5059;
-  --color-primary-800: #324048;
-  --color-primary-900: #28353c;
-
-  /* Secondary Scale - Warm Clay (community warmth accent) */
-  --color-secondary-50: #fbf3ef;
-  --color-secondary-100: #f6e3db;
-  --color-secondary-200: #edc6b8;
-  --color-secondary-300: #e2aa95;
-  --color-secondary-400: #d08166;
-  --color-secondary-500: #b8654d; /* Warm Clay */
-  --color-secondary-600: #93513e;
-  --color-secondary-700: #743f31;
-  --color-secondary-800: #5b3228;
-  --color-secondary-900: #4a2a22;
-
-  /* Accent Scale - Concrete Gray as accent */
-  --color-accent-50: #f5f5f6;
-  --color-accent-100: #ebebed;
-  --color-accent-200: #d7d8db;
-  --color-accent-300: #c3c5c9;
-  --color-accent-400: #b7b9bc; /* Concrete Gray */
-  --color-accent-500: #9a9ca0;
-  --color-accent-600: #7d7f84;
-  --color-accent-700: #606268;
-  --color-accent-800: #43454c;
-  --color-accent-900: #2f3034;
-
-  /* Surface Colors */
-  --color-surface-base: #f9f9f9;
-  --color-surface-raised: #ffffff;
-  --color-surface-overlay: #ffffff;
-  --color-surface-sunken: #f0f0f0;
-
-  /* Text Colors */
-  --color-text-primary: #242424;
-  --color-text-secondary: #43454c;
-  --color-text-tertiary: #606268;
-  --color-text-disabled: #9a9ca0;
-  --color-text-inverse: #ffffff;
-  --color-text-link: #5f7d8c;
-  --color-text-link-hover: #4d6470;
-
-  /* Border Colors */
-  --color-border-subtle: #e3e3e3;
-  --color-border-default: #b7b9bc;
-  --color-border-emphasis: #5f7d8c;
-  --color-border-focus: #5f7d8c;
-}
-
-/* ============================================
-   PALETTE 3: Ink & Paper
-   Ink Black, Paper White, Oxide Red, Warm Gray
-   ============================================ */
-
-[data-palette="ink"] {
-  /* Neutral Scale - Ink Black based */
-  --color-neutral-50: #fefefe; /* Paper White */
-  --color-neutral-100: #f5f5f5;
-  --color-neutral-200: #e8e8e8;
-  --color-neutral-300: #d1d1d1;
-  --color-neutral-400: #a8a8a8;
-  --color-neutral-500: #8a8a86; /* Warm Gray */
-  --color-neutral-600: #6e6e6a;
-  --color-neutral-700: #525250;
-  --color-neutral-800: #36363a;
-  --color-neutral-900: #1a1a1a; /* Ink Black */
-
-  /* Primary Scale - Oxide Red as brand */
-  --color-primary-50: #fbf2f1;
-  --color-primary-100: #f7e5e3;
-  --color-primary-200: #efcbc7;
-  --color-primary-300: #e7b1ab;
-  --color-primary-400: #c97669;
-  --color-primary-500: #8c3b2f; /* Oxide Red */
-  --color-primary-600: #6f2f26;
-  --color-primary-700: #59251e;
-  --color-primary-800: #461e18;
-  --color-primary-900: #3a1914;
-
-  /* Secondary Scale - Shop Sage (utilitarian print shop accent) */
-  --color-secondary-50: #f2f5f3;
-  --color-secondary-100: #e3ebe6;
-  --color-secondary-200: #c6d6cc;
-  --color-secondary-300: #a7bfb0;
-  --color-secondary-400: #7f9f8c;
-  --color-secondary-500: #5f7f6e; /* Shop Sage */
-  --color-secondary-600: #4c6658;
-  --color-secondary-700: #3c5146;
-  --color-secondary-800: #2f4038;
-  --color-secondary-900: #26352f;
-
-  /* Accent Scale - Warm Gray as accent */
-  --color-accent-50: #f5f5f5;
-  --color-accent-100: #ebebea;
-  --color-accent-200: #d7d7d5;
-  --color-accent-300: #c3c3c0;
-  --color-accent-400: #a6a6a3;
-  --color-accent-500: #8a8a86; /* Warm Gray */
-  --color-accent-600: #6e6e6a;
-  --color-accent-700: #525250;
-  --color-accent-800: #36363a;
-  --color-accent-900: #2a2a28;
-
-  /* Surface Colors */
-  --color-surface-base: #fefefe;
-  --color-surface-raised: #ffffff;
-  --color-surface-overlay: #ffffff;
-  --color-surface-sunken: #f5f5f5;
-
-  /* Text Colors */
-  --color-text-primary: #1a1a1a;
-  --color-text-secondary: #36363a;
-  --color-text-tertiary: #6e6e6a;
-  --color-text-disabled: #a8a8a8;
-  --color-text-inverse: #ffffff;
-  --color-text-link: #8c3b2f;
-  --color-text-link-hover: #6f2f26;
-
-  /* Border Colors */
-  --color-border-subtle: #e8e8e8;
-  --color-border-default: #d1d1d1;
-  --color-border-emphasis: #8c3b2f;
-  --color-border-focus: #8c3b2f;
+  --color-error-50: #FEF2F2;
+  --color-error-500: #EF4444;
+  --color-error-900: #7F1D1D;
 }

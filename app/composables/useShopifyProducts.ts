@@ -90,6 +90,27 @@ export const useShopifyProducts = () => {
   };
 
   /**
+   * Fetch products from a specific collection
+   */
+  const fetchProductsFromCollection = async (
+    collectionHandle: string,
+    limit = 50,
+  ): Promise<ShopifyProduct[]> => {
+    try {
+      const data = await $fetch<{
+        collection: any;
+        products: ShopifyProduct[];
+        count: number;
+      }>(`/api/shopify/collections/${collectionHandle}/products?limit=${limit}`);
+
+      return data?.products || [];
+    } catch (error) {
+      console.error(`Failed to fetch products from collection ${collectionHandle}:`, error);
+      return [];
+    }
+  };
+
+  /**
    * Fetch a single product by handle
    */
   const fetchProductByHandle = async (handle: string): Promise<ShopifyProduct | null> => {
@@ -187,6 +208,7 @@ export const useShopifyProducts = () => {
 
   return {
     fetchProducts,
+    fetchProductsFromCollection,
     fetchProductByHandle,
     getVariantSizes,
     getVariantIdBySize,

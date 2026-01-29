@@ -1,6 +1,6 @@
 <template>
   <Section inner-classes="p-4 py-12">
-    <div class="max-w-4xl mx-auto">
+    <div class="max-w-7xl mx-auto">
       <!-- Page Header -->
       <div class="mb-8">
         <h1 class="text-4xl lg:text-5xl mb-4 text-text-primary">Our Products</h1>
@@ -15,7 +15,7 @@
         <!-- Main Content -->
         <div class="flex-1 min-w-0">
           <!-- Desktop Sort & Results Count -->
-          <div class="hidden lg:flex items-center justify-between mb-6">
+          <div v-if="!loading" class="hidden lg:flex items-center justify-between mb-6">
             <p class="text-text-secondary">
               Showing
               <span class="font-bold text-text-primary">{{ filteredProducts.length }}</span>
@@ -65,20 +65,25 @@
             </div>
           </div>
 
+          <!-- Loading State -->
+          <div v-if="loading" class="text-center py-12" role="status" aria-live="polite">
+            <div
+              class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-accent-700 border-t-transparent"
+              aria-hidden="true"
+            ></div>
+            <p class="mt-4 text-text-secondary">Loading products...</p>
+          </div>
+
           <!-- Products Grid -->
           <div
-            v-if="filteredProducts.length > 0"
+            v-else-if="filteredProducts.length > 0"
             class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
             role="list"
           >
-            <ProductCard
+            <ShopifyProductCard
               v-for="product in sortedProducts"
               :key="product.id"
               :product="product"
-              variant="default"
-              :show-tags="true"
-              :max-tags="2"
-              :show-featured-badge="false"
             />
           </div>
 
@@ -152,36 +157,6 @@
                 </div>
               </div>
 
-              <!-- Category Filter -->
-              <div class="filter-section">
-                <h3 class="filter-heading">Category</h3>
-                <div class="space-y-2">
-                  <button
-                    v-for="category in categories"
-                    :key="category.value"
-                    @click="toggleCategory(category.value)"
-                    class="filter-option w-full flex items-center justify-between p-3 rounded-lg transition-all duration-200"
-                    :class="
-                      selectedCategories.includes(category.value)
-                        ? 'bg-accent-700 text-text-inverse'
-                        : 'bg-surface-raised hover:bg-surface-sunken text-text-primary'
-                    "
-                    :aria-pressed="selectedCategories.includes(category.value)"
-                  >
-                    <span class="flex items-center gap-2">
-                      <Icon :name="category.icon" size="18" aria-hidden="true" />
-                      <span class="font-medium">{{ category.label }}</span>
-                    </span>
-                    <Icon
-                      v-if="selectedCategories.includes(category.value)"
-                      name="i-lucide-check"
-                      size="18"
-                      aria-hidden="true"
-                    />
-                  </button>
-                </div>
-              </div>
-
               <!-- Tags Filter -->
               <div class="filter-section">
                 <h3 class="filter-heading">Tags</h3>
@@ -237,17 +212,18 @@
 
 <script setup lang="ts">
   import type { ShopifyProduct } from "~/composables/useShopify";
-  import type { Product } from "~/types/product";
 
   // Fetch products from Shopify
   const { fetchProducts, getCachedProducts } = useShopifyProducts();
-  const shopifyProducts = ref<ShopifyProduct[]>([]);
+  const products = ref<ShopifyProduct[]>([]);
+  const loading = ref(true);
 
   // Try to get cached products first
   if (import.meta.client) {
     const cached = getCachedProducts();
     if (cached) {
-      shopifyProducts.value = cached;
+      products.value = cached;
+      loading.value = false;
     }
   }
 
@@ -255,32 +231,16 @@
   onMounted(async () => {
     try {
       const fetchedProducts = await fetchProducts();
-      shopifyProducts.value = fetchedProducts;
+      products.value = fetchedProducts;
     } catch (error) {
       // Silently fail - products will remain empty array
+    } finally {
+      loading.value = false;
     }
-  });
-
-  // Transform Shopify products to match local Product interface
-  const products = computed<Product[]>(() => {
-    return shopifyProducts.value.map((shopifyProduct) => ({
-      id: shopifyProduct.id,
-      name: shopifyProduct.title,
-      slug: shopifyProduct.handle,
-      description: shopifyProduct.description,
-      icon: "i-lucide-sticker",
-      featured: shopifyProduct.tags?.includes("featured") || false,
-      thumbnailImg: shopifyProduct.featuredImage?.url || "",
-      images: shopifyProduct.images?.edges.map((e) => e.node.url) || [],
-      category: "die-cut" as const,
-      tags: shopifyProduct.tags || [],
-      shopifyProductId: shopifyProduct.id,
-    }));
   });
 
   // Filter state
   const searchQuery = ref("");
-  const selectedCategories = ref<string[]>([]);
   const selectedTags = ref<string[]>([]);
   const sortBy = ref<string>("name-asc");
   const showMobileFilters = ref(false);
@@ -296,7 +256,7 @@
   // Get all available tags from products
   const availableTags = computed(() => {
     const tags = new Set<string>();
-    products.value.forEach((product: Product) => {
+    products.value.forEach((product) => {
       product.tags.forEach((tag: string) => tags.add(tag));
     });
     return Array.from(tags).sort();
@@ -310,23 +270,16 @@
     if (searchQuery.value) {
       const query = searchQuery.value.toLowerCase();
       filtered = filtered.filter(
-        (product: Product) =>
-          product.name.toLowerCase().includes(query) ||
+        (product) =>
+          product.title.toLowerCase().includes(query) ||
           product.description.toLowerCase().includes(query) ||
           product.tags.some((tag: string) => tag.toLowerCase().includes(query)),
       );
     }
 
-    // Category filter
-    if (selectedCategories.value.length > 0) {
-      filtered = filtered.filter((product: Product) =>
-        selectedCategories.value.includes(product.category),
-      );
-    }
-
     // Tags filter
     if (selectedTags.value.length > 0) {
-      filtered = filtered.filter((product: Product) =>
+      filtered = filtered.filter((product) =>
         selectedTags.value.some((tag: string) => product.tags.includes(tag)),
       );
     }
@@ -340,14 +293,16 @@
 
     switch (sortBy.value) {
       case "name-asc":
-        return sorted.sort((a, b) => a.name.localeCompare(b.name));
+        return sorted.sort((a, b) => a.title.localeCompare(b.title));
       case "name-desc":
-        return sorted.sort((a, b) => b.name.localeCompare(a.name));
+        return sorted.sort((a, b) => b.title.localeCompare(a.title));
       case "featured":
         return sorted.sort((a, b) => {
-          if (a.featured && !b.featured) return -1;
-          if (!a.featured && b.featured) return 1;
-          return a.name.localeCompare(b.name);
+          const aFeatured = a.tags.includes("featured");
+          const bFeatured = b.tags.includes("featured");
+          if (aFeatured && !bFeatured) return -1;
+          if (!aFeatured && bFeatured) return 1;
+          return a.title.localeCompare(b.title);
         });
       default:
         return sorted;
@@ -361,28 +316,15 @@
 
   // Check if filters are active
   const hasActiveFilters = computed(() => {
-    return (
-      searchQuery.value !== "" ||
-      selectedCategories.value.length > 0 ||
-      selectedTags.value.length > 0
-    );
+    return searchQuery.value !== "" || selectedTags.value.length > 0;
   });
 
   // Active filter count for mobile badge
   const activeFilterCount = computed(() => {
-    return selectedCategories.value.length + selectedTags.value.length;
+    return selectedTags.value.length;
   });
 
   // Filter actions
-  const toggleCategory = (category: string) => {
-    const index = selectedCategories.value.indexOf(category);
-    if (index > -1) {
-      selectedCategories.value.splice(index, 1);
-    } else {
-      selectedCategories.value.push(category);
-    }
-  };
-
   const toggleTag = (tag: string) => {
     const index = selectedTags.value.indexOf(tag);
     if (index > -1) {
@@ -394,7 +336,6 @@
 
   const clearFilters = () => {
     searchQuery.value = "";
-    selectedCategories.value = [];
     selectedTags.value = [];
   };
 
@@ -459,15 +400,15 @@
               url: "https://thelegendaryprints.com/products",
               mainEntity: {
                 "@type": "ItemList",
-                itemListElement: products.value.map((product: Product, index: number) => ({
+                itemListElement: products.value.map((product, index: number) => ({
                   "@type": "ListItem",
                   position: index + 1,
                   item: {
                     "@type": "Product",
-                    name: product.name,
+                    name: product.title,
                     description: product.description,
-                    image: product.thumbnailImg,
-                    url: `https://thelegendaryprints.com/products/${product.slug}`,
+                    image: product.featuredImage?.url || "",
+                    url: `https://thelegendaryprints.com/products/${product.handle}`,
                   },
                 })),
               },

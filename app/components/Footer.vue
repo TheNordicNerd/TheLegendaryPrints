@@ -3,7 +3,7 @@
     <!-- Newsletter Section -->
     <div class="relative pt-12 z-50 sm:pt-28 md:pt-32 pb-12">
       <div
-        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-surface-raised shadow-lg py-8 rounded-lg"
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-surface-raised shadow-lg py-8 rounded-lg border border-border-subtle"
       >
         <div class="max-w-3xl mx-auto text-center">
           <h2 class="text-3xl sm:text-4xl font-bold text-text-primary mb-6">

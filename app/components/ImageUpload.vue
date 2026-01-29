@@ -20,20 +20,20 @@
       class="upload-area border-2 border-dashed rounded-lg p-8 text-center transition-all duration-200"
       :class="
         isUploading
-          ? 'border-secondary-500 bg-secondary-50 cursor-wait'
+          ? 'border-accent-500 bg-accent-50 cursor-wait'
           : isDragging
-            ? 'border-secondary-500 bg-secondary-50 scale-[0.98] cursor-pointer'
-            : 'border-border-default hover:border-secondary-500 hover:bg-surface-sunken cursor-pointer'
+            ? 'border-accent-500 bg-accent-50 scale-[0.98] cursor-pointer'
+            : 'border-border-default hover:border-accent-500 hover:bg-surface-sunken cursor-pointer'
       "
     >
       <div v-if="isUploading" class="flex flex-col items-center gap-4">
         <div class="animate-bounce">
-          <Icon name="i-lucide-image-up" size="48" class="text-secondary-600" />
+          <Icon name="i-lucide-image-up" size="48" class="text-accent-600" />
         </div>
       </div>
       <div v-else class="flex flex-col items-center gap-3">
-        <div class="p-4 rounded-full bg-secondary-100 grid place-items-center">
-          <Icon name="i-lucide-image-plus" size="32" class="text-secondary-500" />
+        <div class="p-4 rounded-full bg-accent-100 grid place-items-center">
+          <Icon name="i-lucide-image-plus" size="32" class="text-accent-500" />
         </div>
         <div>
           <p class="text-lg font-semibold text-text-primary mb-1">
@@ -133,11 +133,7 @@
       uploadedImageUrl.value = result.url;
       uploadedImagePublicId.value = result.publicId;
       uploadedFileName.value = file.name;
-
-      console.log("✅ Image uploaded to Cloudinary:", result.url);
     } catch (error: any) {
-      console.error("❌ Failed to upload image:", error);
-      alert(`Failed to upload image: ${error.message || "Unknown error"}`);
       uploadedImage.value = null;
       uploadedImageUrl.value = null;
       uploadedImagePublicId.value = null;
@@ -152,7 +148,6 @@
       try {
         const { deleteImage } = useCloudinary();
         await deleteImage(uploadedImagePublicId.value);
-        console.log("✅ Image deleted from Cloudinary");
       } catch (error) {
         console.error("❌ Failed to delete image from Cloudinary:", error);
       }
