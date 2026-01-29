@@ -7,7 +7,6 @@
     ></SectionHeader>
     <div
       class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-4 sm:px-8 lg:px-12"
-      role="list"
     >
       <ShopifyProductCard v-for="product in shopifyProducts" :key="product.id" :product="product" />
     </div>

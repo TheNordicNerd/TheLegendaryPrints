@@ -78,13 +78,8 @@
           <div
             v-else-if="filteredProducts.length > 0"
             class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-            role="list"
           >
-            <ShopifyProductCard
-              v-for="product in sortedProducts"
-              :key="product.id"
-              :product="product"
-            />
+            <ShopifyProductCard v-for="product in sortedProducts" :key="product.id" :product="product" />
           </div>
 
           <!-- Empty State -->

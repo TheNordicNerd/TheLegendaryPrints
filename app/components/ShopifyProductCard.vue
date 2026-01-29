@@ -8,6 +8,7 @@
         class="rounded-2xl aspect-video bg-gradient-to-b from-surface-base via-surface-raised to-surface-sunken"
       >
         <NuxtImg
+          tabindex="-1"
           v-if="product.featuredImage?.url"
           :src="product.featuredImage.url"
           :alt="product.featuredImage.altText || product.title"
@@ -23,7 +24,7 @@
     <!-- Product Info -->
     <div class="px-8 pb-8">
       <!-- Product Title -->
-      <h3 class="text-lg mb-1 text-left font-bold text-text-primary leading-tight">
+      <h3 class="text-lg mb-1 text-left font-bold text-text-primary leading-tight" tabindex="-1">
         {{ product.title }}
       </h3>
 
@@ -45,6 +46,7 @@
       <!-- Add to Cart Button -->
       <NuxtLink :to="`/products/${product.handle}`" class="block">
         <Button
+          tabindex="-1"
           variant="secondary"
           size="lg"
           :full-width="true"

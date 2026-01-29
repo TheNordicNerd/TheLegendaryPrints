@@ -86,8 +86,7 @@
   // SEO Meta Tags
   useSeoMeta({
     title: () => `${collection.value?.title || "Collection"} - The Legendary Prints`,
-    description: () =>
-      collection.value?.description || "Browse our custom sticker collection",
+    description: () => collection.value?.description || "Browse our custom sticker collection",
     ogTitle: () => collection.value?.title || "Collection",
     ogDescription: () => collection.value?.description || "Browse our custom sticker collection",
     ogType: "website",

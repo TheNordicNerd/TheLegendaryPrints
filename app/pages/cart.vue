@@ -23,13 +23,14 @@
       </div>
 
       <!-- Cart Items -->
-      <div v-else class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div v-else class="grid grid-cols-1 lg:grid-cols-3 gap-8" role="list">
         <!-- Items List -->
         <div class="lg:col-span-2 space-y-4">
           <div
             v-for="item in items"
             :key="item.id"
             class="cart-item bg-surface-raised p-6 rounded-lg border border-border-subtle"
+            role="listItem"
           >
             <div class="flex gap-6">
               <!-- Product Image Thumbnail -->
@@ -67,16 +68,20 @@
                     <div v-if="editingItem === item.id" class="space-y-3 mt-2">
                       <!-- Size Buttons -->
                       <div>
-                        <label class="text-sm font-medium text-text-secondary mb-2 block">Size:</label>
+                        <label class="text-sm font-medium text-text-secondary mb-2 block"
+                          >Size:</label
+                        >
                         <div class="flex flex-wrap gap-2">
                           <button
                             v-for="size in sizeOptions"
                             :key="size"
                             @click="editedSize = size"
                             class="px-3 py-1.5 text-sm font-medium rounded-lg border-2 transition-all"
-                            :class="editedSize === size
-                              ? 'border-accent-700 bg-accent-700 text-white'
-                              : 'border-border-default hover:border-accent-500 text-text-primary'"
+                            :class="
+                              editedSize === size
+                                ? 'border-accent-700 bg-accent-700 text-white'
+                                : 'border-border-default hover:border-accent-500 text-text-primary'
+                            "
                           >
                             {{ size }}"
                           </button>
@@ -85,16 +90,20 @@
 
                       <!-- Quantity Buttons -->
                       <div>
-                        <label class="text-sm font-medium text-text-secondary mb-2 block">Quantity:</label>
+                        <label class="text-sm font-medium text-text-secondary mb-2 block"
+                          >Quantity:</label
+                        >
                         <div class="flex flex-wrap gap-2">
                           <button
                             v-for="qty in quantityOptions"
                             :key="qty"
                             @click="editedQuantity = qty"
                             class="px-3 py-1.5 text-sm font-medium rounded-lg border-2 transition-all"
-                            :class="editedQuantity === qty
-                              ? 'border-accent-700 bg-accent-700 text-white'
-                              : 'border-border-default hover:border-accent-500 text-text-primary'"
+                            :class="
+                              editedQuantity === qty
+                                ? 'border-accent-700 bg-accent-700 text-white'
+                                : 'border-border-default hover:border-accent-500 text-text-primary'
+                            "
                           >
                             {{ qty.toLocaleString() }}
                           </button>
@@ -270,11 +279,11 @@
         customQuantity: editedQuantity.value,
       });
 
-      toast.success('Cart item updated successfully!');
+      toast.success("Cart item updated successfully!");
       cancelEdit();
     } catch (error) {
-      console.error('Failed to update cart item:', error);
-      toast.error('Failed to update item. Please try again.');
+      console.error("Failed to update cart item:", error);
+      toast.error("Failed to update item. Please try again.");
     }
   };
 
