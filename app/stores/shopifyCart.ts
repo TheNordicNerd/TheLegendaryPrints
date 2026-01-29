@@ -23,8 +23,8 @@ export const useShopifyCartStore = defineStore(
         const attributes = node.attributes || [];
 
         // Extract custom attributes
-        const uploadedImage = attributes.find((a) => a.key === "Custom Design URL")?.value;
-        const uploadedFileName = attributes.find((a) => a.key === "Design Filename")?.value;
+        const uploadedImage = attributes.find((a) => a.key === "_Custom Design URL")?.value;
+        const uploadedFileName = attributes.find((a) => a.key === "_Design Filename")?.value;
         const customSizeStr = attributes.find((a) => a.key === "Custom Size")?.value;
         const customQuantityStr = attributes.find((a) => a.key === "Custom Quantity")?.value;
         const customPriceStr = attributes.find((a) => a.key === "Custom Price")?.value;
