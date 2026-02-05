@@ -26,6 +26,12 @@ export default defineNuxtConfig({
     "@nuxt/content",
     "@nuxtjs/tailwindcss",
   ],
+  tailwindcss: {
+    cssPath: "~/assets/css/tailwind.css",
+    configPath: "tailwind.config.ts",
+    exposeConfig: false,
+    viewer: false,
+  },
   site: {
     url: process.env.NUXT_PUBLIC_SITE_URL || "http://localhost:3000",
     name: "The Legendary Prints",
