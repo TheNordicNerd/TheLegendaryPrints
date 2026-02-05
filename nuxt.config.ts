@@ -6,10 +6,6 @@ export default defineNuxtConfig({
   ssr: true,
   nitro: {
     preset: "netlify",
-    output: {
-      dir: ".netlify",
-      publicDir: ".netlify/dist",
-    },
     prerender: {
       crawlLinks: false,
       routes: ["/", "/about", "/contact", "/products", "/cart"],
