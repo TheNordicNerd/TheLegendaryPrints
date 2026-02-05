@@ -32,9 +32,13 @@
             />
           </NuxtLink>
         </div>
-        <p class="text-tertiary text-sm font-accent hero-tagline">
-          Fast turnaround • Durable materials • No cheap prints
-        </p>
+        <div class="flex items-center justify-center gap-4 mx-auto w-full">
+          <p class="text-tertiary text-sm font-accent hero-tagline">Fast turnaround</p>
+          <Icon name="i-lucide-circle" size="8" />
+          <p class="text-tertiary text-sm font-accent hero-tagline">Durable materials</p>
+          <Icon name="i-lucide-circle" size="8" />
+          <p class="text-tertiary text-sm font-accent hero-tagline">No cheap prints</p>
+        </div>
       </div>
     </div>
   </Section>

@@ -1,18 +1,18 @@
 <template>
-  <div class="marquee-container bg-neutral-900 py-4 w-full overflow-hidden">
-    <div class="marquee-track">
+  <div class="marquee-container bg-neutral-900 w-full overflow-hidden">
+    <div class="marquee-track border-t-2 border-neutral-800 py-4">
       <div class="marquee-content">
         <!-- Your content goes here (text, images, logos, etc.) -->
         <div v-for="(item, itemIdx) in marquee" :key="`item-${itemIdx}`" class="marquee-item">
-          <Icon :name="item.icon" class="text-white" size="36" />
-          <h2 class="text-neutral-50 text-lg font-medium whitespace-nowrap">{{ item.text }}</h2>
+          <Icon :name="item.icon" class="text-yellow" size="36" />
+          <h2 class="text-neutral-50 text-2xl font-medium whitespace-nowrap">{{ item.text }}</h2>
         </div>
       </div>
       <div class="marquee-content">
         <!-- Duplicate content to ensure a seamless loop -->
         <div v-for="(item, itemIdx) in marquee" :key="`item-${itemIdx}`" class="marquee-item">
-          <Icon :name="item.icon" class="text-white" size="36" />
-          <h2 class="text-neutral-50 text-lg font-medium whitespace-nowrap">{{ item.text }}</h2>
+          <Icon :name="item.icon" class="text-yellow" size="36" />
+          <h2 class="text-neutral-50 text-2xl font-medium whitespace-nowrap">{{ item.text }}</h2>
         </div>
       </div>
     </div>
@@ -23,23 +23,23 @@
   const marquee = [
     {
       text: "Free Shipping",
-      icon: "i-lucide-truck",
+      icon: "i-icon-park-twotone-transporter",
     },
     {
       text: "100% Satisfaction Guarantee",
-      icon: "i-lucide-badge-check",
+      icon: "i-icon-park-twotone-badge-two",
     },
     {
       text: "Premium Quality",
-      icon: "i-lucide-award",
+      icon: "i-icon-park-twotone-five-star-badge",
     },
     {
       text: "Fast Turnaround",
-      icon: "i-lucide-zap",
+      icon: "i-icon-park-twotone-flash-payment",
     },
     {
       text: "Custom Designs",
-      icon: "i-lucide-palette",
+      icon: "i-icon-park-twotone-graphic-design",
     },
   ];
 </script>
@@ -50,7 +50,6 @@
     overflow: hidden;
     /* Adjust height and width as needed */
     width: 100%;
-    padding: 1rem 0;
   }
 
   /* Track styles to hold the duplicated content side-by-side */
@@ -86,10 +85,5 @@
       /* Translate the entire track by half its width, including any gaps */
       transform: translateX(-50%);
     }
-  }
-
-  /* Optional: Pause animation on hover */
-  .marquee-container:hover .marquee-track {
-    animation-play-state: paused;
   }
 </style>

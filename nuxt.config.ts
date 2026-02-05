@@ -55,6 +55,9 @@ export default defineNuxtConfig({
         baseURL: "https://cdn.shopify.com",
       },
     },
+    ipx: {
+      maxAge: 60 * 60 * 24 * 365,
+    },
     presets: {
       default: {
         modifiers: {

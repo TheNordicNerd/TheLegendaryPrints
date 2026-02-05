@@ -126,7 +126,9 @@
                           Verified
                         </span>
                       </div>
-                      <p class="text-xs text-text-tertiary">{{ formatDate(review.created_at) }}</p>
+                      <p class="text-xs text-text-tertiary">
+                        {{ formatDate(review.created_at) }}
+                      </p>
                     </div>
                     <div class="flex gap-0.5">
                       <Icon
@@ -377,9 +379,9 @@
 
     // Scroll to top of reviews section smoothly
     if (import.meta.client) {
-      const reviewsSection = document.querySelector('.reviews-section');
+      const reviewsSection = document.querySelector(".reviews-section");
       if (reviewsSection) {
-        reviewsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        reviewsSection.scrollIntoView({ behavior: "smooth", block: "start" });
       }
     }
   };

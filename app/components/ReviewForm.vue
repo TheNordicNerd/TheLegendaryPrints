@@ -21,9 +21,7 @@
             <Icon
               name="i-lucide-star"
               size="32"
-              :class="
-                star <= (hoverRating || form.rating) ? 'text-yellow' : 'text-border-default'
-              "
+              :class="star <= (hoverRating || form.rating) ? 'text-yellow' : 'text-border-default'"
             />
           </button>
         </div>
@@ -90,6 +88,62 @@
           :class="{ 'border-error-500': errors.body }"
         ></textarea>
         <p v-if="errors.body" class="text-error-500 text-sm mt-1">{{ errors.body }}</p>
+      </div>
+
+      <!-- Image Upload -->
+      <div>
+        <label class="block text-sm font-semibold text-text-primary mb-2">
+          Add Photos (Optional)
+        </label>
+        <div class="space-y-3">
+          <!-- Image Preview -->
+          <div v-if="uploadedImages.length > 0" class="flex flex-wrap gap-3">
+            <div
+              v-for="(image, index) in uploadedImages"
+              :key="index"
+              class="relative group w-24 h-24"
+            >
+              <img
+                :src="image.preview"
+                :alt="`Upload ${index + 1}`"
+                class="w-full h-full object-cover rounded-lg border-2 border-border-default"
+              />
+              <button
+                type="button"
+                @click="removeImage(index)"
+                class="absolute -top-2 -right-2 bg-error text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                aria-label="Remove image"
+              >
+                <Icon name="i-lucide-x" size="16" />
+              </button>
+            </div>
+          </div>
+
+          <!-- Upload Button -->
+          <div v-if="uploadedImages.length < 3">
+            <input
+              ref="fileInput"
+              type="file"
+              accept="image/*"
+              multiple
+              @change="handleImageUpload"
+              class="hidden"
+            />
+            <Button
+              type="button"
+              variant="secondary"
+              size="md"
+              rounded="lg"
+              icon-left="i-lucide-image-plus"
+              @click="triggerFileInput"
+            >
+              {{ uploadedImages.length === 0 ? "Add Photos" : "Add More Photos" }}
+            </Button>
+            <p class="text-xs text-text-secondary mt-1 mb-8">
+              You can upload up to 3 images (JPG, PNG, max 5MB each)
+            </p>
+          </div>
+        </div>
       </div>
 
       <!-- Submit Button -->
@@ -169,6 +223,63 @@
   const successMessage = ref("");
   const errorMessage = ref("");
 
+  // Image upload state
+  const fileInput = ref<HTMLInputElement | null>(null);
+  const uploadedImages = ref<Array<{ file: File; preview: string }>>([]);
+
+  const triggerFileInput = () => {
+    fileInput.value?.click();
+  };
+
+  const handleImageUpload = (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    const files = target.files;
+
+    if (!files) return;
+
+    // Validate and add files
+    for (let i = 0; i < files.length; i++) {
+      if (uploadedImages.value.length >= 3) {
+        errorMessage.value = "You can only upload up to 3 images";
+        break;
+      }
+
+      const file = files[i];
+      if (!file) continue;
+
+      // Validate file type
+      if (!file.type.startsWith("image/")) {
+        errorMessage.value = "Please upload only image files";
+        continue;
+      }
+
+      // Validate file size (5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        errorMessage.value = "Each image must be less than 5MB";
+        continue;
+      }
+
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        uploadedImages.value.push({
+          file,
+          preview: e.target?.result as string,
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Reset input
+    if (target) {
+      target.value = "";
+    }
+  };
+
+  const removeImage = (index: number) => {
+    uploadedImages.value.splice(index, 1);
+  };
+
   const validateForm = () => {
     // Clear previous errors
     Object.keys(errors).forEach((key) => delete errors[key]);
@@ -230,6 +341,36 @@
         reviewData.title = form.title.trim();
       }
 
+      // Upload images if any
+      if (uploadedImages.value.length > 0) {
+        const imageUrls: string[] = [];
+
+        for (const image of uploadedImages.value) {
+          try {
+            // Create FormData for upload
+            const formData = new FormData();
+            formData.append("file", image.file);
+
+            // Upload to server
+            const uploadResponse = await $fetch<{ url: string }>("/api/upload", {
+              method: "POST",
+              body: formData,
+            });
+
+            if (uploadResponse.url) {
+              imageUrls.push(uploadResponse.url);
+            }
+          } catch (uploadError) {
+            console.error("Failed to upload image:", uploadError);
+            // Continue with other images
+          }
+        }
+
+        if (imageUrls.length > 0) {
+          reviewData.pictures = imageUrls;
+        }
+      }
+
       const response = await submitReview(reviewData);
 
       if (response.success) {
@@ -242,6 +383,7 @@
         form.email = "";
         form.title = "";
         form.body = "";
+        uploadedImages.value = [];
 
         // Emit event to parent
         emit("reviewSubmitted");
