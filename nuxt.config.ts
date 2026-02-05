@@ -54,10 +54,13 @@ export default defineNuxtConfig({
     // Server-only env vars (not exposed to client)
     shopifyStoreDomain: process.env.SHOPIFY_STORE_DOMAIN,
     shopifyStorefrontAccessToken: process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN,
+    shopifyAdminAccessToken: process.env.SHOPIFY_ADMIN_ACCESS_TOKEN,
     // Cloudinary credentials (server-only)
     cloudinaryCloudName: process.env.CLOUDINARY_CLOUD_NAME,
     cloudinaryApiKey: process.env.CLOUDINARY_API_KEY,
     cloudinaryApiSecret: process.env.CLOUDINARY_API_SECRET,
+    // Judge.me private token (server-only, for creating reviews)
+    judgeMePrivateToken: process.env.JUDGE_ME_PRIVATE_TOKEN || process.env.JUDGE_ME_TOKEN,
     public: {
       siteUrl: process.env.NUXT_PUBLIC_SITE_URL || "http://localhost:3000",
       siteName: "The Legendary Prints",
@@ -71,6 +74,9 @@ export default defineNuxtConfig({
       hasShopifyConfig: !!(
         process.env.SHOPIFY_STORE_DOMAIN && process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN
       ),
+      // Judge.me configuration
+      judgeMeToken: process.env.JUDGE_ME_TOKEN,
+      shopifyShop: process.env.SHOPIFY_STORE_DOMAIN,
     },
   },
   content: {

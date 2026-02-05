@@ -1,13 +1,27 @@
-/* Base Fonts (Pair 1 as default) */
+/* ============================================
+   LEGENDARY PRINTS TYPOGRAPHY SYSTEM
+   Based on Brand Guidelines
+   ============================================ */
+@font-face {
+  font-family: "Quirthy";
+  src: url("/fonts/Quirthy.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+/* Font Family Variables */
 :root {
-  --font-heading: "Montserrat", sans-serif;
-  --font-body: "Inter", sans-serif;
+  --font-heading: "Montserrat", sans-serif; /* Headlines & Brand Emphasis */
+  --font-body: "Inter", sans-serif; /* Body & Utility Text */
+  --font-accent: "Quirthy", cursive; /* Limited Expressive Use */
 }
 
-/* Apply fonts to elements */
-* {
-  font-family: var(--font-body);
-}
+/* ============================================
+   PRIMARY TYPEFACE - Montserrat
+   Use Cases: Headlines, Section titles,
+   Marketing callouts, Website hero text
+   Weights: Bold (700), ExtraBold (800)
+   ============================================ */
 
 h1,
 h2,
@@ -18,10 +32,73 @@ h6,
 .heading,
 .font-heading {
   font-family: var(--font-heading);
+  font-weight: 700; /* Bold by default */
 }
 
-/* Button text can use heading font for emphasis */
+/* Extra emphasis for major headings */
+h1,
+h2 {
+  font-weight: 800; /* ExtraBold */
+}
+
+/* ============================================
+   SECONDARY TYPEFACE - Inter
+   Use Cases: Body copy, Product descriptions,
+   Invoices, Emails, Website paragraphs, Forms
+   Weights: Regular (400), Medium (500), SemiBold (600)
+   ============================================ */
+
+* {
+  font-family: var(--font-body);
+  font-weight: 400; /* Regular by default */
+}
+
+p,
+.body-text {
+  font-family: var(--font-body);
+  font-weight: 400; /* Regular */
+}
+
+/* Medium weight for emphasis in body text */
+strong,
+b,
+.text-medium {
+  font-weight: 500; /* Medium */
+}
+
+/* SemiBold for important UI elements */
+.text-semibold,
+label,
+button {
+  font-weight: 600; /* SemiBold */
+}
+
+/* ============================================
+   ACCENT TYPEFACE - Quirthy (Limited Use)
+   Use Cases: Small emphasis text, Promotional badges,
+   Short callouts (e.g., "Fast Turnaround"),
+   Feature highlights
+   Weight: Normal (400)
+   IMPORTANT: Use sparingly!
+   ============================================ */
+
+.font-accent,
+.badge-accent,
+.callout-accent {
+  font-family: var(--font-accent);
+  font-weight: 400; /* Normal */
+}
+
+/* ============================================
+   BUTTON TYPOGRAPHY
+   Buttons use heading font for emphasis
+   ============================================ */
+
 button.primary,
-.btn-primary {
+.btn-primary,
+button[class*="bg-primary"],
+button[class*="bg-accent"],
+button[class*="bg-secondary"] {
   font-family: var(--font-heading);
+  font-weight: 700; /* Bold */
 }

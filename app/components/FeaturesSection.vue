@@ -38,7 +38,7 @@
             icon-size="24"
             variant="ghost"
             rounded="full"
-            class="!bg-surface-raised shadow-lg hover:!bg-accent-700 hover:!text-white"
+            class="!bg-surface-raised shadow-lg hover:!bg-neutral-700 hover:!text-white"
             aria-label="Previous slide"
           />
         </div>
@@ -49,7 +49,7 @@
             icon-size="24"
             variant="ghost"
             rounded="full"
-            class="!bg-surface-raised shadow-lg hover:!bg-accent-700 hover:!text-white"
+            class="!bg-surface-raised shadow-lg hover:!bg-neutral-700 hover:!text-white"
             aria-label="Next slide"
           />
         </div>
@@ -62,7 +62,7 @@
             @click="currentSlide = index"
             class="w-2 h-2 rounded-full transition-all duration-300"
             :class="
-              currentSlide === index ? 'bg-accent-700 w-6' : 'bg-border-default hover:bg-accent-500'
+              currentSlide === index ? 'bg-magenta w-6' : 'bg-border-default hover:bg-neutral-400'
             "
             :aria-label="`Go to slide ${index + 1}`"
           />
@@ -77,6 +77,7 @@
             title="Premium Quality"
             description="Professional-grade printing with vibrant colors and waterproof vinyl that lasts for years"
             variant="elevated"
+            use-accent-font
           />
         </div>
 
@@ -86,6 +87,7 @@
             title="Fast Turnaround"
             description="Lightning-fast 3-5 day delivery on all orders with free shipping on orders over $50"
             variant="elevated"
+            use-accent-font
           />
         </div>
 
@@ -95,6 +97,7 @@
             title="Design Support"
             description="Expert design assistance at no extra cost. Our team helps bring your vision to life"
             variant="elevated"
+            use-accent-font
           />
         </div>
 

@@ -1,19 +1,14 @@
 <template>
   <div
-    class="price-summary bg-surface-raised p-6 rounded-lg border-2 border-accent-700 shadow-lg"
+    class="price-summary bg-surface-raised p-6 rounded-lg border-2 border-magenta shadow-lg"
     role="region"
     aria-labelledby="price-estimate-heading"
   >
     <div class="flex items-center justify-between mb-4">
-      <h3 id="price-estimate-heading" class="text-xl font-bold text-text-primary">
+      <h2 id="price-estimate-heading" class="text-xl font-bold text-text-primary">
         Price Estimate
-      </h3>
-      <Icon
-        name="i-lucide-badge-dollar-sign"
-        size="24"
-        class="text-accent-700"
-        aria-hidden="true"
-      />
+      </h2>
+      <Icon name="i-lucide-badge-dollar-sign" size="24" class="text-magenta" aria-hidden="true" />
     </div>
     <div class="space-y-2 text-text-secondary mb-4">
       <div v-for="option in options" :key="option.name" class="flex justify-between">
@@ -27,7 +22,7 @@
       <div class="flex items-baseline justify-between">
         <p class="text-lg font-bold text-text-primary">Total:</p>
         <div class="text-right">
-          <div class="text-3xl font-black text-accent-700">{{ price }}</div>
+          <div class="text-3xl font-black text-magenta">{{ price }}</div>
           <div class="text-xs text-text-secondary">+ shipping</div>
         </div>
       </div>
@@ -36,9 +31,11 @@
 </template>
 
 <script setup lang="ts">
+  import { formatDisplayValue } from "~/config/customDesignOptions";
+
   interface ProductOption {
     name: string;
-    type: 'standard' | 'custom';
+    type: "standard" | "custom";
     values: string[];
     hasCustom: boolean;
   }
@@ -55,9 +52,9 @@
   // Get display value for summary
   const getDisplayValue = (optionName: string): string => {
     const value = props.selections[optionName];
-    if (value === 'Custom' && props.customValues[optionName]) {
+    if (value === "Custom" && props.customValues[optionName]) {
       return props.customValues[optionName];
     }
-    return value || 'Not selected';
+    return formatDisplayValue(optionName, value || "Not selected");
   };
 </script>

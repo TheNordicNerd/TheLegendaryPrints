@@ -1,26 +1,72 @@
 <template>
   <div class="product-options space-y-6">
-    <!-- Upload Design Section -->
-    <ImageUpload ref="imageUploadRef" v-if="dynamicOptions.length > 1" />
+    <!-- Stage 1: Product Configuration -->
+    <div v-if="!showUploadStage" class="space-y-6">
+      <!-- Dynamic Product Options -->
+      <DynamicOptionSelector
+        v-for="option in dynamicOptions"
+        :key="option.name"
+        :option="option"
+        :selected-value="selectedOptions[option.name]"
+        :custom-value="customOptionValues[option.name]"
+        @update:selected-value="(value) => selectOption(option.name, value)"
+        @update:custom-value="(value) => updateCustomValue(option.name, value)"
+      />
 
-    <!-- Dynamic Product Options -->
-    <DynamicOptionSelector
-      v-for="option in dynamicOptions"
-      :key="option.name"
-      :option="option"
-      :selected-value="selectedOptions[option.name]"
-      :custom-value="customOptionValues[option.name]"
-      @update:selected-value="(value) => selectOption(option.name, value)"
-      @update:custom-value="(value) => updateCustomValue(option.name, value)"
-    />
+      <!-- Price Summary -->
+      <PriceSummary
+        :options="dynamicOptions"
+        :selections="selectedOptions"
+        :custom-values="customOptionValues"
+        :price="calculatedPrice"
+      />
 
-    <!-- Price Summary -->
-    <PriceSummary
-      :options="dynamicOptions"
-      :selections="selectedOptions"
-      :custom-values="customOptionValues"
-      :price="calculatedPrice"
-    />
+      <!-- Continue to Upload Button (or Add to Cart for sample packs) -->
+      <Button
+        v-if="hasRequiredSelections && !isSamplePack"
+        @click="showUploadStage = true"
+        variant="primary"
+        size="lg"
+        :full-width="true"
+        rounded="lg"
+        icon-right="i-lucide-arrow-right"
+        right-icon-size="20"
+      >
+        Continue to Upload Artwork
+      </Button>
+    </div>
+
+    <!-- Stage 2: Upload Artwork -->
+    <div v-else class="space-y-6">
+      <!-- Back Button -->
+      <button
+        @click="showUploadStage = false"
+        class="flex items-center gap-2 text-text-secondary hover:text-magenta transition-colors duration-200"
+      >
+        <Icon name="i-lucide-arrow-left" size="20" />
+        <span>Back to Options</span>
+      </button>
+
+      <!-- Selected Options Summary -->
+      <div class="bg-surface-raised p-4 rounded-lg border border-border-subtle">
+        <h3 class="text-lg font-bold text-text-primary mb-3">Your Configuration</h3>
+        <div class="space-y-2 text-sm">
+          <div v-for="option in dynamicOptions" :key="option.name" class="flex justify-between">
+            <span class="text-text-secondary">{{ option.name }}:</span>
+            <span class="text-text-primary font-medium">
+              {{ getDisplayValue(option.name) }}
+            </span>
+          </div>
+          <div class="pt-2 border-t border-border-default flex justify-between">
+            <span class="text-text-primary font-bold">Total:</span>
+            <span class="text-magenta font-bold text-xl">{{ calculatedPrice }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Upload Design Section -->
+      <ImageUpload ref="imageUploadRef" />
+    </div>
   </div>
 </template>
 
@@ -40,14 +86,67 @@
     return useProductOptions(props.product);
   });
 
+  // Check if product has show_shapes tag
+  const hasShapesEnabled = computed(() => {
+    if (!props.product?.tags) return false;
+    return props.product.tags.some((tag) => tag.toLowerCase() === "show_shapes");
+  });
+
+  // Check if product is a sample pack (no upload required)
+  const isSamplePack = computed(() => {
+    if (!props.product?.tags) return false;
+    const hasSamplePackTag = props.product.tags.some((tag) => {
+      const normalized = tag.toLowerCase().replace(/[_\s-]/g, "");
+      return normalized === "samplepack" || normalized === "noupload";
+    });
+    return hasSamplePackTag;
+  });
+
   // Get dynamic product options from Shopify variants
   const dynamicOptions = computed(() => {
-    return productOptionsData.value?.productOptions.value || [];
+    const options = productOptionsData.value?.productOptions.value || [];
+
+    // If product has show_shapes tag, inject Shape option at the beginning
+    if (hasShapesEnabled.value) {
+      const shapeOption = {
+        name: "Shape",
+        type: "standard" as const,
+        values: [
+          {
+            label: "Circle",
+            value: "Circle",
+            icon: "i-material-symbols-circle",
+          },
+          {
+            label: "Square",
+            value: "Square",
+            icon: "i-material-symbols-square",
+          },
+          {
+            label: "Custom",
+            value: "Custom",
+            icon: "i-material-symbols-kid-star",
+          },
+        ],
+        hasCustom: false, // "Custom" here is a preset shape, not a custom input
+      };
+
+      // Check if Shape option doesn't already exist
+      const hasShapeOption = options.some((opt) => opt.name.toLowerCase() === "shape");
+      if (!hasShapeOption) {
+        return [shapeOption, ...options];
+      }
+    }
+
+    return options;
   });
 
   // Selected options (using reactive object)
   const selectedOptions = ref<Record<string, string>>({});
   const customOptionValues = ref<Record<string, string>>({});
+
+  // Stage control
+  const showUploadStage = ref(false);
 
   // Initialize selected options with first value of each option
   watch(
@@ -59,7 +158,9 @@
           if (!selectedOptions.value[option.name] && option.values.length > 0) {
             const firstValue = option.values[0];
             if (firstValue) {
-              selectedOptions.value[option.name] = firstValue;
+              // Extract the actual value (handle both string and object formats)
+              const valueToStore = typeof firstValue === "string" ? firstValue : firstValue.value;
+              selectedOptions.value[option.name] = valueToStore;
             }
           }
         });
@@ -95,7 +196,9 @@
       (opt) =>
         opt.name.toLowerCase().includes("quantity") || opt.name.toLowerCase().includes("qty"),
     );
-    if (!qtyOption) return 100;
+
+    // If no quantity option exists (e.g., sample pack), default to 1
+    if (!qtyOption) return 1;
 
     const selectedQty = selectedOptions.value[qtyOption.name];
     if (!selectedQty) return 100;
@@ -114,8 +217,49 @@
     const { formatPrice } = useShopify();
     const { getVariantInfo } = useProductOptions(props.product);
 
-    // Get the matching variant based on current selections
-    const variantInfo = getVariantInfo(selectedOptions.value, customOptionValues.value);
+    // If no options exist (simple product), use the default variant price
+    if (dynamicOptions.value.length === 0) {
+      return formatPrice(
+        props.product.priceRange.minVariantPrice.amount,
+        props.product.priceRange.minVariantPrice.currencyCode,
+      );
+    }
+
+    // Get all actual Shopify variant option names from the product
+    const actualVariantOptionNames = new Set<string>();
+    if (props.product.variants?.edges?.length > 0) {
+      const firstVariant = props.product.variants.edges[0]?.node;
+      if (firstVariant?.selectedOptions) {
+        firstVariant.selectedOptions.forEach((opt) => {
+          actualVariantOptionNames.add(opt.name);
+        });
+      }
+    }
+
+    // Filter selections to only include actual variant options (exclude injected options like Shape)
+    const variantSelections: Record<string, string> = {};
+    const variantCustomValues: Record<string, string> = {};
+
+    Object.keys(selectedOptions.value).forEach((key) => {
+      if (actualVariantOptionNames.has(key)) {
+        const value = selectedOptions.value[key];
+        if (value) {
+          variantSelections[key] = value;
+        }
+      }
+    });
+
+    Object.keys(customOptionValues.value).forEach((key) => {
+      if (actualVariantOptionNames.has(key)) {
+        const value = customOptionValues.value[key];
+        if (value) {
+          variantCustomValues[key] = value;
+        }
+      }
+    });
+
+    // Get the matching variant based on variant selections only
+    const variantInfo = getVariantInfo(variantSelections, variantCustomValues);
 
     if (variantInfo?.variant?.price) {
       return formatPrice(variantInfo.variant.price.amount, variantInfo.variant.price.currencyCode);
@@ -127,6 +271,36 @@
       props.product.priceRange.minVariantPrice.currencyCode,
     );
   });
+
+  // Check if all required selections are made
+  const hasRequiredSelections = computed(() => {
+    // If no options exist, consider selections complete (e.g., simple sample pack)
+    if (dynamicOptions.value.length === 0) {
+      return true;
+    }
+
+    // Check that all options have a selection (including Shape if applicable)
+    return dynamicOptions.value.every((option) => {
+      const selected = selectedOptions.value[option.name];
+      if (!selected) return false;
+
+      // If "Custom" is selected AND the option has hasCustom enabled, ensure custom value is provided
+      if (selected === "Custom" && option.hasCustom) {
+        return !!customOptionValues.value[option.name];
+      }
+
+      return true;
+    });
+  });
+
+  // Get display value for an option
+  const getDisplayValue = (optionName: string): string => {
+    const value = selectedOptions.value[optionName];
+    if (value === "Custom" && customOptionValues.value[optionName]) {
+      return customOptionValues.value[optionName];
+    }
+    return value || "Not selected";
+  };
 
   // Computed properties to access image upload component values
   const uploadedImage = computed(() => imageUploadRef.value?.uploadedImage);
@@ -147,5 +321,8 @@
     customValues,
     effectiveQuantity,
     dynamicOptions,
+    showUploadStage,
+    isSamplePack,
+    hasRequiredSelections,
   });
 </script>

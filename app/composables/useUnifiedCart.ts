@@ -30,12 +30,39 @@ export const useUnifiedCart = () => {
       customPricePerUnit?: string;
       attributes?: Array<{ key: string; value: string }>;
     }) {
-      // Build attributes array for Shopify - ONLY include Cloudinary image URL
+      // Build attributes array for Shopify
       const attributes = data.attributes || [];
 
-      // Add ONLY the Cloudinary image URL (prefixed with _ to hide from customer view)
+      // Add the Cloudinary image URL (prefixed with _ to hide from customer view)
       if (data.uploadedImage) {
         attributes.push({ key: '_Custom Design URL', value: data.uploadedImage });
+      }
+
+      // Add custom attributes for display in cart
+      if (data.uploadedFileName) {
+        attributes.push({ key: '_Design Filename', value: data.uploadedFileName });
+      }
+
+      // Store size, quantity, and price info with underscore prefix to hide from customer
+      if (data.customSize) {
+        attributes.push({ key: '_Custom Size', value: `${data.customSize}"` });
+      }
+
+      if (data.customQuantity) {
+        attributes.push({ key: '_Custom Quantity', value: data.customQuantity.toString() });
+      }
+
+      if (data.customPrice) {
+        attributes.push({ key: '_Custom Price', value: data.customPrice });
+      }
+
+      if (data.customPricePerUnit) {
+        attributes.push({ key: '_Custom Price Per Unit', value: data.customPricePerUnit });
+      }
+
+      // Merge in any additional attributes passed from the product page (Shape, Finish, etc.)
+      if (data.attributes && Array.isArray(data.attributes)) {
+        attributes.push(...data.attributes);
       }
 
       // Add to Shopify cart with attributes
@@ -73,12 +100,39 @@ export const useUnifiedCart = () => {
       // Remove the old item
       await shopifyCart.removeItem(lineId);
 
-      // Re-add with ONLY the Cloudinary image URL
+      // Re-add with updated values and preserved attributes
       const attributes = [];
 
-      // Preserve ONLY the Cloudinary image URL (prefixed with _ to hide from customer view)
+      // Preserve the Cloudinary image URL (prefixed with _ to hide from customer view)
       if (item.uploadedImage) {
         attributes.push({ key: '_Custom Design URL', value: item.uploadedImage });
+      }
+
+      // Preserve the filename
+      if (item.uploadedFileName) {
+        attributes.push({ key: '_Design Filename', value: item.uploadedFileName });
+      }
+
+      // Use updated or existing custom size
+      const newSize = updates.customSize ?? item.customSize;
+      if (newSize) {
+        attributes.push({ key: 'Custom Size', value: `${newSize}"` });
+      }
+
+      // Use updated or existing custom quantity
+      const newQuantity = updates.customQuantity ?? item.customQuantity;
+      if (newQuantity) {
+        attributes.push({ key: 'Custom Quantity', value: newQuantity.toString() });
+      }
+
+      // Preserve custom price (stored as totalPrice in the item)
+      if (item.totalPrice) {
+        attributes.push({ key: 'Custom Price', value: item.totalPrice.toFixed(2) });
+      }
+
+      // Preserve custom price per unit
+      if (item.pricePerUnit) {
+        attributes.push({ key: 'Custom Price Per Unit', value: item.pricePerUnit.toFixed(2) });
       }
 
       // Re-add the item

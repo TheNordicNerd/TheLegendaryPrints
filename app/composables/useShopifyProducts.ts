@@ -11,7 +11,7 @@ export const useShopifyProducts = () => {
   // Cache products in localStorage
   const CACHE_KEY = "shopify_products_cache_v3"; // Changed cache key to force refresh with collection
   const CACHE_DURATION = 1000 * 60 * 60; // 1 hour
-  const COLLECTION_HANDLE = "custom-stickers"; // Default collection to fetch from
+  const COLLECTION_HANDLE = "products"; // Default collection to fetch from
 
   interface CachedProducts {
     products: ShopifyProduct[];

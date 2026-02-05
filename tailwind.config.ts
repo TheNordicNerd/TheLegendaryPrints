@@ -17,8 +17,35 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        heading: ["var(--font-heading)", "Montserrat", "sans-serif"],
+        body: ["var(--font-body)", "Inter", "sans-serif"],
+        accent: ["var(--font-accent)", "Quirthy", "cursive"],
+      },
+      fontWeight: {
+        // Montserrat weights
+        bold: "700",
+        extrabold: "800",
+        // Inter weights
+        regular: "400",
+        medium: "500",
+        semibold: "600",
+      },
       colors: {
-        // 60% - PRIMARY (Neutral scale)
+        // Brand colors (exact from brand guide)
+        magenta: "var(--color-magenta)",
+        yellow: "var(--color-yellow)",
+        cyan: "var(--color-cyan)",
+        black: "var(--color-black)",
+        white: "var(--color-white)",
+
+        // Primary = Magenta (main brand color)
+        primary: "var(--color-primary)",
+
+        // Secondary = Cyan (secondary brand color)
+        secondary: "var(--color-secondary)",
+
+        // Neutral scale (for backgrounds and text)
         neutral: {
           50: "var(--color-neutral-50)",
           100: "var(--color-neutral-100)",
@@ -32,96 +59,10 @@ export default {
           900: "var(--color-neutral-900)",
         },
 
-        // 30% - SECONDARY (Brand blue)
-        primary: {
-          50: "var(--color-primary-50)",
-          100: "var(--color-primary-100)",
-          200: "var(--color-primary-200)",
-          300: "var(--color-primary-300)",
-          400: "var(--color-primary-400)",
-          500: "var(--color-primary-500)",
-          600: "var(--color-primary-600)",
-          700: "var(--color-primary-700)",
-          800: "var(--color-primary-800)",
-          900: "var(--color-primary-900)",
-        },
-
-        secondary: {
-          50: "var(--color-secondary-50)",
-          100: "var(--color-secondary-100)",
-          200: "var(--color-secondary-200)",
-          300: "var(--color-secondary-300)",
-          400: "var(--color-secondary-400)",
-          500: "var(--color-secondary-500)",
-          600: "var(--color-secondary-600)",
-          700: "var(--color-secondary-700)",
-          800: "var(--color-secondary-800)",
-          900: "var(--color-secondary-900)",
-        },
-
-        // 10% - ACCENT (Action color)
-        accent: {
-          50: "var(--color-accent-50)",
-          100: "var(--color-accent-100)",
-          200: "var(--color-accent-200)",
-          300: "var(--color-accent-300)",
-          400: "var(--color-accent-400)",
-          500: "var(--color-accent-500)",
-          600: "var(--color-accent-600)",
-          700: "var(--color-accent-700)",
-          800: "var(--color-accent-800)",
-          900: "var(--color-accent-900)",
-        },
-
-        // Semantic colors
-        success: {
-          50: "var(--color-success-50)",
-          100: "var(--color-success-100)",
-          200: "var(--color-success-200)",
-          300: "var(--color-success-300)",
-          400: "var(--color-success-400)",
-          500: "var(--color-success-500)",
-          600: "var(--color-success-600)",
-          700: "var(--color-success-700)",
-          800: "var(--color-success-800)",
-          900: "var(--color-success-900)",
-        },
-        error: {
-          50: "var(--color-error-50)",
-          100: "var(--color-error-100)",
-          200: "var(--color-error-200)",
-          300: "var(--color-error-300)",
-          400: "var(--color-error-400)",
-          500: "var(--color-error-500)",
-          600: "var(--color-error-600)",
-          700: "var(--color-error-700)",
-          800: "var(--color-error-800)",
-          900: "var(--color-error-900)",
-        },
-        warning: {
-          50: "var(--color-warning-50)",
-          100: "var(--color-warning-100)",
-          200: "var(--color-warning-200)",
-          300: "var(--color-warning-300)",
-          400: "var(--color-warning-400)",
-          500: "var(--color-warning-500)",
-          600: "var(--color-warning-600)",
-          700: "var(--color-warning-700)",
-          800: "var(--color-warning-800)",
-          900: "var(--color-warning-900)",
-        },
-        info: {
-          50: "var(--color-info-50)",
-          100: "var(--color-info-100)",
-          200: "var(--color-info-200)",
-          300: "var(--color-info-300)",
-          400: "var(--color-info-400)",
-          500: "var(--color-info-500)",
-          600: "var(--color-info-600)",
-          700: "var(--color-info-700)",
-          800: "var(--color-info-800)",
-          900: "var(--color-info-900)",
-        },
+        // Semantic colors (single value, no shades)
+        success: "var(--color-success)",
+        error: "var(--color-error)",
+        warning: "var(--color-warning)",
 
         // Surface colors
         surface: {

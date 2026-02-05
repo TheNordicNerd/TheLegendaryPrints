@@ -7,18 +7,8 @@
         show-more-button
       ></SectionHeader>
 
-      <!-- Mobile: Compact cards in 2 columns (more products visible) -->
-      <div class="grid grid-cols-2 gap-2 px-3 sm:gap-3 sm:px-4 md:hidden">
-        <ShopifyProductCard
-          v-for="product in shopifyProducts"
-          :key="product.id"
-          :product="product"
-          compact
-        />
-      </div>
-
       <!-- Desktop: Full cards -->
-      <div class="hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-4 px-4 sm:px-0">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 px-4 sm:px-0">
         <ShopifyProductCard
           v-for="product in shopifyProducts"
           :key="product.id"

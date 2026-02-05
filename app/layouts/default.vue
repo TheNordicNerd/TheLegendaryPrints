@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="min-h-screen flex flex-col">
     <!-- Skip Navigation Link for Accessibility -->
     <a
       href="#main-content"
@@ -10,10 +10,11 @@
 
     <Navbar />
     <PromoBanner />
-    <main id="main-content">
+    <main id="main-content" class="flex-grow">
       <slot />
     </main>
     <Footer />
     <Toast />
+    <!-- <SignupModal /> -->
   </div>
 </template>

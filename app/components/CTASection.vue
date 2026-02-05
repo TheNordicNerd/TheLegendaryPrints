@@ -28,7 +28,7 @@
         >
           Browse Products
         </Button>
-        <GhostButton icon-left="i-lucide-mail" top="-100px" label="Get in Touch"> </GhostButton>
+        <GhostButton icon-left="i-lucide-mail" top="-100px" label="Get in Touch" />
       </div>
 
       <!-- Trust Indicators -->

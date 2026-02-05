@@ -1,4 +1,5 @@
 import { Resend } from 'resend';
+import businessConfig from '~/config/businessConfig';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -33,8 +34,8 @@ export default defineEventHandler(async (event) => {
   try {
     // Send email to business
     await resend.emails.send({
-      from: 'Contact Form <contact@thelegendaryprints.com>',
-      to: 'hello@thelegendaryprints.com',
+      from: `Contact Form <contact@${businessConfig.email.split('@')[1]}>`,
+      to: businessConfig.email,
       replyTo: email,
       subject: subject || 'New Contact Form Submission',
       html: `

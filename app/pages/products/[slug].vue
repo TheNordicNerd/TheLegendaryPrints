@@ -3,7 +3,7 @@
     <!-- Loading State -->
     <div v-if="loadingShopify" class="text-center py-12" role="status" aria-live="polite">
       <div
-        class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-accent-700 border-t-transparent"
+        class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-magenta border-t-transparent"
         aria-hidden="true"
       ></div>
       <p class="mt-4 text-text-secondary">Loading product...</p>
@@ -16,22 +16,35 @@
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 py-8">
         <!-- Product Gallery -->
         <div class="product-gallery-container flex flex-col justify-between">
-          <ProductGallery
-            :images="productImages"
-            :alt="shopifyProduct.title"
-            :thumbnail-columns="4"
-          />
-          <NuxtImg src="/LP Check List.png" class="hidden lg:block" />
+          <ProductGallery :images="productImages" :alt="shopifyProduct.title" />
         </div>
 
         <!-- Product Info -->
-        <div class="product-info flex flex-col gap-6">
+        <div class="product-info flex flex-col-reverse lg:flex-col gap-6">
           <div class="border border-border-subtle p-4 rounded-lg">
             <h1 class="text-4xl lg:text-5xl mb-4 text-text-primary">{{ shopifyProduct.title }}</h1>
-            <div
-              class="max-w-none max-h-[400px] overflow-y-auto description"
-              v-html="shopifyProduct.descriptionHtml"
-            />
+
+            <!-- Expandable Description -->
+            <div>
+              <div
+                class="max-w-none description overflow-hidden transition-all duration-300 ease-in-out"
+                :class="isDescriptionExpanded ? 'max-h-[2000px]' : 'max-h-[120px]'"
+                v-html="shopifyProduct.descriptionHtml"
+              />
+
+              <!-- Expand/Collapse Button -->
+              <button
+                v-if="shopifyProduct.descriptionHtml && shopifyProduct.descriptionHtml.length > 200"
+                @click="isDescriptionExpanded = !isDescriptionExpanded"
+                class="mt-3 text-magenta hover:text-text-primary font-medium transition-colors duration-200 flex items-center gap-2"
+              >
+                <span>{{ isDescriptionExpanded ? "Read Less" : "Read More" }}</span>
+                <Icon
+                  :name="isDescriptionExpanded ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'"
+                  size="18"
+                />
+              </button>
+            </div>
           </div>
 
           <!-- Product Options -->
@@ -41,11 +54,16 @@
             :loading="loadingShopify"
           />
 
-          <!-- Add to Cart Button -->
-          <div>
+          <!-- Add to Cart Button (show on upload stage OR for sample packs with required selections) -->
+          <div
+            v-if="
+              productOptionsRef?.showUploadStage ||
+              (productOptionsRef?.isSamplePack && productOptionsRef?.hasRequiredSelections)
+            "
+          >
             <Button
               variant="primary"
-              :disabled="requiresImageUpload && !productOptionsRef?.uploadedImage"
+              :disabled="!productOptionsRef?.isSamplePack && !productOptionsRef?.uploadedImage"
               size="lg"
               :full-width="true"
               rounded="lg"
@@ -56,16 +74,19 @@
               Add to Cart
             </Button>
             <p
-              v-if="requiresImageUpload && !productOptionsRef?.uploadedImage"
+              v-if="!productOptionsRef?.isSamplePack && !productOptionsRef?.uploadedImage"
               class="text-sm text-text-secondary mt-2 text-center"
             >
-              Please upload a design to continue
+              Please upload your artwork to continue
             </p>
           </div>
         </div>
       </div>
     </div>
   </Section>
+
+  <!-- Reviews Section -->
+  <ReviewsSection v-if="shopifyProduct" :product-handle="shopifyProduct.handle" :per-page="5" />
 </template>
 
 <script setup lang="ts">
@@ -88,6 +109,7 @@
   // Fetch Shopify product
   const shopifyProduct = ref<ShopifyProduct | null>(null);
   const loadingShopify = ref(true);
+  const isDescriptionExpanded = ref(false);
 
   const { fetchProductByHandle } = useShopifyProducts();
 
@@ -180,19 +202,6 @@
   // Product options ref
   const productOptionsRef = ref<any>(null);
 
-  // Check if product requires image upload
-  // Image upload is shown when dynamicOptions.length > 1 (see ProductOptions.vue line 4)
-  const requiresImageUpload = computed(() => {
-    if (!shopifyProduct.value) return false;
-    if (!productOptionsRef.value) return false;
-
-    // Get the dynamic options from the ProductOptions component
-    const dynamicOptions = productOptionsRef.value?.dynamicOptions || [];
-
-    // Image upload requires more than 1 option (excluding default "Title")
-    return Array.isArray(dynamicOptions) && dynamicOptions.length > 1;
-  });
-
   // Cart functionality
   const cart = useUnifiedCart();
   const toast = useToast();
@@ -216,9 +225,59 @@
     const customValues = opts.customValues;
     const effectiveQuantity = opts.effectiveQuantity;
 
-    // Use the new composable to get variant info
+    console.log("effectiveQuantity:", effectiveQuantity);
+    console.log("dynamicOptions:", opts.dynamicOptions);
+
+    // Get all actual Shopify variant option names from the product
+    const actualVariantOptionNames = new Set<string>();
+    if (shopifyProduct.value.variants?.edges?.length > 0) {
+      const firstVariant = shopifyProduct.value.variants.edges[0]?.node;
+      if (firstVariant?.selectedOptions) {
+        firstVariant.selectedOptions.forEach((opt) => {
+          actualVariantOptionNames.add(opt.name);
+        });
+      }
+    }
+
+    // Separate variant selections from metafield selections (injected options like Shape)
+    const variantSelections: Record<string, string> = {};
+    const metafieldSelections: Record<string, string> = {};
+
+    Object.keys(selections).forEach((key) => {
+      if (actualVariantOptionNames.has(key)) {
+        variantSelections[key] = selections[key];
+      } else {
+        // Store as metafield (Shape, Finish, etc.)
+        metafieldSelections[key] = selections[key];
+      }
+    });
+
+    // Also handle custom values
+    const variantCustomValues: Record<string, string> = {};
+    const metafieldCustomValues: Record<string, string> = {};
+
+    Object.keys(customValues).forEach((key) => {
+      if (actualVariantOptionNames.has(key)) {
+        variantCustomValues[key] = customValues[key];
+      } else {
+        metafieldCustomValues[key] = customValues[key];
+      }
+    });
+
+    // Use the new composable to get variant info (only using variant options)
     const { getVariantInfo } = useProductOptions(shopifyProduct.value);
-    const variantInfo = getVariantInfo(selections, customValues);
+    let variantInfo = getVariantInfo(variantSelections, variantCustomValues);
+
+    // If no variant found and it's a simple product (no options), use the first variant
+    if (!variantInfo && opts.dynamicOptions.length === 0) {
+      const firstVariant = shopifyProduct.value.variants?.edges?.[0]?.node;
+      if (firstVariant) {
+        variantInfo = {
+          id: firstVariant.id,
+          variant: firstVariant,
+        };
+      }
+    }
 
     if (!variantInfo) {
       toast.error(`No matching product variant found for your selections`);
@@ -240,20 +299,36 @@
     const totalPrice = variantPrice;
     const pricePerUnit = variantPrice; // Variant price is already per unit or total based on Shopify setup
 
+    // Build metafield attributes for cart
+    const attributes: Array<{ key: string; value: string }> = [];
+
+    // Add metafield selections
+    Object.entries(metafieldSelections).forEach(([key, value]) => {
+      if (value === "Custom" && metafieldCustomValues[key]) {
+        attributes.push({ key, value: metafieldCustomValues[key] });
+      } else {
+        attributes.push({ key, value });
+      }
+    });
+
     // Add to cart
     // IMPORTANT: Add quantity as 1 to avoid double-multiplication
     // The totalPrice already includes the quantity (e.g., 500 stickers)
     // Store the actual quantity in customQuantity attribute
     try {
+      // Use uploaded image if available, otherwise use product's featured image
+      const cartImage = opts.uploadedImageUrl || opts.uploadedImage || shopifyProduct.value.featuredImage?.url;
+
       await cart.addItem({
         merchandiseId: variantInfo.id,
         quantity: 1, // Always 1 to prevent Shopify from multiplying the price
-        uploadedImage: opts.uploadedImageUrl || opts.uploadedImage,
+        uploadedImage: cartImage,
         uploadedFileName: opts.uploadedFileName,
         customSize: effectiveSize,
         customQuantity: effectiveQuantity,
         customPrice: totalPrice.toFixed(2),
         customPricePerUnit: pricePerUnit.toFixed(2),
+        attributes, // Pass metafield attributes
       });
 
       // Show success toast

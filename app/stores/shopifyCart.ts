@@ -154,18 +154,11 @@ export const useShopifyCartStore = defineStore(
           isLoading.value = true;
           const existingCart = await getCart(savedCartId);
 
-          // Check if cart exists and is not completed
+          // Check if cart exists
           if (existingCart) {
-            // If cart is completed (checkout finished), create a new one
-            if (existingCart.completedAt) {
-              console.log("Cart was completed, creating new cart");
-              localStorage.removeItem("shopifyCartId");
-              await createNewCart();
-            } else {
-              // Cart is valid and not completed, use it
-              cart.value = existingCart;
-              cartId.value = existingCart.id;
-            }
+            // Cart is valid, use it
+            cart.value = existingCart;
+            cartId.value = existingCart.id;
           } else {
             localStorage.removeItem("shopifyCartId"); // Clear invalid cart ID
             await createNewCart();

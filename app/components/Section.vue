@@ -30,7 +30,7 @@
     ></div>
 
     <!-- Content (z-index: 10) - sits above everything -->
-    <div class="relative z-10">
+    <div class="relative">
       <slot name="outerArea"></slot>
       <div :class="innerClass">
         <slot></slot>

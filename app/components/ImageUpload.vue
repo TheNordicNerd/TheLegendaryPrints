@@ -20,20 +20,20 @@
       class="upload-area border-2 border-dashed rounded-lg p-8 text-center transition-all duration-200"
       :class="
         isUploading
-          ? 'border-accent-500 bg-accent-50 cursor-wait'
+          ? 'border-magenta bg-neutral-100 cursor-wait'
           : isDragging
-            ? 'border-accent-500 bg-accent-50 scale-[0.98] cursor-pointer'
-            : 'border-border-default hover:border-accent-500 hover:bg-surface-sunken cursor-pointer'
+            ? 'border-magenta bg-neutral-100 scale-[0.98] cursor-pointer'
+            : 'border-border-default hover:border-magenta hover:bg-surface-sunken cursor-pointer'
       "
     >
       <div v-if="isUploading" class="flex flex-col items-center gap-4">
         <div class="animate-bounce">
-          <Icon name="i-lucide-image-up" size="48" class="text-accent-600" />
+          <Icon name="i-lucide-image-up" size="48" class="text-magenta" />
         </div>
       </div>
       <div v-else class="flex flex-col items-center gap-3">
-        <div class="p-4 rounded-full bg-accent-100 grid place-items-center">
-          <Icon name="i-lucide-image-plus" size="32" class="text-accent-500" />
+        <div class="p-4 rounded-full bg-neutral-100 grid place-items-center">
+          <Icon name="i-lucide-image-plus" size="32" class="text-magenta" />
         </div>
         <div>
           <p class="text-lg font-semibold text-text-primary mb-1">

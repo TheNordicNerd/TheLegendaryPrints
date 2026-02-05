@@ -1,116 +1,36 @@
 <template>
   <!-- Compact Mobile Version -->
-  <div
-    v-if="compact"
-    class="shopify-product-card-compact bg-surface-raised rounded-xl sm:rounded-2xl shadow-sm hover:shadow-md overflow-hidden transition-all duration-300 flex flex-col"
+
+  <NuxtLink
+    :to="`/products/${product.handle}`"
+    class="shopify-product-card-compact bg-surface-raised rounded-xl w-full sm:rounded-2xl shadow-lg hover:shadow-md overflow-hidden transition-all duration-300 flex flex-col"
   >
-    <!-- Product Image -->
-    <div class="relative overflow-hidden p-2 sm:p-3">
-      <div
-        class="rounded-lg sm:rounded-xl aspect-square bg-gradient-to-b from-surface-base via-surface-raised to-surface-sunken"
-      >
-        <NuxtImg
-          tabindex="-1"
-          v-if="product.featuredImage?.url"
-          :src="product.featuredImage.url"
-          :alt="product.featuredImage.altText || product.title"
-          class="w-full h-full object-contain transition-transform duration-300 hover:scale-105"
-          loading="lazy"
-        />
-        <div v-else class="w-full h-full flex items-center justify-center text-text-tertiary">
-          <Icon name="i-lucide-image" size="32" class="sm:size-48" />
-        </div>
-      </div>
+    <div v-if="product.featuredImage?.url" class="aspect-square overflow-hidden w-full">
+      <NuxtImg
+        tabindex="-1"
+        :src="product.featuredImage.url"
+        :alt="product.featuredImage.altText || product.title"
+        class="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+        loading="lazy"
+      />
+    </div>
+
+    <div v-else class="w-full h-full flex items-center justify-center text-text-tertiary">
+      <Icon name="i-lucide-image" size="32" class="sm:size-48" />
     </div>
 
     <!-- Product Info (Compact) -->
     <div class="px-2 pb-2 sm:px-3 sm:pb-3 flex flex-col flex-1">
       <!-- Product Title -->
-      <h3 class="text-xs sm:text-sm mb-2 text-center font-bold text-text-primary leading-tight line-clamp-2 flex-1" tabindex="-1">
-        {{ product.title }}
-      </h3>
-
-      <!-- Order Button -->
-      <NuxtLink :to="`/products/${product.handle}`" class="block mt-auto">
-        <Button
-          tabindex="-1"
-          variant="secondary"
-          size="sm"
-          :full-width="true"
-          rounded="md"
-          icon-left="i-lucide-shopping-cart"
-          left-icon-size="14"
-          class="font-semibold text-xs sm:text-sm py-1.5 sm:py-2 shadow-sm hover:shadow-md transition-all duration-300"
-        >
-          Order
-        </Button>
-      </NuxtLink>
-    </div>
-  </div>
-
-  <!-- Full Desktop Version -->
-  <div
-    v-else
-    class="shopify-product-card bg-surface-raised rounded-3xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 max-w-md mx-auto flex flex-col"
-  >
-    <!-- Product Image -->
-    <div class="relative overflow-hidden p-8">
-      <div
-        class="rounded-2xl aspect-video bg-gradient-to-b from-surface-base via-surface-raised to-surface-sunken"
+      <component
+        :is="headingLevel"
+        class="text-xs pt-4 sm:text-sm mb-2 text-center font-bold text-text-primary leading-tight line-clamp-2 flex-1"
+        tabindex="-1"
       >
-        <NuxtImg
-          tabindex="-1"
-          v-if="product.featuredImage?.url"
-          :src="product.featuredImage.url"
-          :alt="product.featuredImage.altText || product.title"
-          class="w-full h-full object-contain transition-transform duration-500 hover:scale-110"
-          loading="lazy"
-        />
-        <div v-else class="w-full h-full flex items-center justify-center text-text-tertiary">
-          <Icon name="i-lucide-image" size="64" />
-        </div>
-      </div>
-    </div>
-
-    <!-- Product Info -->
-    <div class="px-8 pb-8 flex flex-col flex-1">
-      <!-- Product Title -->
-      <h3 class="text-lg mb-1 text-left font-bold text-text-primary leading-tight" tabindex="-1">
         {{ product.title }}
-      </h3>
-
-      <!-- Product Description -->
-      <p class="text-left text-text-secondary leading-relaxed line-clamp-2 mb-2">
-        {{
-          stripHtml(product.description) ||
-          "Custom vinyl stickers with vibrant colors and durable finish."
-        }}
-      </p>
-
-      <!-- Price -->
-      <div class="py-4 flex-1">
-        <p class="text-left font-bold text-lg text-text-primary">
-          {{ formatPrice(product.priceRange.minVariantPrice.amount) }}
-        </p>
-      </div>
-
-      <!-- Add to Cart Button -->
-      <NuxtLink :to="`/products/${product.handle}`" class="block mt-auto">
-        <Button
-          tabindex="-1"
-          variant="secondary"
-          size="lg"
-          :full-width="true"
-          rounded="xl"
-          icon-left="i-lucide-shopping-cart"
-          left-icon-size="20"
-          class="font-bold text-lg py-4 shadow-lg hover:shadow-xl transition-all duration-300"
-        >
-          Order Now
-        </Button>
-      </NuxtLink>
+      </component>
     </div>
-  </div>
+  </NuxtLink>
 </template>
 
 <script setup lang="ts">
@@ -119,10 +39,12 @@
   interface Props {
     product: ShopifyProduct;
     compact?: boolean;
+    headingLevel?: "h2" | "h3";
   }
 
   const props = withDefaults(defineProps<Props>(), {
     compact: false,
+    headingLevel: "h2",
   });
 
   const { formatPrice: shopifyFormatPrice } = useShopify();

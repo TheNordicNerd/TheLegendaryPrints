@@ -1,13 +1,15 @@
 <script setup lang="ts">
+  import businessConfig from "~/config/businessConfig";
+
   // Initialize scroll animations for the entire page
   useScrollAnimation();
 
   // SEO Meta Tags - Optimized for custom sticker printing
   useSeoMeta({
-    title: "Custom Stickers | Fast Premium Printing - TLP",
+    title: `Custom Stickers | Fast Premium Printing - ${businessConfig.name}`,
     description:
       "High-quality custom stickers & die-cut prints. Waterproof vinyl, fast delivery, free design support. Order premium stickers today!",
-    ogTitle: "Custom Stickers That Make an Impact | TLP",
+    ogTitle: `Custom Stickers That Make an Impact | ${businessConfig.name}`,
     ogDescription:
       "Transform your ideas into stunning custom stickers. Premium quality, waterproof vinyl, delivered in 3-5 days with free design support.",
     ogImage: "/og-image.jpg",
@@ -18,22 +20,21 @@
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "The Legendary Prints",
-    url: "https://thelegendaryprints.com",
-    logo: "https://thelegendaryprints.com/logo.png",
-    description: "Premium custom sticker printing and die-cut prints with fast turnaround",
-    slogan: "Custom Stickers Made Easy",
-    foundingDate: "2024",
+    name: businessConfig.name,
+    url: businessConfig.website,
+    logo: `${businessConfig.website}/logo.png`,
+    description: businessConfig.description,
+    slogan: businessConfig.tagline,
+    foundingDate: businessConfig.foundingYear,
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "Customer Service",
-      email: "hello@thelegendaryprints.com",
+      email: businessConfig.email,
       availableLanguage: "English",
     },
     sameAs: [
-      "https://instagram.com/thelegendaryprints",
-      "https://facebook.com/thelegendaryprints",
-      "https://twitter.com/legendaryprints",
+      businessConfig.social.instagram,
+      businessConfig.social.facebook,
     ],
   };
 
@@ -45,7 +46,7 @@
       "High-quality custom stickers with vibrant colors, waterproof coating, and professional finish",
     brand: {
       "@type": "Brand",
-      name: "The Legendary Prints",
+      name: businessConfig.name,
     },
     offers: {
       "@type": "AggregateOffer",
@@ -78,11 +79,16 @@
 <template>
   <div>
     <HeroSection />
-    <FeaturesSection />
+    <Marquee />
+    <!-- <FeaturesSection /> -->
     <BestSellers />
     <ProcessSection />
-    <TestimonialsSection />
-    <CTASection />
+    <ReviewsSection
+      :per-page="20"
+      :show-write-button="false"
+      title="See what our customers have to say!"
+      description="Real reviews from real customers"
+    />
   </div>
 </template>
 

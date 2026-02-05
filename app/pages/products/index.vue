@@ -74,25 +74,13 @@
             <p class="mt-4 text-text-secondary">Loading products...</p>
           </div>
 
-          <!-- Products Grid - Mobile Compact -->
-          <div
-            v-if="filteredProducts.length > 0"
-            class="grid grid-cols-2 gap-2 sm:gap-3 md:hidden"
-          >
+          <!-- Products Grid - Desktop Full -->
+          <div v-if="filteredProducts.length > 0" class="grid grid-cols-2 lg:grid-cols-3 gap-6">
             <ShopifyProductCard
               v-for="product in sortedProducts"
               :key="product.id"
               :product="product"
-              compact
             />
-          </div>
-
-          <!-- Products Grid - Desktop Full -->
-          <div
-            v-else-if="filteredProducts.length > 0"
-            class="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6"
-          >
-            <ShopifyProductCard v-for="product in sortedProducts" :key="product.id" :product="product" />
           </div>
 
           <!-- Empty State -->
@@ -216,6 +204,9 @@
       </Transition>
     </Teleport>
   </Section>
+
+  <!-- All Reviews Section -->
+  <AllReviewsSection :per-page="6" />
 </template>
 
 <script setup lang="ts">

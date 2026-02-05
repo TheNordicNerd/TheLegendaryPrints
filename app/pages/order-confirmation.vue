@@ -15,7 +15,7 @@
         Thank you for your order. We've received your custom sticker order and will review it shortly.
       </p>
 
-      <div class="bg-surface-raised p-6 rounded-lg border-2 border-accent-700 mb-8">
+      <div class="bg-surface-raised p-6 rounded-lg border-2 border-border-default mb-8">
         <h2 class="text-2xl font-bold mb-4 text-text-primary">What's Next?</h2>
         <div class="text-left space-y-4">
           <div class="flex gap-4">

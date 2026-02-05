@@ -8,10 +8,16 @@ import type { ShopifyProduct, ShopifyVariant } from "~/composables/useShopify";
 
 export type ProductOptionType = "standard" | "custom";
 
+export interface ProductOptionValue {
+  label: string;
+  value: string;
+  icon?: string;
+}
+
 export interface ProductOption {
   name: string;
   type: ProductOptionType;
-  values: string[];
+  values: (string | ProductOptionValue)[];
   hasCustom: boolean;
   isRow?: boolean;
 }
@@ -58,12 +64,77 @@ const getProductVariantOptions = (product: ShopifyProduct) => {
 const findVariant = (
   product: ShopifyProduct,
   selectedOptions: Record<string, string>,
+  debug = false,
 ): ShopifyVariant | null => {
+  if (debug) {
+    console.log("🔍 Finding variant with selections:", selectedOptions);
+    console.log("📦 Total variants to check:", product.variants.edges.length);
+  }
+
+  const filteredVariants: any[] = [];
+  const rejectedVariants: any[] = [];
+
   const variant = product.variants.edges.find(({ node: variant }) => {
-    return variant.selectedOptions.every(({ name, value }) => {
+    // Check if the number of options matches
+    const numSelectedOptions = Object.keys(selectedOptions).length;
+    const numVariantOptions = variant.selectedOptions.length;
+
+    const variantOptionsObj = variant.selectedOptions.reduce((acc: any, opt: any) => {
+      acc[opt.name] = opt.value;
+      return acc;
+    }, {});
+
+    // Log first variant to see actual Shopify structure
+    if (debug && product.variants.edges[0]?.node === variant) {
+      console.log("🔎 First Shopify Variant (for reference):", {
+        title: variant.title,
+        selectedOptions: variant.selectedOptions,
+        variantOptionsObj,
+      });
+    }
+
+    if (numSelectedOptions !== numVariantOptions) {
+      if (debug) {
+        rejectedVariants.push({
+          title: variant.title,
+          reason: `Option count mismatch (selected: ${numSelectedOptions}, variant: ${numVariantOptions})`,
+          variantOptions: variantOptionsObj,
+        });
+      }
+      return false;
+    }
+
+    // Check if all variant options match the selected options
+    const matches = variant.selectedOptions.every(({ name, value }) => {
       return selectedOptions[name] === value;
     });
+
+    if (!matches && debug) {
+      const mismatchedOptions = variant.selectedOptions.filter(({ name, value }) => {
+        return selectedOptions[name] !== value;
+      });
+      rejectedVariants.push({
+        title: variant.title,
+        reason: "Option value mismatch",
+        variantOptions: variantOptionsObj,
+        mismatched: mismatchedOptions.map(opt => `${opt.name}: expected '${selectedOptions[opt.name]}', got '${opt.value}'`),
+      });
+    }
+
+    if (matches && debug) {
+      filteredVariants.push({
+        title: variant.title,
+        options: variantOptionsObj,
+      });
+    }
+
+    return matches;
   });
+
+  if (debug) {
+    console.log("✅ Matching variants:", filteredVariants);
+    console.log("❌ Rejected variants (first 5):", rejectedVariants.slice(0, 5));
+  }
 
   return variant?.node || null;
 };
@@ -150,11 +221,14 @@ export const useProductOptions = (product: ShopifyProduct) => {
    */
   const normalizeCustomValue = (
     optionName: string,
-    value: string,
+    value: string | any,
     customValue?: string,
   ): string => {
+    // Extract actual value if it's an object
+    const actualValue = typeof value === 'string' ? value : value?.value || value;
+
     // If the value is "Custom" and we have a custom value, use it
-    if (value.toLowerCase() === "custom" && customValue) {
+    if (actualValue.toLowerCase() === "custom" && customValue) {
       const normalizedName = optionName.toLowerCase();
 
       // For size, add inch symbol if it's a number without unit
@@ -176,7 +250,7 @@ export const useProductOptions = (product: ShopifyProduct) => {
       return customValue;
     }
 
-    return value;
+    return actualValue;
   };
 
   /**
@@ -205,13 +279,15 @@ export const useProductOptions = (product: ShopifyProduct) => {
    *
    * @param selections - Selected option values
    * @param customValues - Custom values for options marked as "Custom"
+   * @param debug - Enable debug logging
    */
   const findVariantByOptions = (
     selections: SelectedOptions,
     customValues?: Record<string, string>,
+    debug = false,
   ): ShopifyVariant | null => {
     const normalizedOptions = buildSelectedOptions(selections, customValues);
-    return findVariant(product, normalizedOptions);
+    return findVariant(product, normalizedOptions, debug);
   };
 
   /**
@@ -235,12 +311,14 @@ export const useProductOptions = (product: ShopifyProduct) => {
    *
    * @param selections - Selected option values
    * @param customValues - Custom values for options marked as "Custom"
+   * @param debug - Enable debug logging
    */
   const getVariantInfo = (
     selections: SelectedOptions,
     customValues?: Record<string, string>,
+    debug = false,
   ): { variant: ShopifyVariant; id: string } | null => {
-    const variant = findVariantByOptions(selections, customValues);
+    const variant = findVariantByOptions(selections, customValues, debug);
     if (!variant) return null;
 
     return {

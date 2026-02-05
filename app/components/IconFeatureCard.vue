@@ -3,25 +3,25 @@
     class="feature-card p-6 rounded-lg transition-all duration-300"
     :class="[
       variant === 'elevated'
-        ? 'bg-surface-raised border border-border-subtle hover:border-accent-500'
+        ? 'bg-surface-raised border border-border-subtle hover:border-neutral-400'
         : '',
     ]"
   >
     <!-- Step Number (optional) -->
     <div
       v-if="stepNumber"
-      class="w-16 h-16 rounded-full bg-accent-700 text-text-inverse flex items-center justify-center text-2xl font-bold mb-4 relative z-10 shadow-lg mx-auto"
+      class="w-16 h-16 rounded-full bg-magenta text-text-inverse flex items-center justify-center text-2xl font-bold mb-4 relative z-10 shadow-lg mx-auto"
     >
       {{ stepNumber }}
     </div>
 
     <!-- Icon -->
-    <div class="p-3 bg-accent-100 rounded-lg grid place-items-center w-fit mb-4 mx-auto">
-      <Icon :name="icon" size="32" class="text-accent-700" />
+    <div class="p-3 bg-neutral-100 rounded-lg grid place-items-center w-fit mb-4 mx-auto">
+      <Icon :name="icon" size="32" class="text-magenta" />
     </div>
 
     <!-- Title -->
-    <h3 class="text-xl text-center font-bold text-text-primary mb-2">
+    <h3 class="text-xl text-center font-bold text-text-primary mb-2" :class="{ 'font-accent': useAccentFont }">
       {{ title }}
     </h3>
 
@@ -39,10 +39,12 @@
     description: string;
     stepNumber?: number;
     variant?: "default" | "elevated";
+    useAccentFont?: boolean;
   }
 
   withDefaults(defineProps<Props>(), {
     variant: "default",
+    useAccentFont: false,
   });
 </script>
 

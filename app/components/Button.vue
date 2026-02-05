@@ -225,15 +225,12 @@
     if (isCustom.value) return "";
 
     const variants = {
-      primary:
-        "text-text-inverse bg-primary-500 hover:bg-primary-600 shadow-lg shadow-primary-500/30 hover:shadow-primary-600/40",
-      secondary:
-        "text-text-inverse bg-secondary-500 hover:bg-secondary-800 shadow-lg shadow-secondary-500/20 hover:shadow-secondary-600/30",
+      primary: "text-text-inverse bg-primary hover:bg-primary  hover:shadow-primary",
+      secondary: "text-text-inverse bg-secondary hover:bg-secondary-800 hover:shadow-secondary",
       outline:
-        "text-primary-500 border-2 border-primary-500 bg-transparent hover:bg-primary-500 hover:text-text-inverse shadow-lg hover:shadow-xl",
+        "text-primary border-2 border-primary bg-transparent hover:bg-primary hover:text-text-inverse",
       ghost: "text-text-primary bg-transparent hover:bg-neutral-100",
-      danger:
-        "text-text-inverse bg-error-600 hover:bg-error-700 shadow-lg shadow-error-500/30 hover:shadow-error-600/40",
+      danger: "text-text-inverse bg-error hover:bg-error-700 ",
       custom: "",
     };
     return variants[props.variant];

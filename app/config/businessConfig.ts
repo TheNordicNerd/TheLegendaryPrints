@@ -1,0 +1,35 @@
+export default {
+  name: "The Legendary Prints",
+  email: "hello@thelegendaryprints.com",
+  phone: "(407) 476-4413",
+  phoneFormatted: "+14074764413",
+  address: {
+    street: "40 N Charles Richard Beall Blvd",
+    city: "DeBary",
+    state: "FL",
+    zip: "32713",
+    full: "40 N Charles Richard Beall Blvd, DeBary, FL 32713",
+  },
+  googleMapsUrl: "https://maps.google.com/?q=40+N+Charles+Richard+Beall+Blvd,+DeBary,+FL+32713",
+  businessHours: {
+    weekdays: "Monday - Friday: 9am - 6pm EST",
+    weekend: "Saturday - Sunday: Closed",
+    hours: {
+      monday: { open: "09:00", close: "18:00" },
+      tuesday: { open: "09:00", close: "18:00" },
+      wednesday: { open: "09:00", close: "18:00" },
+      thursday: { open: "09:00", close: "18:00" },
+      friday: { open: "09:00", close: "18:00" },
+      saturday: { open: "", close: "" },
+      sunday: { open: "", close: "" },
+    },
+  },
+  social: {
+    instagram: "https://instagram.com/thelegendaryprints",
+    facebook: "https://facebook.com/thelegendaryprints",
+  },
+  website: "https://thelegendaryprints.com",
+  tagline: "Custom Stickers Made Easy",
+  description: "Premium custom sticker printing and die-cut prints with fast turnaround",
+  foundingYear: "2024",
+};

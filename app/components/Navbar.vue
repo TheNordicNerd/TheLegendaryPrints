@@ -1,24 +1,14 @@
 <template>
   <header class="navbar-header w-full top-0 left-0 right-0 z-50 shadow bg-surface-raised">
     <nav
-      class="navbar-container mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-6"
+      class="navbar-container mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-0"
       aria-label="Main navigation"
     >
-      <div class="navbar-content mx-auto flex items-center justify-between max-w-[1200px] w-full">
-        <!-- Logo -->
-        <div class="navbar-logo flex-shrink-0">
-          <NuxtLink
-            to="/"
-            class="flex items-center gap-2 font-extrabold hover:text-accent-500-600 transition-colors duration-200"
-            aria-label="The Legendary Prints - Home"
-          >
-            <NuxtImg src="/LP Logo.png" alt="Legendary Prints" class="h-16" />
-          </NuxtLink>
-        </div>
-
+      <div class="navbar-content mx-auto flex items-center justify-between max-w-[1440px] w-full">
         <!-- Desktop Navigation -->
-        <div class="hidden lg:flex lg:items-center lg:gap-8">
-          <ul class="flex items-center gap-6">
+        <div class="hidden lg:grid lg:grid-cols-[1fr_auto_1fr] lg:items-center lg:w-full lg:gap-8">
+          <!-- Left: Navigation Links -->
+          <ul class="flex items-center gap-4 justify-start">
             <li v-for="link in links" :key="link.to" class="relative group text-sm">
               <!-- Links without children -->
               <NavLink
@@ -70,18 +60,45 @@
             </li>
           </ul>
 
-          <!-- CTA Button -->
-          <Button
-            variant="primary"
-            rounded="lg"
-            size="sm"
-            icon-left="i-lucide-package"
-            left-icon-size="16"
-            to="/products"
-          >
-            Order Now
-          </Button>
-          <div class="flex justify-start gap-2">
+          <!-- Center: Logo -->
+          <div class="navbar-logo flex justify-center">
+            <NuxtLink
+              to="/"
+              class="flex items-center gap-2 py-2 font-extrabold hover:text-accent-500-600 transition-colors duration-200"
+              aria-label="The Legendary Prints - Home"
+            >
+              <NuxtImg src="/LP - Logo.png" alt="Legendary Prints" class="h-24" />
+            </NuxtLink>
+          </div>
+
+          <!-- Right: Action Buttons -->
+          <div class="flex justify-end gap-2">
+            <!-- CTA Button -->
+            <Button
+              variant="primary"
+              rounded="lg"
+              size="sm"
+              icon-left="i-lucide-package"
+              left-icon-size="16"
+              to="/products"
+            >
+              Order Now
+            </Button>
+
+            <!-- Sign In Button -->
+            <Tooltip text="Sign in to your account" position="bottom">
+              <Button
+                variant="ghost"
+                size="sm"
+                rounded="lg"
+                icon="i-lucide-user"
+                icon-size="20"
+                label="Sign in"
+                :to="shopifyLoginUrl"
+                external
+              />
+            </Tooltip>
+
             <!-- Cart Button -->
             <div class="relative">
               <Button
@@ -95,7 +112,7 @@
               />
               <div
                 v-if="cartItemCount > 0"
-                class="absolute -top-1 -right-1 bg-accent-700 text-text-inverse text-xs font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5"
+                class="absolute -top-1 -right-1 bg-magenta text-text-inverse text-xs font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5"
                 aria-label="`${cartItemCount} items in cart`"
               >
                 {{ cartItemCount }}
@@ -104,39 +121,67 @@
           </div>
         </div>
 
-        <!-- Mobile Actions & Menu Button -->
-        <div class="lg:hidden flex items-center gap-2">
-          <!-- Cart Button (Mobile) -->
-          <div class="relative">
+        <!-- Mobile Layout -->
+        <div class="lg:hidden flex items-center justify-between w-full">
+          <!-- Mobile Logo (Left) -->
+          <div class="navbar-logo">
+            <NuxtLink
+              to="/"
+              class="flex items-center gap-2 font-extrabold hover:text-accent-500-600 transition-colors duration-200"
+              aria-label="The Legendary Prints - Home"
+            >
+              <NuxtImg src="/LP - Logo.png" alt="Legendary Prints" class="h-12 sm:h-14" />
+            </NuxtLink>
+          </div>
+
+          <!-- Mobile Actions & Menu Button (Right) -->
+          <div class="flex items-center gap-2">
+            <!-- Sign In Button (Mobile) -->
+            <Tooltip text="Sign in to your account" position="bottom">
+              <Button
+                variant="ghost"
+                size="sm"
+                rounded="lg"
+                icon="i-lucide-user"
+                icon-size="20"
+                label="Sign in"
+                :to="shopifyLoginUrl"
+                external
+              />
+            </Tooltip>
+
+            <!-- Cart Button (Mobile) -->
+            <div class="relative">
+              <Button
+                variant="ghost"
+                size="sm"
+                rounded="lg"
+                icon="i-lucide-shopping-cart"
+                icon-size="20"
+                label="View cart"
+                @click="handleCartClick"
+              />
+              <div
+                v-if="cartItemCount > 0"
+                class="absolute -top-3 right-0 bg-magenta text-text-inverse text-xs font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5"
+                aria-label="`${cartItemCount} items in cart`"
+              >
+                {{ cartItemCount }}
+              </div>
+            </div>
+
+            <!-- Mobile Menu Button -->
             <Button
               variant="ghost"
               size="sm"
               rounded="lg"
-              icon="i-lucide-shopping-cart"
-              icon-size="20"
-              label="View cart"
-              @click="handleCartClick"
+              :icon="isMobileMenuOpen ? 'i-lucide-x' : 'i-lucide-menu'"
+              icon-size="24"
+              @click="toggleMobileMenu"
+              aria-label="Toggle mobile menu"
+              :aria-expanded="isMobileMenuOpen"
             />
-            <div
-              v-if="cartItemCount > 0"
-              class="absolute -top-3 right-0 bg-accent-700 text-text-inverse text-xs font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5"
-              aria-label="`${cartItemCount} items in cart`"
-            >
-              {{ cartItemCount }}
-            </div>
           </div>
-
-          <!-- Mobile Menu Button -->
-          <Button
-            variant="ghost"
-            size="sm"
-            rounded="lg"
-            :icon="isMobileMenuOpen ? 'i-lucide-x' : 'i-lucide-menu'"
-            icon-size="24"
-            @click="toggleMobileMenu"
-            aria-label="Toggle mobile menu"
-            :aria-expanded="isMobileMenuOpen"
-          />
         </div>
       </div>
 
@@ -152,8 +197,8 @@
               <NuxtLink
                 v-if="!link.children || link.children.length === 0"
                 :to="link.to"
-                class="mobile-nav-link flex items-center gap-3 px-4 py-3 text-base font-semibold text-text-primary hover:bg-accent-100 hover:text-accent-500 transition-colors duration-200"
-                active-class="text-accent-500 bg-accent-50"
+                class="mobile-nav-link flex items-center gap-3 px-4 py-3 text-base font-semibold text-text-primary hover:bg-neutral-100 transition-colors duration-200"
+                active-class="text-magenta bg-neutral-100"
                 @click="closeMobileMenu"
               >
                 <Icon v-if="link.icon" :name="link.icon" size="20" />
@@ -163,7 +208,7 @@
               <!-- Links with children (accordion) -->
               <div v-else>
                 <button
-                  class="mobile-nav-link w-full flex items-center justify-between px-4 py-3 text-base font-semibold text-text-primary hover:bg-accent-100 hover:text-accent-500 transition-colors duration-200"
+                  class="mobile-nav-link w-full flex items-center justify-between px-4 py-3 text-base font-semibold text-text-primary hover:bg-neutral-100 transition-colors duration-200"
                   @click="toggleMobileDropdown(link.text)"
                 >
                   <span class="flex items-center gap-3">
@@ -182,13 +227,13 @@
                 <Transition name="mobile-submenu">
                   <ul
                     v-show="activeMobileDropdown === link.text"
-                    class="ml-4 border-l-2 border-accent-200"
+                    class="ml-4 border-l-2 border-neutral-300"
                   >
                     <li v-for="child in link.children" :key="child.to">
                       <NuxtLink
                         :to="child.to"
-                        class="mobile-submenu-link flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-text-secondary hover:bg-accent-100 hover:text-accent-500 transition-colors duration-200"
-                        active-class="text-accent-500 bg-accent-50"
+                        class="mobile-submenu-link flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-text-secondary hover:bg-neutral-100 transition-colors duration-200"
+                        active-class="text-magenta bg-neutral-100"
                         @click="closeMobileMenu"
                       >
                         <Icon v-if="child.icon" :name="child.icon" size="18" />
@@ -273,13 +318,14 @@
         },
       ],
     },
+
     {
-      text: "About",
-      to: "/about",
-      icon: "i-lucide-info",
+      text: "Samples",
+      to: "/products/sample-pack",
+      icon: "i-lucide-sticker",
     },
     {
-      text: "Contact",
+      text: "For Businesses",
       to: "/contact",
       icon: "i-lucide-mail",
     },
@@ -297,6 +343,13 @@
   const cart = useUnifiedCart();
   const cartItemCount = cart.itemCount;
   const router = useRouter();
+
+  // Shopify login URL
+  const config = useRuntimeConfig();
+  const shopifyLoginUrl = computed(() => {
+    const domain = config.public.shopifyShop || "";
+    return domain ? `https://${domain}/account/login` : "/account/login";
+  });
 
   const handleCartClick = (event: MouseEvent) => {
     router.push("/cart");
@@ -455,12 +508,12 @@
 
   /* Active Link Styling */
   .router-link-active.nav-link {
-    color: var(--color-accent-600);
+    color: var(--color-magenta);
   }
 
   .router-link-active.nav-link::after {
     width: 80%;
-    background: var(--color-accent-600);
+    background: var(--color-magenta);
   }
 
   /* Dropdown Item Hover */
