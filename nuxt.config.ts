@@ -7,8 +7,9 @@ export default defineNuxtConfig({
   nitro: {
     preset: "netlify",
     prerender: {
-      crawlLinks: true,
+      crawlLinks: false,
       routes: ["/", "/about", "/contact", "/products", "/cart"],
+      failOnError: false,
       // Prerender product pages will be handled by the hook below
     },
   },
@@ -46,6 +47,14 @@ export default defineNuxtConfig({
     providers: {
       shopify: {
         baseURL: "https://cdn.shopify.com",
+      },
+    },
+    presets: {
+      default: {
+        modifiers: {
+          format: "webp",
+          quality: 80,
+        },
       },
     },
   },

@@ -12,7 +12,7 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="h-full w-full p-8">
-            <NuxtImg src="/LP Logo.png" class="my-0" />
+            <NuxtImg src="/lp-logo.png" class="my-0" />
           </div>
 
           <div class="">
@@ -39,7 +39,7 @@
             </ul>
           </div>
           <div class="h-full w-full">
-            <NuxtImg src="/LP Check List.png" class="my-0" />
+            <NuxtImg src="/lp-checklist.png" class="my-0" />
           </div>
         </div>
 

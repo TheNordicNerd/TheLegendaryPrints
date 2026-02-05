@@ -6,7 +6,7 @@
         <!-- Links and Social -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
           <div class="hidden lg:inline">
-            <NuxtImg src="/LP - Logo.png" class="w-48" />
+            <NuxtImg src="/lp-logo.png" class="w-48" />
           </div>
           <!-- Company -->
           <div>
