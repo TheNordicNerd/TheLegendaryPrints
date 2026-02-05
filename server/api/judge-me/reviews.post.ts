@@ -40,12 +40,6 @@ export default defineEventHandler(async (event) => {
     // Note: shop_domain should be the full myshopify.com domain
     const shopDomain = config.public.shopifyShop;
 
-      shop_domain: shopDomain,
-      productHandle,
-      productId,
-      rating,
-    });
-
     const reviewData: any = {
       api_token: config.judgeMePrivateToken,
       shop_domain: shopDomain,

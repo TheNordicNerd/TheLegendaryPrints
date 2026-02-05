@@ -19,11 +19,6 @@ export default defineEventHandler(async (event) => {
 
     const judgeMeUrl = `https://judge.me/api/v1/reviews?${params.toString()}`;
 
-      shop_domain: config.public.shopifyShop,
-      page: pageNum,
-      perPage: perPageNum,
-    });
-
     const response = await fetch(judgeMeUrl, {
       method: "GET",
       headers: {
@@ -42,9 +37,6 @@ export default defineEventHandler(async (event) => {
     }
 
     const data = await response.json();
-      reviewCount: data.review_count || 0,
-      rating: data.rating || 0,
-    });
 
     return {
       success: true,
