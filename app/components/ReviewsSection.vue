@@ -37,12 +37,8 @@
       </div>
 
       <!-- Loading State -->
-      <div v-if="loading" class="text-center py-12" role="status" aria-live="polite">
-        <div
-          class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-magenta border-t-transparent"
-          aria-hidden="true"
-        ></div>
-        <p class="mt-4 text-text-secondary">Loading reviews...</p>
+      <div v-if="loading" class="space-y-6">
+        <SkeletonLoader v-for="i in perPage" :key="i" type="review" />
       </div>
 
       <!-- Error State -->

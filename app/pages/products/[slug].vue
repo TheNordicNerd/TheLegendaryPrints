@@ -1,13 +1,7 @@
 <template>
   <Section inner-classes="p-4">
     <!-- Loading State -->
-    <div v-if="loadingShopify" class="text-center py-12" role="status" aria-live="polite">
-      <div
-        class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-magenta border-t-transparent"
-        aria-hidden="true"
-      ></div>
-      <p class="mt-4 text-text-secondary">Loading product...</p>
-    </div>
+    <SkeletonLoader v-if="loadingShopify" type="product-detail" container-class="py-8" />
 
     <!-- Product Content -->
     <div v-else-if="shopifyProduct">
@@ -225,9 +219,6 @@
     const customValues = opts.customValues;
     const effectiveQuantity = opts.effectiveQuantity;
 
-    console.log("effectiveQuantity:", effectiveQuantity);
-    console.log("dynamicOptions:", opts.dynamicOptions);
-
     // Get all actual Shopify variant option names from the product
     const actualVariantOptionNames = new Set<string>();
     if (shopifyProduct.value.variants?.edges?.length > 0) {
@@ -317,7 +308,8 @@
     // Store the actual quantity in customQuantity attribute
     try {
       // Use uploaded image if available, otherwise use product's featured image
-      const cartImage = opts.uploadedImageUrl || opts.uploadedImage || shopifyProduct.value.featuredImage?.url;
+      const cartImage =
+        opts.uploadedImageUrl || opts.uploadedImage || shopifyProduct.value.featuredImage?.url;
 
       await cart.addItem({
         merchandiseId: variantInfo.id,

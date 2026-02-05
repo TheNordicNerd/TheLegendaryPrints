@@ -42,7 +42,6 @@ export default defineEventHandler(async (event) => {
         try {
           await cloudinary.uploader.destroy(resource.public_id);
           deletedImages.push(resource.public_id);
-          console.log(`🗑️ Deleted orphaned image: ${resource.public_id}`);
         } catch (error: any) {
           console.error(`❌ Failed to delete ${resource.public_id}:`, error.message);
           errors.push(`${resource.public_id}: ${error.message}`);

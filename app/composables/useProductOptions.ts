@@ -66,11 +66,6 @@ const findVariant = (
   selectedOptions: Record<string, string>,
   debug = false,
 ): ShopifyVariant | null => {
-  if (debug) {
-    console.log("🔍 Finding variant with selections:", selectedOptions);
-    console.log("📦 Total variants to check:", product.variants.edges.length);
-  }
-
   const filteredVariants: any[] = [];
   const rejectedVariants: any[] = [];
 
@@ -83,15 +78,6 @@ const findVariant = (
       acc[opt.name] = opt.value;
       return acc;
     }, {});
-
-    // Log first variant to see actual Shopify structure
-    if (debug && product.variants.edges[0]?.node === variant) {
-      console.log("🔎 First Shopify Variant (for reference):", {
-        title: variant.title,
-        selectedOptions: variant.selectedOptions,
-        variantOptionsObj,
-      });
-    }
 
     if (numSelectedOptions !== numVariantOptions) {
       if (debug) {
@@ -130,11 +116,6 @@ const findVariant = (
 
     return matches;
   });
-
-  if (debug) {
-    console.log("✅ Matching variants:", filteredVariants);
-    console.log("❌ Rejected variants (first 5):", rejectedVariants.slice(0, 5));
-  }
 
   return variant?.node || null;
 };

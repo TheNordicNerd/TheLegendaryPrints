@@ -8,7 +8,6 @@ export default defineNitroPlugin((nitroApp) => {
     // Only run during build/prerender
     if (process.env.NODE_ENV !== 'production' && !process.env.PRERENDER) return;
 
-    console.log('🔍 Fetching Shopify products for prerendering...');
 
     try {
       // Fetch products from Shopify collection
@@ -18,7 +17,6 @@ export default defineNitroPlugin((nitroApp) => {
       const response = await $fetch(url);
       const products = response.products || [];
 
-      console.log(`✅ Found ${products.length} products to prerender`);
 
       // Generate routes for each product
       const productRoutes = products.map((product: any) => `/products/${product.handle}`);

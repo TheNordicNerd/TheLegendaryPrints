@@ -19,7 +19,6 @@ export default defineEventHandler(async (event) => {
 
     const judgeMeUrl = `https://judge.me/api/v1/reviews?${params.toString()}`;
 
-    console.log("Fetching all reviews from Judge.me:", {
       shop_domain: config.public.shopifyShop,
       page: pageNum,
       perPage: perPageNum,
@@ -43,7 +42,6 @@ export default defineEventHandler(async (event) => {
     }
 
     const data = await response.json();
-    console.log("Judge.me API response:", {
       reviewCount: data.review_count || 0,
       rating: data.rating || 0,
     });

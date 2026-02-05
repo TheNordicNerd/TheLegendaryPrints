@@ -66,13 +66,7 @@
           </div>
 
           <!-- Loading State -->
-          <div v-if="loading" class="text-center py-12" role="status" aria-live="polite">
-            <div
-              class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-accent-700 border-t-transparent"
-              aria-hidden="true"
-            ></div>
-            <p class="mt-4 text-text-secondary">Loading products...</p>
-          </div>
+          <SkeletonLoader v-if="loading" type="product-grid" :count="6" />
 
           <!-- Products Grid - Desktop Full -->
           <div v-if="filteredProducts.length > 0" class="grid grid-cols-2 lg:grid-cols-3 gap-6">

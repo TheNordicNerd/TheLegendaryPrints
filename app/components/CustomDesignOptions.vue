@@ -82,16 +82,12 @@
     async ([material, shape]) => {
       if (!material || !shape) return;
 
-      console.log("Looking for product with:", { material, shape });
-
       isLoadingProduct.value = true;
       productError.value = null;
 
       try {
         const { fetchProducts } = useShopifyProducts();
         const allProducts = await fetchProducts(250); // Fetch up to 250 products
-
-        console.log("Searching through products:", allProducts.length);
 
         // Find product whose title contains both Material and Shape
         const matchingProduct = allProducts.find((product: any) => {
@@ -101,22 +97,16 @@
 
           const comparisonTitle = `${material} ${capitalizedProductType} - ${shape}`;
 
-          console.log("Comparing:", title, "===", comparisonTitle.toLowerCase());
-
           const hasSameTitle = title === comparisonTitle.toLowerCase();
 
           return hasSameTitle;
         });
 
-        console.log(matchingProduct);
-
         if (!matchingProduct) {
           productError.value = `No product found with "${material}" and "${shape}" in the title`;
           currentProduct.value = null;
-          console.error("No matching product found");
         } else {
           currentProduct.value = matchingProduct;
-          console.log("Found matching product:", matchingProduct.title);
         }
       } catch (error: any) {
         console.error("Error fetching products:", error);
@@ -149,12 +139,10 @@
     // Get the actual option names from the first variant's selectedOptions
     const firstVariant = currentProduct.value.variants?.edges?.[0]?.node;
     if (!firstVariant?.selectedOptions) {
-      console.log("No variants found in product");
       return {};
     }
 
     const productOptionNames = firstVariant.selectedOptions.map((opt) => opt.name);
-    console.log("Product option names from Shopify:", productOptionNames);
 
     // Build selections based on actual Shopify variant option names
     // Only match Size, Quantity, Laminate (NOT Material or Shape)
@@ -172,8 +160,6 @@
         if (laminateValue) selections[optionName] = laminateValue;
       }
     });
-
-    console.log("Built variant selections:", selections);
 
     return selections;
   });
@@ -202,24 +188,11 @@
   // Get the variant ID for cart operations
   const selectedVariantId = computed(() => {
     if (!currentProduct.value) {
-      console.log("No current product");
       return null;
     }
 
     const { getVariantInfo } = useProductOptions(currentProduct.value);
-    const variantInfo = getVariantInfo(variantSelections.value, customOptionValues.value, true); // Enable debug
-
-    console.log("Variant matching:", {
-      variantSelections: variantSelections.value,
-      customValues: customOptionValues.value,
-      variantInfo,
-      availableVariants: currentProduct.value.variants?.edges?.length,
-      allVariants: currentProduct.value.variants?.edges?.map((e) => ({
-        id: e.node.id,
-        title: e.node.title,
-        selectedOptions: e.node.selectedOptions,
-      })),
-    });
+    const variantInfo = getVariantInfo(variantSelections.value, customOptionValues.value);
 
     // If no variant found, log detailed error
     if (!variantInfo) {

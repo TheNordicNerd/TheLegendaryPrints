@@ -40,7 +40,6 @@ export default defineEventHandler(async (event) => {
     // Note: shop_domain should be the full myshopify.com domain
     const shopDomain = config.public.shopifyShop;
 
-    console.log("Submitting review to Judge.me:", {
       shop_domain: shopDomain,
       productHandle,
       productId,
@@ -94,7 +93,6 @@ export default defineEventHandler(async (event) => {
     }
 
     const data = await response.json();
-    console.log("Judge.me API success response:", data);
 
     return {
       success: true,
