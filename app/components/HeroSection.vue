@@ -1,5 +1,5 @@
 <template>
-  <Section inner-classes="text-left" outer-classes="bg-neutral-900">
+  <Section inner-classes="text-center md:text-left" outer-classes="bg-neutral-900">
     <div class="w-full max-w-7xl mx-auto py-24 md:py-24 px-8 md:px-0 text-white">
       <div class="relative z-10">
         <h1 class="text-3xl sm:text-5xl lg:text-7xl mb-4 hero-title leading-loose">
@@ -30,7 +30,7 @@
             />
           </NuxtLink>
         </div>
-        <div class="flex items-center justify-start gap-4 mx-auto w-full">
+        <div class="hidden md:flex items-center justify-start gap-4 mx-auto w-full">
           <p class="text-tertiary text-sm font-accent hero-tagline">Fast turnaround</p>
           <Icon name="i-lucide-circle" size="8" />
           <p class="text-tertiary text-sm font-accent hero-tagline">Durable materials</p>
