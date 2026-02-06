@@ -9,7 +9,13 @@
           {{ links.title }}
         </h3>
         <ul class="space-y-3">
-          <li v-for="link in links.links">
+          <li v-for="link in links.links" class="flex items-start gap-2">
+            <Icon
+              v-if="link.icon"
+              :name="link.icon"
+              size="20"
+              class="text-text-disabled flex-shrink-0"
+            />
             <NuxtLink
               :to="link.link"
               class="text-text-disabled hover:text-text-tertiary transition-colors duration-200"
@@ -25,7 +31,8 @@
 
 <script setup lang="ts">
   interface Link {
-    title: string;
+    title?: string;
+    icon?: string;
     link: string;
   }
   interface FooterSection {

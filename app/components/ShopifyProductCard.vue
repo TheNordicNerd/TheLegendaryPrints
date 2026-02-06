@@ -3,7 +3,7 @@
 
   <NuxtLink
     :to="`/products/${product.handle}`"
-    class="shopify-product-card-compact bg-surface-raised rounded-xl w-full sm:rounded-2xl shadow-lg hover:shadow-md overflow-hidden transition-all duration-300 flex flex-col"
+    class="shopify-product-card-compact bg-surface-raised rounded-xl w-full sm:rounded-2xl border border-border-subtle hover:shadow-md overflow-hidden transition-all duration-300 flex flex-col"
   >
     <div v-if="product.featuredImage?.url" class="aspect-square overflow-hidden w-full">
       <NuxtImg

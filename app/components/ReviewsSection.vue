@@ -74,7 +74,9 @@
             displayAverageRating.toFixed(1)
           }}</span>
         </div>
-        <p class="text-center text-text-secondary">Based on {{ displayReviewCount }} reviews</p>
+        <p class="font-accent text-3xl text-center text-text-secondary">
+          Based on {{ displayReviewCount }} reviews
+        </p>
       </div>
 
       <!-- Reviews Carousel -->

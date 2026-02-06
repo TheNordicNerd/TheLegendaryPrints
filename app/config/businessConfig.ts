@@ -25,8 +25,9 @@ export default {
     },
   },
   social: {
-    instagram: "https://instagram.com/thelegendaryprints",
-    facebook: "https://facebook.com/thelegendaryprints",
+    instagram: "thelegendaryprints",
+    facebook: "thelegendaryprints",
+    tiktok: "@thelegendaryprints",
   },
   website: "https://thelegendaryprints.com",
   tagline: "Custom Stickers Made Easy",

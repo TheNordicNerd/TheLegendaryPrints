@@ -1,18 +1,16 @@
 <template>
-  <Section inner-classes="text-center" outer-classes="bg-neutral-900">
+  <Section inner-classes="text-left" outer-classes="bg-neutral-900">
     <div class="w-full max-w-7xl mx-auto py-24 md:py-24 px-8 md:px-0 text-white">
       <div class="relative z-10">
         <h1 class="text-3xl sm:text-5xl lg:text-7xl mb-4 hero-title leading-loose">
           Custom Printed Vinyl <br />
           Stickers and Labels
         </h1>
-        <p
-          class="text-xl md:text-2xl font-medium text-neutral-50 max-w-2xl mx-auto mb-12 hero-subtitle"
-        >
+        <p class="text-xl md:text-2xl font-medium text-neutral-50 max-w-2xl mb-12 hero-subtitle">
           Professional prints. Personal service. <br />
           Most orders ship in 24-48 hours.
         </p>
-        <div class="flex items-center flex-col md:flex-row justify-center gap-4 mb-12 hero-buttons">
+        <div class="flex items-center flex-col md:flex-row justify-start gap-4 mb-12 hero-buttons">
           <NuxtLink to="/custom-design">
             <Button
               variant="primary"
@@ -32,7 +30,7 @@
             />
           </NuxtLink>
         </div>
-        <div class="flex items-center justify-center gap-4 mx-auto w-full">
+        <div class="flex items-center justify-start gap-4 mx-auto w-full">
           <p class="text-tertiary text-sm font-accent hero-tagline">Fast turnaround</p>
           <Icon name="i-lucide-circle" size="8" />
           <p class="text-tertiary text-sm font-accent hero-tagline">Durable materials</p>

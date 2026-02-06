@@ -4,9 +4,9 @@
     <div class="py-12 pt-16">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Links and Social -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-12">
           <div class="hidden lg:inline">
-            <NuxtImg src="/lp-logo.png" class="w-48" />
+            <NuxtImg src="/lp-logo-bw.png" class="w-48" />
           </div>
           <!-- Company -->
           <div>
@@ -41,22 +41,14 @@
 
             <div class="flex justify-end gap-6">
               <a
-                :href="businessConfig.social.facebook"
+                v-for="social in socialIcons"
+                :href="social.link"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Facebook"
                 class="text-text-disabled hover:text-text-tertiary transition-colors duration-200"
               >
-                <Icon name="i-lucide-facebook" size="24" />
-              </a>
-              <a
-                :href="businessConfig.social.instagram"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram"
-                class="text-text-disabled hover:text-text-tertiary transition-colors duration-200"
-              >
-                <Icon name="i-lucide-instagram" size="24" />
+                <Icon :name="social.icon" size="24" />
               </a>
             </div>
           </div>
@@ -68,26 +60,37 @@
 
 <script setup lang="ts">
   import businessConfig from "~/config/businessConfig";
+  import socialIcons from "~/config/socialIcons";
 
   const currentYear = new Date().getFullYear();
   interface Link {
-    title: string;
+    title?: string;
+    icon?: string;
     link: string;
   }
   interface FooterSection {
     title: string;
+    hideOnMobile?: boolean;
     links: Array<Link>;
   }
   const columnOne: Array<FooterSection> = [
     {
-      title: "Company",
+      title: "Shop",
       links: [
         {
-          title: "About Us",
-          link: "/about",
+          title: "Products",
+          link: "/products",
         },
         {
-          title: "Contact",
+          title: "Best Sellers",
+          link: "/collections/best-sellers",
+        },
+        {
+          title: "Samples",
+          link: "/products/sample-pack",
+        },
+        {
+          title: "Business Orders",
           link: "/contact",
         },
       ],
@@ -113,34 +116,20 @@
 
   const columnTwo: Array<FooterSection> = [
     {
-      title: "Shop",
-      links: [
-        {
-          title: "All Products",
-          link: "/products",
-        },
-        {
-          title: "Best Sellers",
-          link: "/collections/best-sellers",
-        },
-        {
-          title: "Custom Stickers",
-          link: "/collections/custom-stickers",
-        },
-      ],
-    },
-    {
       title: "Connect",
       links: [
         {
-          title: "Email Us",
+          icon: "i-lucide-mail",
+          title: businessConfig.email,
           link: `mailto:${businessConfig.email}`,
         },
         {
-          title: businessConfig.phone,
+          icon: "i-lucide-phone",
+          title: businessConfig.phoneFormatted,
           link: `tel:${businessConfig.phoneFormatted}`,
         },
         {
+          icon: "i-lucide-store",
           title: businessConfig.address.full,
           link: businessConfig.googleMapsUrl,
         },
