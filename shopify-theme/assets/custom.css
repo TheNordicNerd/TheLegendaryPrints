@@ -1,0 +1,178 @@
+/* Custom CSS for additional styling not covered by Tailwind */
+
+/* SVG Icon Sizing - Ensures icons don't become huge */
+svg {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Default size for SVGs with Tailwind classes */
+svg.w-4 {
+  width: 1rem;
+  height: 1rem;
+}
+svg.w-5 {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+svg.w-6 {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+svg.w-8 {
+  width: 2rem;
+  height: 2rem;
+}
+
+/* Button and link SVG sizing */
+button svg,
+a svg {
+  flex-shrink: 0;
+}
+
+/* Typography */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Button Utilities */
+.btn-primary {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--color-magenta);
+  color: var(--color-white);
+  border-radius: 0.5rem;
+  font-weight: 600;
+  text-align: center;
+  transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+  transform: scale(1.05);
+}
+
+.btn-secondary {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--color-cyan);
+  color: var(--color-neutral-900);
+  border-radius: 0.5rem;
+  font-weight: 600;
+  text-align: center;
+  transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.btn-secondary:hover {
+  opacity: 0.9;
+  transform: scale(1.05);
+}
+
+/* Color utilities */
+.bg-yellow {
+  background-color: var(--color-yellow);
+}
+
+.bg-cyan {
+  background-color: var(--color-cyan);
+}
+
+.bg-magenta {
+  background-color: var(--color-magenta);
+}
+
+.text-neutral {
+  color: var(--color-neutral-900);
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* Prose styles for rich text content */
+.prose {
+  max-width: 65ch;
+}
+
+.prose p {
+  margin-bottom: 1.25em;
+  line-height: 1.75;
+}
+
+.prose h2 {
+  font-size: 1.5em;
+  margin-top: 2em;
+  margin-bottom: 1em;
+  line-height: 1.3333333;
+  font-weight: 700;
+}
+
+.prose h3 {
+  font-size: 1.25em;
+  margin-top: 1.6em;
+  margin-bottom: 0.6em;
+  line-height: 1.6;
+  font-weight: 600;
+}
+
+.prose ul,
+.prose ol {
+  margin-top: 1.25em;
+  margin-bottom: 1.25em;
+  padding-left: 1.625em;
+}
+
+.prose li {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+/* Loading spinner */
+.spinner {
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid var(--color-magenta);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Image aspect ratio utilities */
+.aspect-square {
+  aspect-ratio: 1 / 1;
+}
+
+.aspect-video {
+  aspect-ratio: 16 / 9;
+}
+
+/* Shopify-specific overrides */
+.shopify-section {
+  display: block;
+}
+
+/* Print styles */
+@media print {
+  header,
+  footer,
+  .no-print {
+    display: none !important;
+  }
+}

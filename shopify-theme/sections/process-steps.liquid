@@ -1,0 +1,157 @@
+{% comment %}
+  Process Steps Section
+  "How It Works" with numbered steps
+  Converted from ProcessSection.vue component
+{% endcomment %}
+
+<section class="process-section py-12 md:py-20 bg-surface-base">
+  <div class="max-w-6xl mx-auto px-4">
+    <!-- Section Header -->
+    <div class="text-center mb-12">
+      <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold text-text-primary mb-4">
+        {{ section.settings.title }}
+      </h2>
+      <p class="text-lg md:text-xl text-text-secondary max-w-2xl mx-auto">
+        {{ section.settings.description }}
+      </p>
+    </div>
+
+    <!-- Steps Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+      <!-- Connector Lines (hidden on mobile) -->
+      <div class="hidden md:block absolute  left-0 right-0 h-0.5 bg-neutral-200" style="top: 2rem;"></div>
+
+      {% for block in section.blocks %}
+        <div class="relative flex flex-col items-center process-step">
+          <!-- Step Number Circle -->
+          <div class="w-16 h-16 rounded-full bg-magenta text-white flex items-center justify-center text-2xl font-bold mb-4 relative z-10 shadow-lg">
+            {{ forloop.index }}
+          </div>
+
+          <!-- Icon -->
+          <div class="p-3 bg-neutral-100 rounded-lg grid place-items-center w-fit mb-4">
+            {% if block.settings.icon_svg != blank %}
+              <div class="text-magenta">
+                {{ block.settings.icon_svg }}
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Title -->
+          <h3 class="text-xl text-center font-bold text-text-primary mb-2">
+            {{ block.settings.title }}
+          </h3>
+
+          <!-- Description -->
+          <p class="text-text-secondary text-center">
+            {{ block.settings.description }}
+          </p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<style>
+  .process-step {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .process-step:hover {
+    transform: translateY(-4px);
+  }
+
+  .process-step svg {
+    width: 32px;
+    height: 32px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .process-step {
+      transition-duration: 0.01ms !important;
+    }
+
+    .process-step:hover {
+      transform: none !important;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Process Steps",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section Title",
+      "default": "How It Works"
+    },
+    {
+      "type": "text",
+      "id": "description",
+      "label": "Section Description",
+      "default": "Get your custom stickers in just 3 simple steps"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Step",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Step Title",
+          "default": "Upload Your Design"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Step Description",
+          "default": "Choose your product and upload your artwork. We accept all major file formats"
+        },
+        {
+          "type": "html",
+          "id": "icon_svg",
+          "label": "Icon SVG",
+          "info": "Paste SVG code (32x32px recommended)",
+          "default": "<svg width=\"32\" height=\"32\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12\"></path></svg>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Process Steps",
+      "blocks": [
+        {
+          "type": "step",
+          "settings": {
+            "title": "Upload Your Design",
+            "description": "Choose your product and upload your artwork. We accept all major file formats",
+            "icon_svg": "<svg width=\"32\" height=\"32\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12\"></path></svg>"
+          }
+        },
+        {
+          "type": "step",
+          "settings": {
+            "title": "Customize Options",
+            "description": "Select size, quantity, and material. Get instant pricing and preview your order",
+            "icon_svg": "<svg width=\"32\" height=\"32\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z\"></path><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M15 12a3 3 0 11-6 0 3 3 0 016 0z\"></path></svg>"
+          }
+        },
+        {
+          "type": "step",
+          "settings": {
+            "title": "Receive & Enjoy",
+            "description": "We print and ship within 3-5 days. Track your order every step of the way",
+            "icon_svg": "<svg width=\"32\" height=\"32\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0\"></path></svg>"
+          }
+        }
+      ]
+    }
+  ],
+  "max_blocks": 6
+}
+{% endschema %}

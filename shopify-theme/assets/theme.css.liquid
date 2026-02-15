@@ -1,0 +1,57 @@
+/*
+ * The Legendary Prints - Shopify Theme CSS
+ * This file will be processed by Tailwind locally, then by Shopify's CSS pipeline
+ * NOTE: Custom fonts are in fonts.css.liquid (processed by Shopify)
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Additional custom styles */
+@layer utilities {
+  .hover-grow {
+    transition: transform 0.2s ease-in-out;
+  }
+
+  .hover-grow:hover {
+    transform: scale(1.05);
+  }
+
+  .animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+}
+
+/* Accessibility */
+.skip-to-content-link {
+  position: absolute;
+  left: -9999px;
+  z-index: 999;
+}
+
+.skip-to-content-link:focus {
+  left: 50%;
+  transform: translateX(-50%);
+  top: 1rem;
+}
+
+/* Focus visible for keyboard navigation */
+*:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+}
+
+/* Remove focus outline for mouse users */
+*:focus:not(:focus-visible) {
+  outline: none;
+}

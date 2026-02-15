@@ -1,0 +1,235 @@
+{% comment %}
+  Hero Section
+  Converted from HeroSection.vue component
+{% endcomment %}
+
+<section class="hero-section bg-neutral-900 relative overflow-hidden">
+  {% if section.settings.hero_image != blank %}
+    <div class="hero-image-wrapper absolute inset-0 z-0">
+      <img
+        src="{{ section.settings.hero_image | image_url: width: 1920 }}"
+        srcset="{{ section.settings.hero_image | image_url: width: 640 }} 640w,
+                {{ section.settings.hero_image | image_url: width: 1024 }} 1024w,
+                {{ section.settings.hero_image | image_url: width: 1920 }} 1920w"
+        sizes="100vw"
+        alt="{{ section.settings.hero_image.alt | escape }}"
+        class="w-full h-full object-cover hero-bg-image"
+        style="object-position: {{ section.settings.image_position }};"
+        loading="eager"
+      >
+      <div class="absolute inset-0 bg-black hero-overlay" style="opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};"></div>
+    </div>
+  {% endif %}
+  <div class="w-full max-w-7xl mx-auto py-24 md:py-24 px-8 md:px-0 text-white relative z-10">
+    <div class="text-center md:text-left px-8 lg:px-0">
+      <h1 class="text-3xl sm:text-5xl lg:text-7xl mb-4 hero-title leading-loose">
+        {{ section.settings.title }}
+      </h1>
+      <p class="text-xl md:text-2xl font-medium text-neutral-50 max-w-2xl mb-12 hero-subtitle">
+        {{ section.settings.subtitle }}
+      </p>
+      <div class="flex items-center flex-col md:flex-row justify-start gap-4 mb-12 hero-buttons">
+        {% if section.settings.primary_button_link != blank %}
+          <a href="{{ section.settings.primary_button_link }}" class="inline-block px-6 py-3 bg-magenta text-white rounded-lg font-semibold duration-300 transition-all hover:scale-105">
+            {{ section.settings.primary_button_text }}
+          </a>
+        {% endif %}
+        {% if section.settings.secondary_button_link != blank %}
+          <a href="{{ section.settings.secondary_button_link }}" class="inline-block px-6 py-3 bg-cyan text-neutral-900 rounded-lg font-semibold duration-300 transition-all hover:scale-105">
+            {{ section.settings.secondary_button_text }}
+          </a>
+        {% endif %}
+      </div>
+      <div class="hidden md:flex items-center justify-start gap-4 mx-auto w-full">
+        {% if section.settings.tagline_1 != blank %}
+          <p class="text-tertiary text-sm font-accent hero-tagline">{{ section.settings.tagline_1 }}</p>
+        {% endif %}
+        {% if section.settings.tagline_2 != blank %}
+          <svg class="w-2 h-2 text-neutral-400 hero-tagline" fill="currentColor" viewBox="0 0 8 8">
+            <circle cx="4" cy="4" r="4"/>
+          </svg>
+          <p class="text-tertiary text-sm font-accent hero-tagline">{{ section.settings.tagline_2 }}</p>
+        {% endif %}
+        {% if section.settings.tagline_3 != blank %}
+          <svg class="w-2 h-2 text-neutral-400 hero-tagline" fill="currentColor" viewBox="0 0 8 8">
+            <circle cx="4" cy="4" r="4"/>
+          </svg>
+          <p class="text-tertiary text-sm font-accent hero-tagline">{{ section.settings.tagline_3 }}</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Hero section styling */
+  .hero-section {
+    min-height: 500px;
+  }
+
+  .hero-image-wrapper {
+    z-index: 0;
+  }
+
+  .hero-bg-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .hero-overlay {
+    transition: opacity 0.3s ease-in-out;
+  }
+
+  /* Hero entrance animations */
+  .hero-title {
+    opacity: 0;
+    animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards 0.2s;
+  }
+
+  .hero-subtitle {
+    opacity: 0;
+    animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards 0.4s;
+  }
+
+  .hero-buttons {
+    opacity: 0;
+    animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards 0.6s;
+  }
+
+  .hero-tagline {
+    opacity: 0;
+    font-size: 2rem !important;
+    animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards 0.8s;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .hero-title,
+    .hero-subtitle,
+    .hero-buttons,
+    .hero-tagline {
+      animation: fadeInQuick 0.01ms forwards;
+      animation-delay: 0s !important;
+    }
+
+    @keyframes fadeInQuick {
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Hero Section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "hero_image",
+      "label": "Background Image"
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Image Position",
+      "options": [
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "label": "Image Overlay Opacity",
+      "default": 50,
+      "info": "Add a dark overlay to improve text readability"
+    },
+    {
+      "type": "html",
+      "id": "title",
+      "label": "Title",
+      "default": "Custom Printed Vinyl <br />Stickers and Labels"
+    },
+    {
+      "type": "html",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Professional prints. Personal service. <br />Most orders ship in 24-48 hours."
+    },
+    {
+      "type": "text",
+      "id": "primary_button_text",
+      "label": "Primary Button Text",
+      "default": "Design Custom Stickers"
+    },
+    {
+      "type": "url",
+      "id": "primary_button_link",
+      "label": "Primary Button Link"
+    },
+    {
+      "type": "text",
+      "id": "secondary_button_text",
+      "label": "Secondary Button Text",
+      "default": "All Products"
+    },
+    {
+      "type": "url",
+      "id": "secondary_button_link",
+      "label": "Secondary Button Link"
+    },
+    {
+      "type": "text",
+      "id": "tagline_1",
+      "label": "Tagline 1",
+      "default": "Fast turnaround"
+    },
+    {
+      "type": "text",
+      "id": "tagline_2",
+      "label": "Tagline 2",
+      "default": "Durable materials"
+    },
+    {
+      "type": "text",
+      "id": "tagline_3",
+      "label": "Tagline 3",
+      "default": "No cheap prints"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Section"
+    }
+  ]
+}
+{% endschema %}

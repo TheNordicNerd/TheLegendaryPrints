@@ -1,0 +1,78 @@
+{% comment %}
+  Promo Banner Section
+  Yellow banner with promotional message
+{% endcomment %}
+
+<div class="group w-full bg-yellow duration-300 text-neutral py-2 px-4 hover:opacity-95 transition-opacity">
+  <a href="{{ section.settings.link_url }}" class="p-0 m-0 flex w-full">
+    <div class="max-w-7xl mx-auto text-center flex items-center justify-center w-full">
+      <p class="font-medium duration-300">
+        {% if section.settings.bold_text_1 != blank %}
+          <span class="font-black">{{ section.settings.bold_text_1 }}</span>
+        {% endif %}
+        {{ section.settings.main_text }}
+        {% if section.settings.bold_text_2 != blank %}
+          <span class="font-black">{{ section.settings.bold_text_2 }}</span>
+        {% endif %}
+      </p>
+    </div>
+  </a>
+</div>
+
+<style>
+  .bg-yellow {
+    background-color: var(--color-yellow);
+  }
+
+  span{
+    font-weight: 900 !important;
+  }
+
+  .text-neutral {
+    color: var(--color-neutral-900);
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .promo-banner {
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Promo Banner",
+  "settings": [
+    {
+      "type": "text",
+      "id": "bold_text_1",
+      "label": "Bold Text (Start)",
+      "default": "$20 OFF"
+    },
+    {
+      "type": "text",
+      "id": "main_text",
+      "label": "Main Text",
+      "default": "Orders Over $150 Use Code:"
+    },
+    {
+      "type": "text",
+      "id": "bold_text_2",
+      "label": "Bold Text (End)",
+      "default": "GET20"
+    },
+    {
+      "type": "url",
+      "id": "link_url",
+      "label": "Link URL",
+      "default": "/collections/all"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Promo Banner"
+    }
+  ]
+}
+{% endschema %}

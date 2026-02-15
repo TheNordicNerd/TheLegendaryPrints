@@ -14,7 +14,11 @@
     "format:write": "prettier . --write",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest --coverage"
+    "test:coverage": "vitest --coverage",
+    "shopify:build-css": "tailwindcss -i ./shopify-theme/assets/theme.css.liquid -o ./shopify-theme/assets/app.css --minify",
+    "shopify:watch-css": "tailwindcss -i ./shopify-theme/assets/theme.css.liquid -o ./shopify-theme/assets/app.css --watch",
+    "shopify:dev": "npm run shopify:build-css && cd shopify-theme && shopify theme dev",
+    "shopify:push": "npm run shopify:build-css && cd shopify-theme && shopify theme push"
   },
   "dependencies": {
     "@nuxt/a11y": "1.0.0-alpha.1",
@@ -48,7 +52,10 @@
     "@tailwindcss/typography": "^0.5.19",
     "@vitejs/plugin-vue": "^6.0.3",
     "@vue/test-utils": "^2.4.6",
+    "autoprefixer": "^10.4.24",
     "happy-dom": "^20.3.4",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.19",
     "vitest": "^4.0.17"
   }
 }

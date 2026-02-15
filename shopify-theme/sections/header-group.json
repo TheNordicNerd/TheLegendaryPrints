@@ -1,0 +1,25 @@
+{
+  "name": "t:sections.header.name",
+  "type": "header",
+  "sections": {
+    "promo-banner": {
+      "type": "promo-banner",
+      "settings": {
+        "bold_text_1": "$20 OFF",
+        "main_text": " Orders Over $150 Use Code: ",
+        "bold_text_2": "GET20",
+        "link_url": "/collections/all"
+      }
+    },
+    "header": {
+      "type": "header",
+      "settings": {
+        "menu": "main-menu"
+      }
+    }
+  },
+  "order": [
+    "header",
+    "promo-banner"
+  ]
+}

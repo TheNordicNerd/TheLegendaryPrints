@@ -1,0 +1,410 @@
+{% comment %}
+  Main Product Section
+  Modular product page with app block support
+{% endcomment %}
+
+<div class="product-page max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+    <!-- Product Images (Always shown) -->
+    <div class="product-images flex gap-4">
+      <!-- Thumbnail Gallery (Left Side) -->
+      {% if product.images.size > 1 %}
+        <div class="thumbnail-gallery flex flex-col gap-3 w-20 flex-shrink-0">
+          {% for image in product.images %}
+            <button
+              type="button"
+              class="thumbnail-btn group border-2 rounded-lg overflow-hidden transition-all duration-200 bg-surface-sunken {% if forloop.first %}border-magenta{% else %}border-neutral-200 hover:border-neutral-400{% endif %}"
+              data-image-url="{{ image | image_url: width: 1000 }}"
+            >
+              <img
+                src="{{ image | image_url: width: 100 }}"
+                alt="{{ image.alt | escape }}"
+                class="w-full aspect-square object-cover transition-transform duration-200 group-hover:scale-105"
+              >
+            </button>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <!-- Main Image (Right Side) -->
+      <div class="main-image aspect-square bg-surface-sunken rounded-lg overflow-hidden">
+        {% if product.featured_image %}
+          <img
+            src="{{ product.featured_image | image_url: width: 1000 }}"
+            alt="{{ product.featured_image.alt | escape }}"
+            class="w-full aspect-square object-contain transition-opacity duration-300"
+            id="product-featured-image"
+          >
+        {% else %}
+          {{ 'product-1' | placeholder_svg_tag: 'w-full aspect-square' }}
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Product Info with Blocks -->
+    <div class="product-info">
+      <form id="product-form" class="product-form" action="/cart/add" method="post">
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+
+        {% for block in section.blocks %}
+          <div class="product-block" {{ block.shopify_attributes }}>
+            {% case block.type %}
+
+              {% when 'title' %}
+                <h1 class="text-3xl md:text-4xl font-bold text-text-primary mb-4">
+                  {{ product.title }}
+                </h1>
+
+              {% when 'price' %}
+                <div class="flex items-center gap-3 mb-6">
+                  {% if product.compare_at_price > product.price %}
+                    <span class="text-3xl font-bold text-magenta" id="product-price">
+                      {{ product.selected_or_first_available_variant.price | money }}
+                    </span>
+                    <span class="text-xl text-text-secondary line-through" id="product-compare-price">
+                      {{ product.selected_or_first_available_variant.compare_at_price | money }}
+                    </span>
+                  {% else %}
+                    <span class="text-3xl font-bold text-text-primary" id="product-price">
+                      {{ product.selected_or_first_available_variant.price | money }}
+                    </span>
+                  {% endif %}
+                </div>
+
+              {% when 'description' %}
+                <div class="prose mb-8 text-text-secondary product-description">
+                  {{ product.description }}
+                </div>
+
+              {% when 'variant_picker' %}
+                {% render 'variant-picker', product: product %}
+
+              {% when 'buy_buttons' %}
+                <button
+                  type="submit"
+                  name="add"
+                  class="w-full px-6 py-4 bg-magenta text-white text-lg font-semibold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed mb-4"
+                  {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}
+                >
+                  {% if product.selected_or_first_available_variant.available %}
+                    Add to Cart
+                  {% else %}
+                    Sold Out
+                  {% endif %}
+                </button>
+
+              {% when 'additional_info' %}
+                <div class="additional-info space-y-2 text-sm text-text-secondary">
+                  <p class="flex items-center gap-2">
+                    <svg class="w-5 h-5 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Fast turnaround - Most orders ship in 24-48 hours
+                  </p>
+                  <p class="flex items-center gap-2">
+                    <svg class="w-5 h-5 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Premium quality vinyl stickers
+                  </p>
+                  <p class="flex items-center gap-2">
+                    <svg class="w-5 h-5 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Free design support available
+                  </p>
+                </div>
+
+              {% when 'custom_text' %}
+                <div class="custom-text-block mb-6">
+                  {% if block.settings.title != blank %}
+                    <h3 class="text-lg font-bold text-text-primary mb-2">
+                      {{ block.settings.title }}
+                    </h3>
+                  {% endif %}
+                  {% if block.settings.text != blank %}
+                    <div class="text-text-secondary">
+                      {{ block.settings.text }}
+                    </div>
+                  {% endif %}
+                </div>
+
+              {% when '@app' %}
+                {% render block %}
+
+            {% endcase %}
+          </div>
+        {% endfor %}
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Image gallery with smooth transition
+  document.querySelectorAll('.thumbnail-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const imageUrl = btn.dataset.imageUrl;
+      const mainImage = document.getElementById('product-featured-image');
+
+      // Fade out
+      mainImage.style.opacity = '0.5';
+
+      // Change image
+      setTimeout(() => {
+        mainImage.src = imageUrl;
+        mainImage.style.opacity = '1';
+      }, 150);
+
+      // Update active thumbnail
+      document.querySelectorAll('.thumbnail-btn').forEach(b => {
+        b.classList.remove('border-magenta');
+        b.classList.add('border-neutral-200', 'hover:border-neutral-400');
+      });
+      btn.classList.remove('border-neutral-200', 'hover:border-neutral-400');
+      btn.classList.add('border-magenta');
+    });
+  });
+
+  // Variant selection
+  document.querySelectorAll('.variant-input').forEach(input => {
+    input.addEventListener('change', () => {
+      // Update selected variant styling
+      const label = document.querySelector(`label[for="${input.id}"]`);
+      document.querySelectorAll('.variant-label').forEach(l => {
+        l.classList.remove('border-magenta', 'bg-magenta', 'text-white');
+        l.classList.add('border-neutral-300');
+      });
+      label.classList.remove('border-neutral-300');
+      label.classList.add('border-magenta', 'bg-magenta', 'text-white');
+
+      // Find matching variant and update form
+      const options = Array.from(document.querySelectorAll('.variant-input:checked')).map(i => i.value);
+      const variant = {{ product.variants | json }}.find(v => {
+        return options.every((opt, idx) => v.options[idx] === opt);
+      });
+
+      if (variant) {
+        document.querySelector('input[name="id"]').value = variant.id;
+        document.getElementById('product-price').textContent = new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: '{{ cart.currency.iso_code }}'
+        }).format(variant.price / 100);
+
+        // Update availability
+        const addBtn = document.querySelector('button[name="add"]');
+        if (variant.available) {
+          addBtn.disabled = false;
+          addBtn.textContent = 'Add to Cart';
+        } else {
+          addBtn.disabled = true;
+          addBtn.textContent = 'Sold Out';
+        }
+      }
+    });
+  });
+
+  // Add to cart
+  document.getElementById('product-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const addBtn = form.querySelector('button[name="add"]');
+    const originalText = addBtn.textContent;
+
+    // Show loading state
+    addBtn.disabled = true;
+    addBtn.textContent = 'Adding...';
+
+    const formData = new FormData(form);
+
+    try {
+      const response = await fetch('/cart/add.js', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({
+          items: [{
+            id: formData.get('id'),
+            quantity: 1
+          }]
+        })
+      });
+
+      // Check if it's a 401 error (common in dev environment)
+      if (response.status === 401) {
+        console.warn('Ajax Cart API blocked (401). Falling back to form submission.');
+        // Fallback to standard form submission
+        form.submit();
+        return;
+      }
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Update cart count
+        const cart = await fetch('/cart.js', {
+          headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        }).then(r => r.json());
+        document.dispatchEvent(new CustomEvent('cart:updated', {
+          detail: { item_count: cart.item_count }
+        }));
+
+        // Show success message briefly
+        addBtn.textContent = 'Added! ✓';
+
+        // Redirect to cart after brief delay
+        setTimeout(() => {
+          window.location.href = '/cart';
+        }, 500);
+      } else {
+        // Handle error
+        addBtn.disabled = false;
+        addBtn.textContent = originalText;
+        alert(data.description || 'Unable to add item to cart. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      // Fallback to standard form submission on any error
+      form.submit();
+    }
+  });
+</script>
+
+<style>
+  /* Product Images */
+  .product-images {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .product-description {
+    max-height: 300px;
+    overflow-y: scroll;
+  }
+
+  .main-image {
+    position: relative;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+
+  #product-featured-image {
+    display: block;
+    width: 100%;
+  }
+
+  .thumbnail-gallery {
+    width: 80px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    max-height: 488px;
+  }
+
+  .thumbnail-btn {
+    cursor: pointer;
+    position: relative;
+    aspect-ratio: 1;
+    height: 80px;
+    width: 80px;
+  }
+
+  .thumbnail-btn img {
+    object-fit: cover;
+    height: 100%;
+  }
+
+  .thumbnail-btn:focus {
+    outline: 2px solid var(--color-magenta);
+    outline-offset: 2px;
+  }
+
+  .thumbnail-btn.border-magenta {
+    border-color: var(--color-magenta);
+    box-shadow: 0 0 0 1px var(--color-magenta);
+  }
+
+  /* Mobile: Stack thumbnails below main image */
+  @media (max-width: 640px) {
+    .product-images {
+      flex-direction: column-reverse;
+    }
+
+    .thumbnail-gallery {
+      width: 100%;
+      flex-direction: row;
+      overflow-x: auto;
+      gap: 0.5rem;
+      padding-bottom: 0.5rem;
+    }
+
+    .thumbnail-btn {
+      width: 60px;
+      flex-shrink: 0;
+    }
+  }
+
+</style>
+
+{% schema %}
+{
+  "name": "Product Information",
+  "tag": "section",
+  "class": "section",
+  "blocks": [
+    {
+      "type": "@app"
+    },
+    {
+      "type": "title",
+      "name": "Product Title",
+      "limit": 1
+    },
+    {
+      "type": "price",
+      "name": "Price",
+      "limit": 1
+    },
+    {
+      "type": "description",
+      "name": "Description",
+      "limit": 1
+    },
+    {
+      "type": "variant_picker",
+      "name": "Variant Picker",
+      "limit": 1
+    },
+    {
+      "type": "buy_buttons",
+      "name": "Buy Buttons",
+      "limit": 1
+    },
+    {
+      "type": "additional_info",
+      "name": "Additional Info",
+      "limit": 1
+    },
+    {
+      "type": "custom_text",
+      "name": "Custom Text",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text"
+        }
+      ]
+    }
+  ],
+  "settings": []
+}
+{% endschema %}

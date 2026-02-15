@@ -1,0 +1,164 @@
+{% comment %}
+  Variant Picker Snippet
+  Displays product variant options (Size, Quantity, etc.)
+{% endcomment %}
+
+{% unless product.has_only_default_variant %}
+  <div class="variant-picker-wrapper">
+    {% for option in product.options_with_values %}
+      <div class="variant-option-group">
+        <label class="variant-option-label">
+          {{ option.name }}
+        </label>
+        <div class="variant-buttons-grid">
+          {% for value in option.values %}
+            <input
+              type="radio"
+              name="option-{{ option.position }}"
+              value="{{ value | escape }}"
+              id="option-{{ option.position }}-{{ forloop.index }}"
+              {% if option.selected_value == value %}checked{% endif %}
+              class="variant-input"
+              data-option-position="{{ option.position }}"
+            >
+            <label
+              for="option-{{ option.position }}-{{ forloop.index }}"
+              class="variant-button"
+            >
+              {{ value }}
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endunless %}
+
+<style>
+  /* Variant Picker Container */
+  .variant-picker-wrapper {
+    background: linear-gradient(135deg, rgba(236, 72, 153, 0.05) 0%, rgba(6, 182, 212, 0.05) 100%);
+    border: 2px solid var(--color-surface-sunken);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  /* Option Group */
+  .variant-option-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .variant-option-group:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Option Label */
+  .variant-option-label {
+    display: block;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Buttons Grid */
+  .variant-buttons-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.625rem;
+  }
+
+  /* Hide radio inputs */
+  .variant-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  /* Variant Button */
+  .variant-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 100px;
+    padding: 0.875rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    background-color: white;
+    border: 2.5px solid var(--color-neutral-300);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    text-align: center;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  }
+
+  /* Hover State */
+  .variant-button:hover {
+    border-color: var(--color-magenta);
+    background-color: rgba(236, 72, 153, 0.05);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(236, 72, 153, 0.2);
+  }
+
+  /* Selected State */
+  .variant-input:checked + .variant-button {
+    border-color: var(--color-magenta) !important;
+    background: linear-gradient(135deg, var(--color-magenta) 0%, #be185d 100%) !important;
+    color: white !important;
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px -4px rgba(236, 72, 153, 0.4);
+  }
+
+
+  /* Disabled State */
+  .variant-input:disabled + .variant-button {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background-color: var(--color-surface-sunken);
+  }
+
+  .variant-input:disabled + .variant-button:hover {
+    transform: none;
+    border-color: var(--color-neutral-300);
+  }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    .variant-picker-wrapper {
+      padding: 1.25rem;
+    }
+
+    .variant-button {
+      min-width: 80px;
+      padding: 0.75rem 1.25rem;
+      font-size: 0.9375rem;
+    }
+
+    .variant-option-label {
+      font-size: 1rem;
+    }
+  }
+
+  /* Reduced Motion */
+  @media (prefers-reduced-motion: reduce) {
+    .variant-button {
+      transition: none;
+    }
+
+    .variant-button:hover,
+    .variant-input:checked + .variant-button {
+      transform: none;
+    }
+  }
+</style>
